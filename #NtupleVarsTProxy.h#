@@ -213,7 +213,7 @@ public :
    TBoolProxy                                                         JetIDJERdown;
    TBoolProxy                                                         JetIDJERup;
    TStlPx_ROOT__Math__LorentzVector_ROOT__Math__PtEtaPhiE4D_float__   Jets;
-   Int_t                                                               Jets_;
+   //Int_t                                                               Jets_;
    TStlSimpleProxy<vector<float> >                                    Jets_axismajor;
    TStlSimpleProxy<vector<float> >                                    Jets_axisminor;
    TStlSimpleProxy<vector<float> >                                    Jets_bDiscriminatorCSV;
