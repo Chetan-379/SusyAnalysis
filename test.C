@@ -99,18 +99,22 @@ void generate_1Dplot(vector<TH1F*> hist, char const *tag_name="", float energy=-
   canvas_n1->SetFillColor(0);
   canvas_n1->SetBorderMode(0);
   canvas_n1->SetBorderSize(2);
-  auto *pad_1 = new TPad("pad_1","pad_1",0.,0.0,1.,0.32); pad_1->Draw();
-  pad_1->SetTopMargin(0.06);
-  pad_1->SetBottomMargin(0.3);
-  pad_1->SetRightMargin(0.025);
-  pad_1->SetLeftMargin(0.14);
+  canvas_n1->SetRightMargin(0.045);
+  canvas_n1->SetLeftMargin(0.12);
+  canvas_n1->SetTopMargin(0.06);
+  canvas_n1->SetBottomMargin(0.12);
+  // auto *pad_1 = new TPad("pad_1","pad_1",0.,0.0,1.,0.32); pad_1->Draw();
+  // pad_1->SetTopMargin(0.06);
+  // pad_1->SetBottomMargin(0.3);
+  // pad_1->SetRightMargin(0.025);
+  // pad_1->SetLeftMargin(0.14);
   
-  auto *p1 = new TPad("p1","p1",0.,0.32,1.,1.);  p1->Draw();
-  p1->SetBottomMargin(0.04);
-  p1->SetRightMargin(0.025);
-  p1->SetLeftMargin(0.14);
-  p1->SetTopMargin(0.05);
-  p1->cd();
+  // auto *p1 = new TPad("p1","p1",0.,0.32,1.,1.);  p1->Draw();
+  // p1->SetBottomMargin(0.04);
+  // p1->SetRightMargin(0.025);
+  // p1->SetLeftMargin(0.14);
+  // p1->SetTopMargin(0.05);
+  // p1->cd();
   gStyle->SetOptStat(0);
   
   vector<TString> legName;
@@ -119,7 +123,7 @@ void generate_1Dplot(vector<TH1F*> hist, char const *tag_name="", float energy=-
   double y = 0.90;
   TLegend *legend; //legend to be drawn on the plot - shift x,ys if you want to move this on the canvas
   legend = new TLegend(0.7,0.65,0.95,0.9);  
-  legend->SetTextSize(0.045);
+  legend->SetTextSize(0.030);
   legend->SetLineColor(kWhite);
   char* lhead = new char[100];
   
@@ -166,12 +170,29 @@ void generate_1Dplot(vector<TH1F*> hist, char const *tag_name="", float energy=-
     hist.at(i)->GetYaxis()->SetTitleOffset(1.2);
     hist.at(i)->GetYaxis()->SetLabelSize(x_label_size);
     hist.at(i)->GetXaxis()->SetTitle(xtitile); //setting the title of X axis
+
+      hist.at(i)->GetXaxis()->SetTitleSize(0.05);
+    hist.at(i)->GetXaxis()->SetLabelSize(0.04);
+    hist.at(i)->GetYaxis()->SetLabelSize(0.04);
+    hist.at(i)->GetYaxis()->SetTitleSize(0.05);
+    hist.at(i)->GetYaxis()->SetTitleOffset(1.1);
+    hist.at(i)->GetXaxis()->SetTitleOffset(1.1);
+
+    TLatex* textOnTop = new TLatex();
+  textOnTop->SetTextSize(0.04);
+
+  textOnTop->DrawLatexNDC(0.13,0.96,"CMS it{#bf{Simulation Preliminary}}");
+  sprintf(lhead,"%s ",title);
+  textOnTop->DrawLatexNDC(0.79,0.96,lhead);
+  char* en_lat = new char[500];
+  textOnTop->SetTextSize(0.035);
     if(DoRebin) { //if rebin flag is on - this will reduce the bin size by half
      hist.at(i)->Rebin(rebin);
     }
     //setting up the legend style and all
     legName.push_back(hist.at(i)->GetName());
     leg_entry[i] = legend->AddEntry(hist.at(i),legend_text[i],"l");
+    leg_entry[i] = legend->AddEntry(hist.at(i),(hist.at(i)->Integral().c_str()),"xsl");
     leg_entry[i]->SetTextColor(hist.at(i)->GetLineColor());
     if(hist.at(i)->GetMaximum() > ymax) ymax = hist.at(i)->GetMaximum();
     if(hist.at(i)->GetMinimum() < ymin) ymin = hist.at(i)->GetMinimum();
@@ -185,7 +206,7 @@ void generate_1Dplot(vector<TH1F*> hist, char const *tag_name="", float energy=-
     if(!normalize) hist.at(i)->GetYaxis()->SetRangeUser(0.001,ymax*10);
     else
       hist.at(i)->GetYaxis()->SetRangeUser(0.00001,ymax*60.0);
-    p1->SetGrid();
+    //    p1->SetGrid();
     
     if(!i) hist.at(i)->Draw("hist");
     else   hist.at(i)->Draw("hist sames"); //overlaying the histograms
@@ -221,9 +242,9 @@ void generate_1Dplot(vector<TH1F*> hist, char const *tag_name="", float energy=-
   //saving the file
   if(save_canvas) {
     sprintf(canvas_name,"%s.png",tag_name);//.png",tag_name);//_wnormalize.png",tag_name);
-     canvas_n1->SaveAs(canvas_name);   
-     sprintf(canvas_name,"%s.pdf",tag_name);
-    canvas_n1->SaveAs(canvas_name);
+    canvas_n1->SaveAs(canvas_name);   
+    // sprintf(canvas_name,"%s.pdf",tag_name);
+    // canvas_n1->SaveAs(canvas_name);
     
   }
   
@@ -265,15 +286,20 @@ void test(string pathname)
   f[1] = new TFile("out.root");
   //define your histograms to be read from here
   vector<vector<string>> bigbaseline;
-  vector<string> baseline1, baseline2;
+  vector<string> baseline1, baseline2, baseline3, baseline4, baseline5, baseline6;
 
-  baseline1 = {"h_pho_pT","h_pho_pT1"};
-  baseline2 = {"h_MET","h_MET2"};
-  
-   //string to be added to output file name - useful when you have different files and reading the same histograms from these
-  bigbaseline = {baseline1, baseline2};
+  baseline1 = {"h_pho_pT0","h_pho_pT3"};
+  baseline2 = {"h_pho_eta0","h_pho_eta3"};
+  baseline3 = {"h_pho_phi0","h_pho_phi3"};
+  baseline4 = {"h_Jet_pT2", "h_Jet_pT3"};
+  baseline5 = {"h_Jet_Eta2", "h_Jet_Eta3"};
+  baseline6 = {"h_NJets2", "h_NJets3"};
 
-  for (int bigi=0; bigi<2; bigi++)
+
+  //string to be added to output file name - useful when you have different files and reading the same histograms from these
+  bigbaseline = {baseline1, baseline2, baseline3, baseline4, baseline5, baseline6};
+
+  for (int bigi=0; bigi<6; bigi++)
     {
       vector<string> filetag;
       filetag={"TTGJets_2018","TTGJets_2017"};
@@ -285,27 +311,35 @@ void test(string pathname)
       vector<int >rebin = {2,2}; //keep it 1 if you don't want to change hist bins
       
       //x axis title for all plots///
-      vector<string>xtitle = {"p_{T}^{miss} (GeV)","p_{T}^{miss} (GeV)"};
+      // vector<string>xtitle = {title[bigi], title[bigi]};
       //x axis range
       vector<int>xmax = {2000,2000};
       vector<int>xmin = {0,0};
 
       //looping over each files///  
-      for(int i_file=0; i_file<n_files;i_file++) //looping over each file
+      for(int i_file=0; i_file<1; i_file++) //looping over each file
 	{
 	  vector<TH1F*> hist_list_Njets;
 	  for(int i_cut=0; i_cut<bigbaseline[bigi].size();i_cut++) //looping over different histograms which should be overlayed on the same canvas and these histograms are saved in the same file
 	    {
 	      //sprintf(hist_name,"%s",baseline[i_cut].c_str());
 	      sprintf(hist_name,"%s",bigbaseline[bigi][i_cut].c_str());
-	      cout<<"i_file "<<i_file<<"\t"<<i_cut<<"\t"<<f[i_file]->GetName()<<endl;
+	       cout<<"i_file "<<i_file<<"\t"<<i_cut<<"\t"<<f[i_file]->GetName()<< "\t" << hist_name<<endl;
 	      TH1F* resp = (TH1F*)f[i_file]->Get(hist_name); //reading hist from the TFile
 	      hist_list_Njets.push_back(resp);
 	    }
 	  float energy=energyy[i_file];
 	  int xrange=0.0;
+
+	   //x axis title for all plots///
+	  vector<string>diff_title;
+	  diff_title = {"pho_pT" ,"pho_eta", "pho_phi", "Jet_pT", "Jet_Eta", "NJets"};
+	  vector<string>xtitle;
+	  xtitle = {diff_title[bigi],diff_title[bigi]};
+	 
 	  //path to save the files a jpg or pdf
-	  sprintf(full_path,"%s/MET_comparisons_%s_",pathname.c_str(),filetag[i_file].c_str());
+	  sprintf(full_path,"%s/%s_MET_comparisons_%s",pathname.c_str(),diff_title[bigi].c_str(),filetag[i_file].c_str());
+	 	    
 	  //calling generate_1Dplot which will take this vector of histograms and 
 	  generate_1Dplot(hist_list_Njets,full_path,energy,xmax[i_file],xmin[i_file],leg_head,false,true,false,true,filetag[i_file].c_str(),xtitle[i_file].c_str(),rebin[i_file]);
       
