@@ -90,8 +90,8 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
   // int NEvtlep3 = 0;
   // int NEvtlep4 = 0;
   
-  for (Long64_t jentry=0; jentry<fChain->GetEntries(); jentry++)
-    {
+  for (Long64_t jentry=0; jentry<fChain->GetEntries(); jentry++){
+    
       fDirector.SetReadEntry(jentry);
       
       // == == print number of events done == == == == == == == =
@@ -102,7 +102,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
       decade = k;
       
       //std::cout << jentry << " " << MET << std::endl;
-      h_MET->Fill(MET);
+      
       //if (MET > 200){
       vector<myLV> hadJets, bjets;
       int BTags = bjets.size();
@@ -118,42 +118,53 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
       myLV bestPhoton=getBestPhoton(pho_ID);
       int hadJetID=-999;
       int NJets0=Jets->size();
-      h_NJets0->Fill(NJets0);
-      h_NJet_MET->Fill(MET,NJets0);
       
-      int NJets1=0;
+      // h_NJet_MET->Fill(MET,NJets0);
+      
+      //int NJets1=0;
       int NJets2=0;
-      int NJets3=0;
+      // int NJets3=0;
+      // int NJets4=0;
+      // int NJets5=0;
 
+      // int NHadJets0=0;
+      // int NHadJets3=0;
+      // int NHadJets4=0;
+      // int NHadJets5=0;
       for(int i=0;i<Jets->size();i++){
-	h_Jet_pT0->Fill(Jets[0].Pt());
-	h_Jet_Eta0->Fill(Jets[i].Eta());
+	// h_Jet_pT0->Fill(Jets[0].Pt());
+	// h_Jet_Eta0->Fill(Jets[i].Eta());
 
-	if(Jets[i].Pt() > 30.0) {
-	  NJets1++;
-	  h_Jet_pT1->Fill(Jets[i].Pt());
-	  h_Jet_Eta1->Fill(Jets[i].Eta());
-
-	}
+	// if(Jets[i].Pt() > 30.0) {
+	//   NJets1++;
+	//   // h_Jet_pT1->Fill(Jets[i].Pt());
+	//   // h_Jet_Eta1->Fill(Jets[i].Eta());
+	
+	// }
 	if( (Jets[i].Pt() > 30.0) && (abs(Jets[i].Eta()) <= 2.4) ){
 	  double dR=DeltaR(bestPhoton.Eta(),bestPhoton.Phi(),Jets[i].Eta(),Jets[i].Phi());//DeltaR(Jets[i]);
-	  if(dR<minDR){minDR=dR;minDRindx=i;
-	    NJets2++;
-	    h_Jet_pT2->Fill(Jets[i].Pt());
-	    h_Jet_Eta2->Fill(Jets[i].Eta());
-	    h_NJet_MET->Fill(MET,NJets2);
-	  }
-	  if (MET>200){
-	    h_Jet_pT3-> Fill(Jets[i].Pt());
-	    h_Jet_Eta3-> Fill(Jets[i].Eta());
-	    NJets3++;
+	  if(dR<minDR) minDR=dR;minDRindx=i;
+	    //NJets2++;
+	    // h_Jet_pT2->Fill(Jets[i].Pt());
+	    // h_Jet_Eta2->Fill(Jets[i].Eta());
+	    // h_NJet_MET->Fill(MET,NJets2);
+	  
+	  // if (MET>200){
+	  //   // h_Jet_pT3-> Fill(Jets[i].Pt());
+	  //   // h_Jet_Eta3-> Fill(Jets[i].Eta());
+	  //   NJets3++;
+	  //   if (bestPhoton.Pt() < 20) continue;
+	  //   NJets4++;
+	  // }
 
-	  }
+	  // if (MET>200 && bestPhoton.Pt()>20) NJets4++;
+	  // if (MET>200 && bestPhoton.Pt()>20 && NJets2>=2) NJets5++;
 	} 
-      }      h_NJets1->Fill(NJets1);
-      h_NJets2->Fill(NJets2);
-      h_NJets3->Fill(NJets3);
-
+      }
+      // h_NJets1->Fill(NJets1);
+      // h_NJets2->Fill(NJets2);
+      
+      
 
       if(Debug)
 	cout<<"===load tree entry  ==="<<"\t"<<jentry<<"\t"<<"Jets check == "<<minDR<<endl;
@@ -165,6 +176,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
       	  if( (Jets[i].Pt() > 30.0) && (abs(Jets[i].Eta()) <= 2.4) ){
       	    //if(Debug)
       	    //cout<< "==== loadjets ==="<<"\t"<<i<<"\t"<<minDR<<endl;
+	    
       	    if( !(minDR < 0.3 && i==minDRindx) )
       	      {
 		
@@ -172,8 +184,25 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
       		if(hadJetID)
       		  {
       		    hadJets.push_back(Jets[i]);
-      		    h_hadJets_Pt->Fill(hadJets[i].Pt());
-      		    h_hadJets_Eta->Fill(hadJets[i].Eta());
+		    NJets2++;
+		    h_Jet_pT[0]->Fill(Jets[i].Pt());
+		    h_Jet_eta[0]->Fill(Jets[i].Eta());
+		    h_Jet_phi[0]->Fill(Jets[i].Phi());
+
+		    //if (MET>200) {
+		    //   h_Jet_pT[1]->Fill(Jets[i].Pt());
+		    //   h_Jet_eta[1]->Fill(Jets[i].Eta());
+		    //   h_Jet_phi[1]->Fill(Jets[i].Phi());
+
+		    //   if (bestPhoton.Pt()<20) continue;
+		    //   h_Jet_pT[2]->Fill(Jets[i].Pt());
+		    //   h_Jet_eta[2]->Fill(Jets[i].Eta());
+		    //   h_Jet_phi[2]->Fill(Jets[i].Phi());
+
+		    //}
+		    
+      		    // h_hadJets_Pt->Fill(hadJets[i].Pt());
+      		    // h_hadJets_Eta->Fill(hadJets[i].Eta());
       		    //for (int p=0; p<1000; p++){ 
       		        // if (MET>200) {
       		       // 	h_MET2->Fill(MET); 
@@ -189,18 +218,50 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
       		    // if(q==1) leadjet_qmulti=(*Jets_chargedMultiplicity)[q];
       		    // if(q==1) leadjet_Pt=(*Jets)[q].Pt();
 		      if((*Jets_bJetTagDeepCSVBvsAll)[i] > deepCSVvalue){
-      		      bjets.push_back(Jets[i]); bJet1Idx = i;}
+			bjets.push_back(Jets[i]); bJet1Idx = i;}
 		      //hadJets.push_back((*Jets)[i]);
 		      jetMatchindx.push_back(i);
 		      
 		  }
-	      }   
+	      }
 	  }	  
       }
+      
+	for(int i=0;i<Jets->size();i++){
+	  if( (Jets[i].Pt() > 30.0) && (abs(Jets[i].Eta()) <= 2.4) ){
+	    if (Jets_ID[i]){
+	      if (MET>200){
+		h_Jet_pT[1]->Fill(Jets[i].Pt());
+		h_Jet_eta[1]->Fill(Jets[i].Eta());
+		h_Jet_phi[1]->Fill(Jets[i].Phi());
+	  
+		if (bestPhoton.Pt()<20) continue;
+		h_Jet_pT[2]->Fill(Jets[i].Pt());
+		h_Jet_eta[2]->Fill(Jets[i].Eta());
+		h_Jet_phi[2]->Fill(Jets[i].Phi());
+
+		if (NJets2 < 2) continue;
+		h_Jet_pT[3]->Fill(Jets[i].Pt());
+		h_Jet_eta[3]->Fill(Jets[i].Eta());
+		h_Jet_phi[3]->Fill(Jets[i].Phi());
+		
+	      }
+	    }
+	  }
+	}
+      
 	  if(hadJets.size()==0) continue;
 	  if(Debug)
 	    cout<<"===load tree entry ===  "<<"\t"<<jentry<<"\t"<<"No of B-Jets ===  "<<bjets.size()<<endl;
-      
+
+	  // for (int i=0; i<hadJets.size(); i++){
+	  //   NHadJets0++;
+	  //   if (MET>200) NHadJets3++;
+	  //   if (MET>200 && bestPhoton.Pt()>20) NHadJets4++;
+	  //   if (MET>200 && bestPhoton.Pt()>20 && NJets2>2) NHadJets5++;
+	      
+	    
+	  //}
 	  
       
 	  
@@ -227,12 +288,12 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
       
 	    //for counting no. of leptons in an event
       int PdgId = GenParticles_PdgId[(int)ii];
-      if (PdgId == 22) h_NJet_genPhoPt->Fill(GenParticles[(int)ii].Pt(),NJets2);
+      // if (PdgId == 22) h_NJet_genPhoPt->Fill(GenParticles[(int)ii].Pt(),NJets2);
       //if (abs(PdgId) == 11 || abs(PdgId) == 13 || abs(PdgId) == 15) Nlep++;
       // if (abs(PdgId)==11) Ch_e++;
       //   if (abs(PdgId)==13) Ch_mu++;
     //   if (abs(PdgId)==15) Ch_tau++;	      
-	  } 
+	  }
 	  //end genparticle loop
 	  
 	  // if (Ch_e == 1 && Ch_mu == 0 && Ch_tau == 0) {
@@ -283,15 +344,15 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
       for(Long64_t ii=0; ii<Electrons->size(); ii++){
 	ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiE4D<float> > myele = Electrons[(int)ii];
 	//std::cout <<" ii, Pt, Eta, Phi, E " << ii << " " << Electrons[(int)ii].Pt() 		  << " " << Electrons[(int)ii].Eta() << " " << Electrons[(int)ii].Phi() 		  << " " << Electrons[(int)ii].E()  		  << " iso, mediumID " << Electrons_iso[(int)ii] << " " << Electrons_mediumID[(int)ii]		  << std::endl;
-	h_ele_pT0  ->Fill(Electrons[(int)ii].Pt());
-	h_ele_eta0 ->Fill(Electrons[(int)ii].Eta());
-	h_ele_phi0 ->Fill(Electrons[(int)ii].Phi());
-	if (MET>200){
-	  h_ele_pT3  ->Fill(Electrons[(int)ii].Pt());
-	  h_ele_eta3 ->Fill(Electrons[(int)ii].Eta());
-	  h_ele_phi3 ->Fill(Electrons[(int)ii].Phi());
-	}
-
+	// h_ele_pT0  ->Fill(Electrons[(int)ii].Pt());
+	// h_ele_eta0 ->Fill(Electrons[(int)ii].Eta());
+	// h_ele_phi0 ->Fill(Electrons[(int)ii].Phi());
+	// if (MET>200){
+	//   h_ele_pT3  ->Fill(Electrons[(int)ii].Pt());
+	//   h_ele_eta3 ->Fill(Electrons[(int)ii].Eta());
+	//   h_ele_phi3 ->Fill(Electrons[(int)ii].Phi());
+	// }
+	
       } //end electron loop
       
       //std::cout << std::endl; 
@@ -304,33 +365,72 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
 	//h_pho_eta ->Fill(Photons[(int)ii].Eta());
 	//h_pho_phi ->Fill(Photons[(int)ii].Phi());
       } //end photon loop
-      h_pho_pT0  ->Fill(bestPhoton.Pt());
-      h_pho_eta0  ->Fill(bestPhoton.Eta());
-      h_pho_phi0 ->Fill(bestPhoton.Phi());
+      // h_pho_eta0  ->Fill(bestPhoton.Eta());
+      // h_pho_phi0 ->Fill(bestPhoton.Phi());
       
-      h_NJet_PhoPt->Fill(bestPhoton.Pt(),NJets2);
-      
+      // h_NJet_PhoPt->Fill(bestPhoton.Pt(),NJets2);
+      h_NJets[0]->Fill(NJets2);
+      h_MET[0]->Fill(MET);
+      h_Pho_pT[0]  ->Fill(bestPhoton.Pt());
+      h_Pho_eta[0]  ->Fill(bestPhoton.Eta());
+      h_Pho_phi[0]  ->Fill(bestPhoton.Phi());
       if (MET  > 200) {
-	h_pho_pT3  ->Fill(bestPhoton.Pt());
-	h_pho_eta3  ->Fill(bestPhoton.Eta());
-	h_pho_phi3  ->Fill(bestPhoton.Phi());
+	h_MET[1]-> Fill(MET);
+	h_Pho_pT[1]  ->Fill(bestPhoton.Pt());
+	h_Pho_eta[1]  ->Fill(bestPhoton.Eta());
+	h_Pho_phi[1]  ->Fill(bestPhoton.Phi());
+	h_NJets[1]-> Fill(NJets2);
+	if (bestPhoton.Pt()<20) continue;
+	h_MET[2] -> Fill(MET);
+	h_Pho_pT[2] -> Fill(bestPhoton.Pt());
+	h_Pho_eta[2] -> Fill(bestPhoton.Eta());
+	h_Pho_phi[2] -> Fill(bestPhoton.Phi());
+	h_NJets[2]-> Fill(NJets2);
+	if (NJets2 <2 ) continue;
+	h_MET[3] ->Fill(MET);
+	h_Pho_pT[3] ->Fill(bestPhoton.Pt());
+	h_Pho_eta[3] -> Fill(bestPhoton.Eta());
+	h_Pho_phi[3] -> Fill(bestPhoton.Phi());
+	h_NJets[3]-> Fill(NJets2);
+	
+	// h_pho_eta3  ->Fill(bestPhoton.Eta());
+	// h_pho_phi3  ->Fill(bestPhoton.Phi());
       }
+      
+      //if (MET >200 && bestPhoton.Pt() > 20) {	
+      //h_pho_pT4 -> Fill(bestPhoton.Pt());
+      //h_NJets4-> Fill(NJets4);
+	//h_NHadJets4-> Fill(NHadJets4);
+      //}  
+
+      // if (MET >200 && bestPhoton.Pt() > 20 && NJets2 >= 2) {	
+      // 	h_pho_pT5 ->Fill(bestPhoton.Pt());
+      // 	h_NJets5-> Fill(NJets5);
+      // 	//h_NHadJets5-> Fill(NHadJets5);
+      // }
+      
+      //h_NHadJets0-> Fill (NHadJets0);
 	  
+      
+      //h_pho_pT0-> Fill(bestPhoton.Pt());
+      //if (jentry < 1000 && bestPhoton.Pt() <=20) cout << bestPhoton.Pt() << endl;
+      // if (jentry < 10) {cout << "photon branch size: " << Photons->size() << " " << "bestphotonpt:" << bestPhoton.Pt() << " " << "idx: " << bestPhotonIndxAmongPhotons  << endl;}
+
       //      std::cout << "================================" << std::endl;1
       //    } // if(jentry .. 
 
       
       //} // end if condition
-
-    } // end jentry loop 
- 
+      //if(jentry<1000) cout << "Nelectrons: " << NElectrons << ", Nmuons: " << NMuons << endl;
+  } // end jentry loop 
+}
   // std::cout << "No. of events with 0 Leptons " << NEvtlep0 << std::endl;
   // std::cout << "No. of events with 1 Leptons " << NEvtlep1 << std::endl;
   // std::cout << "No. of events with 2 Leptons " << NEvtlep2 << std::endl;
   // std::cout << "No. of events with 3 Leptons " << NEvtlep3 << std::endl;
   // std::cout << "No. of events with 4 Leptons " << NEvtlep4 << std::endl;
   // std::cout <<"total Events (sum of all cases) " << NEvtlep0 + NEvtlep1 + NEvtlep2 + NEvtlep3 + NEvtlep4 << std::endl;
-}
+
   myLV AnalyzeTProxytBSM::getBestPhoton(int pho_ID){
   //TLorentzVector AnalyzeTProxytBSM::getBestPhoton(int pho_ID){
   //vector<TLorentzVector> goodPho;

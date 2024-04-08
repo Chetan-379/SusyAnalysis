@@ -1,7 +1,7 @@
 const int n_pl = 4;
 bool logx = false;
 //defining the legends for each plots
-TString legend_text[4] = {"MET no cut","MET>200","pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
+TString legend_text[10] = {"no cut","MET>200","Pho_Pt>20", "NJet>2", "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
 int line_width[12] = {2,2,2,2,2,2,2,2,2,2,2,2};
 int line_style[12] = {1,1,1,1,1,1,1,1,1,1,1,1};
 int line_color[9] = {kBlack, kBlue, kGreen+2, kMagenta, kRed - 3, kBlue + 2 , kCyan + 1 , kGreen + 3 };
@@ -192,7 +192,7 @@ void generate_1Dplot(vector<TH1F*> hist, char const *tag_name="", float energy=-
     //setting up the legend style and all
     legName.push_back(hist.at(i)->GetName());
     leg_entry[i] = legend->AddEntry(hist.at(i),legend_text[i],"l");
-    leg_entry[i] = legend->AddEntry(hist.at(i),(hist.at(i)->Integral().c_str()),"xsl");
+    //leg_entry[i] = legend->AddEntry(hist.at(i),(hist.at(i)->Integral().c_str()),"xsl");
     leg_entry[i]->SetTextColor(hist.at(i)->GetLineColor());
     if(hist.at(i)->GetMaximum() > ymax) ymax = hist.at(i)->GetMaximum();
     if(hist.at(i)->GetMinimum() < ymin) ymin = hist.at(i)->GetMinimum();
@@ -286,20 +286,24 @@ void test(string pathname)
   f[1] = new TFile("out.root");
   //define your histograms to be read from here
   vector<vector<string>> bigbaseline;
-  vector<string> baseline1, baseline2, baseline3, baseline4, baseline5, baseline6;
+  vector<string> baseline1, baseline2, baseline3, baseline4;
 
-  baseline1 = {"h_pho_pT0","h_pho_pT3"};
-  baseline2 = {"h_pho_eta0","h_pho_eta3"};
-  baseline3 = {"h_pho_phi0","h_pho_phi3"};
-  baseline4 = {"h_Jet_pT2", "h_Jet_pT3"};
-  baseline5 = {"h_Jet_Eta2", "h_Jet_Eta3"};
-  baseline6 = {"h_NJets2", "h_NJets3"};
-
+  //baseline1 = {"h_pho_pT0","h_pho_pT3","h_pho_pT4", "h_pho_pT5"};
+  baseline1 = {"h_pho_pT0", "h_pho_pT3", "h_pho_pT4", "h_pho_pT5"};
+  //baseline2 = {"h_pho_eta0","h_pho_eta3"};
+  //baseline3 = {"h_pho_phi0","h_pho_phi3"};
+  //baseline4 = {"h_Jet_pT2", "h_Jet_pT3"};
+  //baseline5 = {"h_Jet_Eta2", "h_Jet_Eta3"};
+  //baseline6 = {"h_NJets2", "h_NJets3"};
+  baseline2 = {"h_MET0", "h_MET3", "h_MET4", "h_MET5"};
+  baseline3 = {"h_NJets2", "h_NJets3", "h_NJets4", "h_NJets5"};
+  baseline4 = {"h_NHadJets0", "h_NHadJets3", "h_NHadJets4", "h_NHadJets5"};
+  
 
   //string to be added to output file name - useful when you have different files and reading the same histograms from these
-  bigbaseline = {baseline1, baseline2, baseline3, baseline4, baseline5, baseline6};
+  bigbaseline = {baseline1, baseline2, baseline3, baseline4};
 
-  for (int bigi=0; bigi<6; bigi++)
+  for (int bigi=0; bigi<bigbaseline.size(); bigi++)
     {
       vector<string> filetag;
       filetag={"TTGJets_2018","TTGJets_2017"};
@@ -333,7 +337,7 @@ void test(string pathname)
 
 	   //x axis title for all plots///
 	  vector<string>diff_title;
-	  diff_title = {"pho_pT" ,"pho_eta", "pho_phi", "Jet_pT", "Jet_Eta", "NJets"};
+	  diff_title = { "Pho_pT" , "Pt_Miss", "NJets", "NHadJets"};
 	  vector<string>xtitle;
 	  xtitle = {diff_title[bigi],diff_title[bigi]};
 	 
