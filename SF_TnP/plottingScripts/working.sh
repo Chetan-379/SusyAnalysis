@@ -3,35 +3,43 @@
 # root -b  'two2D_SRvsCR.C("Results/MET_200_EMpt100/twoDplots/HEm_veto",1)'
 # root -b  'two2D_SRvsCR.C("Results/MET_200_EMpt100/twoDplots/L1TrigProb",2)'
 
-
 # root -b 'TF_varKinem_ratio.C("Results/MET_200_EMpt100/TFVarKineMatic",0)'
 # root -b 'TF_varKinem_ratio.C("Results/MET_200_EMpt100/TFVarKineMatic/HEM_veto",1)'
 # root -b 'TF_varKinem_ratio.C("Results/MET_200_EMpt100/TFVarKineMatic/L1TrigProb",2)'
 
 # root -b -q 'TF_varKinem_ratio.C("Results/SRvsCR_KinemVar",0)'
 # root -b -q 'TF_varKinem_ratio.C("Results/SRvsCR_KinemVar/HEM_veto",1)'
-root -b -q 'TF_varKinem_ratio.C("Results/SRvsCR_KinemVar/",0)'
+# root -b -q 'TF_varKinem_ratio.C("Results/SRvsCR_KinemVar/L1TrigProb",2)'
 
 # root -b -q 'two2D_SRvsCR.C("Results/SRvsCR_KinemVar/2dPlots",0)'
 # root -b -q 'two2D_SRvsCR.C("Results/SRvsCR_KinemVar/2dPlots/HEM_veto",1)'
-root -b -q 'two2D_SRvsCR.C("Results/SRvsCR_KinemVar/2dPlots/",0)'
+# root -b -q 'two2D_SRvsCR.C("Results/SRvsCR_KinemVar/2dPlots/L1TrigProb",2)'
 
-## Kinematics comparisons SR vs CR
-#root -b 'TF_varKinem_ratio.C("Results/SRvsCR_KinemVar")'
+# ## Kinematics comparisons SR vs CR
+# root -b 'TF_varKinem_ratio.C("Results/SRvsCR_KinemVar")'
 
-## Transfer factors
-#root -b 'SRvsCRStacked_LL_varRatio.C("Results/TransferFactors/TFbins_v1_nJets_BJets",1)'
-root -b -q 'SRvsCRStacked_LL_varRatio.C("Results/TransferFactors/TFbins_v3_phopt_qmulti",3)'
+# ## Transfer factors
+# root -b 'SRvsCRStacked_LL_varRatio.C("Results/TransferFactors/TFbins_v1_nJets_BJets",1)'
+# ## MC-Data comparisons 1 electron CR
+## For SF                                                                                                          
+root -b -q 'CRcompare_DataVsMC.C("Results/data_mcComparisons/",0,0)'
+root -b -q 'CRcompare_DataVsMC.C("Results/data_mcComparisons/",0,1)'
+root -b -q 'CRcompare_DataVsMC.C("Results/data_mcComparisons/",0,2)'
+root -b -q 'CRcompare_DataVsMC.C("Results/data_mcComparisons/",0,3)'
+root -b -q 'CRcompare_DataVsMC.C("Results/data_mcComparisons/",0,4)'
+root -b -q 'CRcompare_DataVsMC.C("Results/data_mcComparisons/",0,5)'
 
-## MC-Data comparisons 1 electron CR
-                                                                                                          
-root -b -q 'plotAlps_RatioPlots.C("Results/data_mcComparisons/",0,0)'
-root -b -q 'plotAlps_RatioPlots.C("Results/data_mcComparisons/",0,1)'
-root -b -q 'plotAlps_RatioPlots.C("Results/data_mcComparisons/",0,2)'
-root -b -q 'plotAlps_RatioPlots.C("Results/data_mcComparisons/",0,3)'
-root -b -q 'plotAlps_RatioPlots.C("Results/data_mcComparisons/",0,4)'
-root -b -q 'plotAlps_RatioPlots.C("Results/data_mcComparisons/",0,5)'
 
+root -b -q 'CRcompare_DataVsMC.C("Results/data_mcComparisons/",1,0)'
+root -b -q 'CRcompare_DataVsMC.C("Results/data_mcComparisons/",1,1)'
+root -b -q 'CRcompare_DataVsMC.C("Results/data_mcComparisons/",1,2)'
+root -b -q 'CRcompare_DataVsMC.C("Results/data_mcComparisons/",1,3)'
+root -b -q 'CRcompare_DataVsMC.C("Results/data_mcComparisons/",1,4)'
+root -b -q 'CRcompare_DataVsMC.C("Results/data_mcComparisons/",1,5)'
+
+root -b -q 'DataMC_SRvsCR_kinem.C("Results/SRvsCR_KinemVar/data",1)'
+root -b -q 'DataMC_SRvsCR_kinem.C("Results/SRvsCR_KinemVar/",0)'
+root -b 'CorrSF_calc.C("Results/SF_plots",0)'
 
 # root -b -q 'plotAlps_RatioPlots.C("Results/data_mcComparisons/AfterHEM_veto/",1,0)'
 # root -b -q 'plotAlps_RatioPlots.C("Results/data_mcComparisons/AfterHEM_veto/",1,1)'
@@ -41,28 +49,19 @@ root -b -q 'plotAlps_RatioPlots.C("Results/data_mcComparisons/",0,5)'
 # root -b -q 'plotAlps_RatioPlots.C("Results/data_mcComparisons/AfterHEM_veto/",1,5)'
 
 
-# root -b -q 'plotAlps_RatioPlots.C("Results/data_mcComparisons/",2,0)'
-# root -b -q 'plotAlps_RatioPlots.C("Results/data_mcComparisons/",2,1)'
-# root -b -q 'plotAlps_RatioPlots.C("Results/data_mcComparisons/",2,2)'
-# root -b -q 'plotAlps_RatioPlots.C("Results/data_mcComparisons/",2,3)'
-# root -b -q 'plotAlps_RatioPlots.C("Results/data_mcComparisons/",2,4)'
-# root -b -q 'plotAlps_RatioPlots.C("Results/data_mcComparisons/",2,5)'
+# root -b -q 'plotAlps_RatioPlots.C("Results/data_mcComparisons/AfterHEM_vetoAnd_L1TrigProb/",2,0)'
+# root -b -q 'plotAlps_RatioPlots.C("Results/data_mcComparisons/AfterHEM_vetoAnd_L1TrigProb/",2,1)'
+# root -b -q 'plotAlps_RatioPlots.C("Results/data_mcComparisons/AfterHEM_vetoAnd_L1TrigProb/",2,2)'
+# root -b -q 'plotAlps_RatioPlots.C("Results/data_mcComparisons/AfterHEM_vetoAnd_L1TrigProb/",2,3)'
+# root -b -q 'plotAlps_RatioPlots.C("Results/data_mcComparisons/AfterHEM_vetoAnd_L1TrigProb/",2,4)'
+# root -b -q 'plotAlps_RatioPlots.C("Results/data_mcComparisons/AfterHEM_vetoAnd_L1TrigProb/",2,5)'
 
-## validation on MC
-root -b -q 'Valid_SRBins_LL_wrRatio.C("Validation_MC/SRbins/Bins_inPhopT_Qmulti",1,1,1)'
+# ## validation on MC
+# root -b -q 'Valid_SRBins_LL_wrRatio.C("Validation_MC/SRbins/Bins_inPhopT_Qmulti",1,1,1)'
 # root -b -q 'Valid_SRBins_LL_wrRatio.C("Validation_MC/SRbins/Bins_inPhopT_Qmulti/v1",1,1,1)'
 # root -b 'Valid_diffKinematics_wrRatio.C("Validation_MC/Kinematics_Valid/Bins_inPhopT_Qmulti/v1",1,1,1)'
-root -b -q 'Valid_diffKinematics_wrRatio.C("Validation_MC/Kinematics_Valid/Bins_inPhopT_Qmulti/",1,1,1)'
-
-
-
-# extra plots
-root -b 'extraPlots_CRvsSR.C("Results/ExtraPlots_validationChecks/SRvsCR",0)'
-root -b 'extraPlots_valid.C("Results/ExtraPlots_validationChecks/Validation_MC",0)'
-root -b 'extraPlots_2D.C("Results/ExtraPlots_validationChecks/2Dplots",0)'
-## For LL background
-
-# ## data MC comparisons
+# root -b 'Valid_diffKinematics_wrRatio.C("Validation_MC/Kinematics_Valid/Bins_inPhopT_Qmulti/",1,1,1)'
+# # ## data MC comparisons
 # # root -l 'plotAlps_RatioPlots.C("path to save plots",which lepton (1 for electron, 0 muon, 2 for e+mu),which year (0=2016 (pre+post VFP), 1=2017, 2=2018, 3=2016pre,4=2016post,5=fullrun2))'
 # ## total lepton
 # root -b -q 'plotAlps_RatioPlots.C("data_mcComparisons/",2,0)'

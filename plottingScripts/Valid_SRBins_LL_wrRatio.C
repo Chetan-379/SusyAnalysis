@@ -745,13 +745,16 @@ void Valid_SRBins_LL_wrRatio(string pathname, int which_Lept, int which_TFBins, 
   vector<string> legend_texts;
   char *TFbins_str= new char[2000];
   if(which_TFBins==1)
-    sprintf(TFbins_str,"TFbins_v1_nJetsBjets");
+    sprintf(TFbins_str,"TFbins_v1_nJetsBjets_Qmulti");
   else if (which_TFBins==2)
     sprintf(TFbins_str,"TFbins_v2_nJetsBjets_PhoPt");
   else if(which_TFBins==3)
     sprintf(TFbins_str,"TFbins_v3_phopt_qmulti");
-
-  baseline1={"ProbL1Trig_Pho_SR","Validation_ProbL1Trig_Elec_CR"};//,"ProbL1Trig_Pho_SR"};//,"TauHad_SR","Mu_SR","Elec_SR","FailAcep_ElecSR","FailId_ElecSR","FailIso_ElecSR","Elec_SR","Elec_"};//        
+  if(which_TFBins==3)  
+    baseline1={"Pho_SR","Validation_Elec_CR"};//,"ProbL1Trig_Pho_SR"};//,"TauHad_SR","Mu_SR","Elec_SR","FailAcep_ElecSR","FailId_ElecSR","FailIso_ElecSR","Elec_SR","Elec_"};//
+  else if(which_TFBins==1)
+    baseline1={"Pho_SR","Validation_TFbins_V2_Elec_CR"};
+  
     legend_texts ={"Exp:(0e,1#gamma)","Pred: TF x (1e,0#gamma)"};//(0e,0#gamma) SR","(0e,1#gamma) SR"};
     sprintf(string_png,"FR_Sbins_Valid_%s",TFbins_str);
     sprintf(hname,"%s_phoID_loose_06March24",string_png);

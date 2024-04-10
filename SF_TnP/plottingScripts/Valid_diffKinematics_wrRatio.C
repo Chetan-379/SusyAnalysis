@@ -792,18 +792,18 @@ void Valid_diffKinematics_wrRatio(string pathname, int which_Lept, int which_TFB
   vector<string> legend_texts;
   char *TFbins_str= new char[2000];
   if(which_TFBins==1)
-    sprintf(TFbins_str,"TFbins_v1_phopt_qmulti");
+    sprintf(TFbins_str,"TFbins_v1_nJetsBjets");
   else if (which_TFBins==2)
-    sprintf(TFbins_str,"TFbins_v2_nJetsBjets_qmulti");
+    sprintf(TFbins_str,"TFbins_v2_nJetsBjets_PhoPt");
   else if(which_TFBins==3)
     sprintf(TFbins_str,"TFbins_v3_nJetsBjets_MET");
   
     sprintf(string_png,"FR_Valid_Kinematics_%s",TFbins_str);
     sprintf(hname,"%s_phoID_loose_06March24",string_png);
     if(which_TFBins==1)
-      baseline1 = {"Pho_SR","Validation_Elec_CR"};//,"TauHad_SR","Mu_SR","Elec_SR"};
+      baseline1 = {"ProbL1Trig_Pho_SR","Validation_ProbL1Trig_Elec_CR"};//,"TauHad_SR","Mu_SR","Elec_SR"};
     else if(which_TFBins==2) //fix it later
-      baseline1 = {"Pho_SR","Validation_TFbins_v2_Elec_CR"};//"Validation_TFbins_V2_Elec_CR","Validation_TFbins_V2_Mu_CR","TauHad_SR","Mu_SR","Elec_SR"};
+      baseline1 = {"Validation_TFbins_V2_Elec_CR","Validation_TFbins_V2_Mu_CR","TauHad_SR","Mu_SR","Elec_SR"};
     else if(which_TFBins==3)//fix it later
       baseline1 = {"Validation_TFbins_V3_Elec_CR","Validation_TFbins_V3_Mu_CR","TauHad_SR","Mu_SR","Elec_SR"};
     legend_texts = {"Exp:(0e,1#gamma)","Pred: TF x (1e,0#gamma)"};//"#tau-had SR","lost #mu SR","lost e SR","(1l,1#gamma) CR"};
@@ -863,9 +863,9 @@ void Valid_diffKinematics_wrRatio(string pathname, int which_Lept, int which_TFB
   vector<string>varName4;
   vector<string>varName5;
 
-     varName ={"h_St_validation_Elec_CR","h_HT_validation_Elec_CR","h_NhadJets_validation_Elec_CR","h_NBJets_validation_Elec_CR","h_MET_validation_Elec_CR","h_PhoPt_validation_Elec_CR","h_qmulti_validation_Elec_CR","h_Photon_Eta_validation_Elec_CR","h_Photon_Phi_validation_Elec_CR","h_MET_Phi_validation_Elec_CR","h_leadJets_qmulti_validation_Elec_CR","h_leadJet_Pt_validation_Elec_CR","h_leadbjet_tag_validation_Elec_CR","h_nvrtx_validation_Elec_CR","h_minDR_Jets_EMObject_validation_Elec_CR","h_Phi_leadJet1_validation_Elec_CR","h_Eta_leadJet1_validation_Elec_CR","h_Pt_leadJet1_validation_Elec_CR","h_dPhi_METJet1_validation_Elec_CR","h_Phi_leadJet2_validation_Elec_CR","h_Eta_leadJet2_validation_Elec_CR","h_Pt_leadJet2_validation_Elec_CR","h_dPhi_METJet2_validation_Elec_CR","h_Phi_leadJet3_validation_Elec_CR","h_Eta_leadJet3_validation_Elec_CR","h_Pt_leadJet3_validation_Elec_CR","h_dPhi_METJet3_validation_Elec_CR","h_Phi_leadJet4_validation_Elec_CR","h_Eta_leadJet4_validation_Elec_CR","h_Pt_leadJet4_validation_Elec_CR","h_dPhi_METJet4_validation_Elec_CR","h_Phi_matchedJet_validation_Elec_CR","h_Eta_matchedJet_validation_Elec_CR","h_Pt_matchedJet_validation_Elec_CR","h_HT5HT_validation_Elec_CR","h_Mt_phoMET_validation_Elec_CR","h_dPhi_phoMet_validation_Elec_CR"};
+     varName ={"h_St_validation_ProbL1Trig_Elec_CR","h_HT_validation_ProbL1Trig_Elec_CR","h_NhadJets_validation_ProbL1Trig_Elec_CR","h_NBJets_validation_ProbL1Trig_Elec_CR","h_MET_validation_ProbL1Trig_Elec_CR","h_PhoPt_validation_ProbL1Trig_Elec_CR","h_qmulti_validation_ProbL1Trig_Elec_CR","h_Photon_Eta_validation_ProbL1Trig_Elec_CR","h_Photon_Phi_validation_ProbL1Trig_Elec_CR","h_MET_Phi_validation_ProbL1Trig_Elec_CR","h_leadJets_qmulti_validation_ProbL1Trig_Elec_CR","h_leadJet_Pt_validation_ProbL1Trig_Elec_CR","h_leadbjet_tag_validation_ProbL1Trig_Elec_CR","h_nvrtx_validation_ProbL1Trig_Elec_CR","h_minDR_Jets_EMObject_validation_ProbL1Trig_Elec_CR","h_Phi_leadJet1_validation_ProbL1Trig_Elec_CR","h_Eta_leadJet1_validation_ProbL1Trig_Elec_CR","h_Pt_leadJet1_validation_ProbL1Trig_Elec_CR","h_dPhi_METJet1_validation_ProbL1Trig_Elec_CR","h_Phi_leadJet2_validation_ProbL1Trig_Elec_CR","h_Eta_leadJet2_validation_ProbL1Trig_Elec_CR","h_Pt_leadJet2_validation_ProbL1Trig_Elec_CR","h_dPhi_METJet2_validation_ProbL1Trig_Elec_CR","h_Phi_leadJet3_validation_ProbL1Trig_Elec_CR","h_Eta_leadJet3_validation_ProbL1Trig_Elec_CR","h_Pt_leadJet3_validation_ProbL1Trig_Elec_CR","h_dPhi_METJet3_validation_ProbL1Trig_Elec_CR","h_Phi_leadJet4_validation_ProbL1Trig_Elec_CR","h_Eta_leadJet4_validation_ProbL1Trig_Elec_CR","h_Pt_leadJet4_validation_ProbL1Trig_Elec_CR","h_dPhi_METJet4_validation_ProbL1Trig_Elec_CR","h_Phi_matchedJet_validation_ProbL1Trig_Elec_CR","h_Eta_matchedJet_validation_ProbL1Trig_Elec_CR","h_Pt_matchedJet_validation_ProbL1Trig_Elec_CR","h_HT5HT_validation_ProbL1Trig_Elec_CR","h_Mt_phoMET_validation_ProbL1Trig_Elec_CR","h_dPhi_phoMet_validation_ProbL1Trig_Elec_CR"};
 
-  varName2={"h_St_Pho_SR","h_HT_Pho_SR","h_NhadJets_Pho_SR","h_NBJets_Pho_SR","h_MET_Pho_SR","h_PhoPt_Pho_SR","h_qmulti_Pho_SR","h_Photon_Eta_Pho_SR","h_Photon_Phi_Pho_SR","h_MET_Phi_Pho_SR","h_leadJets_qmulti_Pho_SR","h_leadJet_Pt_Pho_SR","h_leadbjet_tag_Pho_SR","h_nvrtx_Pho_SR","h_minDR_Jets_EMObject_Pho_SR","h_Phi_leadJet1_Pho_SR","h_Eta_leadJet1_Pho_SR","h_Pt_leadJet1_Pho_SR","h_dPhi_METJet1_Pho_SR","h_Phi_leadJet2_Pho_SR","h_Eta_leadJet2_Pho_SR","h_Pt_leadJet2_Pho_SR","h_dPhi_METJet2_Pho_SR","h_Phi_leadJet3_Pho_SR","h_Eta_leadJet3_Pho_SR","h_Pt_leadJet3_Pho_SR","h_dPhi_METJet3_Pho_SR","h_Phi_leadJet4_Pho_SR","h_Eta_leadJet4_Pho_SR","h_Pt_leadJet4_Pho_SR","h_dPhi_METJet4_Pho_SR","h_Phi_matchedJet_Pho_SR","h_Eta_matchedJet_Pho_SR","h_Pt_matchedJet_Pho_SR","h_HT5HT_Pho_SR","h_Mt_phoMET_Pho_SR","h_dPhi_phoMet_Pho_SR"};
+  varName2={"h_St_ProbL1Trig_Pho_SR","h_HT_ProbL1Trig_Pho_SR","h_NhadJets_ProbL1Trig_Pho_SR","h_NBJets_ProbL1Trig_Pho_SR","h_MET_ProbL1Trig_Pho_SR","h_PhoPt_ProbL1Trig_Pho_SR","h_qmulti_ProbL1Trig_Pho_SR","h_Photon_Eta_ProbL1Trig_Pho_SR","h_Photon_Phi_ProbL1Trig_Pho_SR","h_MET_Phi_ProbL1Trig_Pho_SR","h_leadJets_qmulti_ProbL1Trig_Pho_SR","h_leadJet_Pt_ProbL1Trig_Pho_SR","h_leadbjet_tag_ProbL1Trig_Pho_SR","h_nvrtx_ProbL1Trig_Pho_SR","h_minDR_Jets_EMObject_ProbL1Trig_Pho_SR","h_Phi_leadJet1_ProbL1Trig_Pho_SR","h_Eta_leadJet1_ProbL1Trig_Pho_SR","h_Pt_leadJet1_ProbL1Trig_Pho_SR","h_dPhi_METJet1_ProbL1Trig_Pho_SR","h_Phi_leadJet2_ProbL1Trig_Pho_SR","h_Eta_leadJet2_ProbL1Trig_Pho_SR","h_Pt_leadJet2_ProbL1Trig_Pho_SR","h_dPhi_METJet2_ProbL1Trig_Pho_SR","h_Phi_leadJet3_ProbL1Trig_Pho_SR","h_Eta_leadJet3_ProbL1Trig_Pho_SR","h_Pt_leadJet3_ProbL1Trig_Pho_SR","h_dPhi_METJet3_ProbL1Trig_Pho_SR","h_Phi_leadJet4_ProbL1Trig_Pho_SR","h_Eta_leadJet4_ProbL1Trig_Pho_SR","h_Pt_leadJet4_ProbL1Trig_Pho_SR","h_dPhi_METJet4_ProbL1Trig_Pho_SR","h_Phi_matchedJet_ProbL1Trig_Pho_SR","h_Eta_matchedJet_ProbL1Trig_Pho_SR","h_Pt_matchedJet_ProbL1Trig_Pho_SR","h_HT5HT_ProbL1Trig_Pho_SR","h_Mt_phoMET_ProbL1Trig_Pho_SR","h_dPhi_phoMet_ProbL1Trig_Pho_SR"};
 
   //
 

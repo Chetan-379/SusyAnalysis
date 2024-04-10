@@ -264,7 +264,7 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio, char const *tag_name="
       hist.at(i)->GetYaxis()->SetTitle("Entries");
     }
     if(which_TFbins==1) //default 8 bins
-      hist.at(i)->GetXaxis()->SetRangeUser(0,50);//xmin,xrange);
+      hist.at(i)->GetXaxis()->SetRangeUser(0,10);//xmin,xrange);
     else if(which_TFbins==2) // v2 TF bins including photon pT>100 and pT<100
       hist.at(i)->GetXaxis()->SetRangeUser(0,50);
     else if(which_TFbins==3) // v3 TF bins including MET<300 and MET>300
@@ -448,11 +448,11 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio, char const *tag_name="
   TArrow *arrow16 = new TArrow(16.0,0.1, 17.0,0.1,0.01,"<|>");
   TArrow *arrow17 = new TArrow(17.0,0.1, 18.0,0.1,0.01,"<|>");
 
-  // if(which_TFbins==1){
-  // arrow1->Draw(); arrow2->Draw(); arrow3->Draw();
-  // arrow4->Draw(); arrow5->Draw(); arrow6->Draw();
-  // arrow7->Draw(); arrow8->Draw();
-  // }
+  if(which_TFbins==1){
+  arrow1->Draw(); arrow2->Draw(); arrow3->Draw();
+  arrow4->Draw(); arrow5->Draw(); arrow6->Draw();
+  arrow7->Draw(); arrow8->Draw();
+  }
   // else if (which_TFbins==2 || which_TFbins==3){
   //   arrow2->Draw(); arrow3->Draw();
   //   arrow4->Draw(); arrow5->Draw(); arrow6->Draw();
@@ -607,15 +607,15 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio, char const *tag_name="
       hist_ratio->GetYaxis()->SetRangeUser(0.0,0.03);
     
     if(which_TFbins==1) //default 8 bins                                                                                                    
-      hist_ratio->GetXaxis()->SetRangeUser(0,50);//xmin,xrange);                                                                                                 
+      hist_ratio->GetXaxis()->SetRangeUser(0,10);//xmin,xrange);                                                                                                 
     else if(which_TFbins==2) // v2 TF bins including photon pT>100 and pT<100
       {  hist_ratio->GetXaxis()->SetRangeUser(0,50);
-	hist_ratio->GetYaxis()->SetRangeUser(0.0,0.07);
+	hist_ratio->GetYaxis()->SetRangeUser(0.0,0.1);
       }
     else if(which_TFbins==3) // v3 TF bins including MET<300 and MET>300
       {
 	hist_ratio->GetXaxis()->SetRangeUser(0,50);
-	hist_ratio->GetYaxis()->SetRangeUser(0.0,0.06);
+	hist_ratio->GetYaxis()->SetRangeUser(0.0,0.1);
       }
     //    hist_ratio->GetXaxis()->SetLabelSize(0.0450);
     hist_ratio->GetYaxis()->SetTitleSize(0.13);
@@ -723,21 +723,13 @@ char* hname2 = new char[200];
   vector<string> legend_texts; 
  char *TFbins_str= new char[2000];
   if(which_TFBins==1)
-    sprintf(TFbins_str,"TFbins_v1_phopT_qmulti");
+    sprintf(TFbins_str,"TFbins_v1_nJetsBjets");
   else if (which_TFBins==2)
-    sprintf(TFbins_str,"TFbins_v2_qmulti_nJetsBjets");
+    sprintf(TFbins_str,"TFbins_v2_nJetsBjets_PhoPt");
   else if(which_TFBins==3)
     sprintf(TFbins_str,"TFbins_v3_phopt_qmulti");
-
-  if(which_TFBins==4)
-    sprintf(TFbins_str,"TFbins_v4_nJets_phopt");
-  else if (which_TFBins==5)
-    sprintf(TFbins_str,"TFbins_v5_nJetsBjets_PhoPt");
-  else if(which_TFBins==6)
-    sprintf(TFbins_str,"TFbins_v6_nJets_bJets");
   
-
-    baseline1={"Elec_CR","Pho_SR"};//,"TauHad_SR","Mu_SR","Elec_SR","FailAcep_ElecSR","FailId_ElecSR","FailIso_ElecSR","Elec_SR","Elec_"};//
+    baseline1={"ProbL1Trig_Elec_CR","ProbL1Trig_Pho_SR"};//,"TauHad_SR","Mu_SR","Elec_SR","FailAcep_ElecSR","FailId_ElecSR","FailIso_ElecSR","Elec_SR","Elec_"};//
     legend_texts ={"(1e,0#gamma) CR","(0e,1#gamma) SR"};//,"#tau-had SR","lost #mu SR","lost e SR","(1l,1#gamma) CR","Failed Iso"};
     
     //sprintf(hname,"");
@@ -858,11 +850,6 @@ char* hname2 = new char[200];
 	    sprintf(hist_name,"h_TFbins_ElecLL_v5_%s",baseline1[i_cut].c_str());
 	  else if(which_TFBins==4)
 	    sprintf(hist_name,"h_TFbins_ElecLL_v6_%s",baseline1[i_cut].c_str());
-	  else if(which_TFBins==5)
-            sprintf(hist_name,"h_TFbins_ElecLL_v3_%s",baseline1[i_cut].c_str());
-	  else if(which_TFBins==6)
-            sprintf(hist_name,"h_TFbins_ElecLL_v4_%s",baseline1[i_cut].c_str());
-
 	  
  	  cout<<hist_name<<"\t"<<i_cut<<endl;
 	  TH1F* h_TFbins = (TH1F*)f[i_file]->Get(hist_name);

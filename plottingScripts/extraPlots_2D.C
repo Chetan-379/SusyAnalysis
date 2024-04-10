@@ -703,7 +703,7 @@ TFile *f[nfiles];
 TFile *f1[nfiles];
 
 
-void two2D_SRvsCR(string pathname, int which_plots)
+void extraPlots_2D(string pathname, int which_plots)
 {
   char* hname = new char[200];
     char* hname1 = new char[200];
@@ -750,138 +750,52 @@ char* hname2 = new char[200];
   // else if(which_TFBins==3)
   //   sprintf(TFbins_str,"TFbins_v3_nJetsBjets_MET");
   
-    baseline1={"Elec_CR","Pho_SR"};//,"TauHad_SR","Mu_SR","Elec_SR","FailAcep_ElecSR","FailId_ElecSR","FailIso_ElecSR","Elec_SR","Elec_"};//
-    legend_texts ={"Elec_CR","Pho_SR"};//(1e,0#gamma) CR","(0e,1#gamma) SR"};//,"#tau-had SR","lost #mu SR","lost e SR","(1l,1#gamma) CR","Failed Iso"};
+  baseline1={"Elec_CR","Pho_SR"};//,"TauHad_SR","Mu_SR","Elec_SR","FailAcep_ElecSR","FailId_ElecSR","FailIso_ElecSR","Elec_SR","Elec_"};//
+  legend_texts ={"Elec_CR","Pho_SR"};//(1e,0#gamma) CR","(0e,1#gamma) SR"};//,"#tau-had SR","lost #mu SR","lost e SR","(1l,1#gamma) CR","Failed Iso"};
+  varName ={"h_Qmulti_vsPhotonpT","h_Qmulti_vsPhotonEta","h_Qmulti_vsPhotonPhi","h_PhotonPt_vsPhotonEta","h_PhotonPt_vsPhotonPhi","h_PhotonEta_vsPhotonPhi"};//h_Njets","h_Nbjets","h_MET","h_PhotonPt","h_Qmulti","h_PhotonEta","h_PhotonPhi"};
+vector<string> bin_string = {"Elec_CR_binno_9","Elec_CR_binno_10","Elec_CR_binno_11to12","Elec_CR_binno_13to14","Elec_CR_binno_15","Elec_CR_binno_16","Elec_CR_binno_17to18","Elec_CR_binno30to33"};
+  vector<string>bin_string1= {"Pho_SR_binno_9","Pho_SR_binno_10","Pho_SR_binno_11to12","Pho_SR_binno_13to14","Pho_SR_binno_15","Pho_SR_binno_16","Pho_SR_binno_17to18","Pho_SR_binno30to33"};
 
-    if(which_plots==0){
-    varName2 ={"h_qmultiVsEmobjPT_Pho_SR","h_qmultiVsnJets_Pho_SR","h_ST_vs_EMObjPt_Pho_SR","h_Emobj_PtvsEta_Pho_SR","h_Emobj_PtvsPhi_Pho_SR","h_Emobj_EtavsPhi_Pho_SR","h_nBjets_vs_qmulti_Pho_SR","h_qmultiVs_MET_Pho_SR","h_qmultiVs_ST_Pho_SR","h_leadbjet_tag_vs_leadQmulti_Pho_SR","h_leadbjet_tag_vsQmulti_Pho_SR","h_leadjet_ptvsqmulti_Pho_SR","h_qmulti_vs_phopt_bin_Pho_SR","h_EtavsPhi_leadJet1_Pho_SR","h_PtvsPhi_leadJet1_Pho_SR","h_PtvsEta_leadJet1_Pho_SR","h_HT5HT_vsdPhi_METJet1_Pho_SR","h_EtavsPhi_leadJet2_Pho_SR","h_PtvsPhi_leadJet2_Pho_SR","h_PtvsEta_leadJet2_Pho_SR","h_HT5HT_vsdPhi_METJet2_Pho_SR","h_EtavsPhi_leadJet3_Pho_SR","h_PtvsPhi_leadJet3_Pho_SR","h_PtvsEta_leadJet3_Pho_SR","h_HT5HT_vsdPhi_METJet3_Pho_SR","h_EtavsPhi_leadJet4_Pho_SR","h_PtvsPhi_leadJet4_Pho_SR","h_PtvsEta_leadJet4_Pho_SR","h_HT5HT_vsdPhi_METJet4_Pho_SR","h_EtavsPhi_matchedJet_Pho_SR","h_PtvsPhi_matchedJet_Pho_SR","h_PtvsEta_matchedJet_Pho_SR","h_minDR_Jets_vs_Em_Pt_Pho_SR","h_btaggervalue_vs_qmulti_Pho_SRs","h_btaggervalue_vs_minDR_Jets_Pho_SR","h_minDR_Jets_vsqMulti_Pho_SR","h_Emobje_pt_vs_Jet_Pt_Pho_SR"};	       //"h_qmulti_vs_phopt_bin_HEM_veto_Pho_SR""h_qmulti_vs_phopt_bin_L1Trig_Pho_SR","h_qmulti_vs_phopt_bin_ProbL1Trig_Pho_SR",};
-    varName={"h_qmultiVsEmobjPT_Elec_CR","h_qmultiVsnJets_Elec_CR","h_ST_vs_EMObjPt_Elec_CR","h_Emobj_PtvsEta_Elec_CR","h_Emobj_PtvsPhi_Elec_CR","h_Emobj_EtavsPhi_Elec_CR","h_nBjets_vs_qmulti_Elec_CR","h_qmultiVs_MET_Elec_CR","h_qmultiVs_ST_Elec_CR","h_leadbjet_tag_vs_leadQmulti_Elec_CR","h_leadbjet_tag_vsQmulti_Elec_CR","h_leadjet_ptvsqmulti_Elec_CR","h_qmulti_vs_phopt_bin_Elec_CR","h_EtavsPhi_leadJet1_Elec_CR","h_PtvsPhi_leadJet1_Elec_CR","h_PtvsEta_leadJet1_Elec_CR","h_HT5HT_vsdPhi_METJet1_Elec_CR","h_EtavsPhi_leadJet2_Elec_CR","h_PtvsPhi_leadJet2_Elec_CR","h_PtvsEta_leadJet2_Elec_CR","h_HT5HT_vsdPhi_METJet2_Elec_CR","h_EtavsPhi_leadJet3_Elec_CR","h_PtvsPhi_leadJet3_Elec_CR","h_PtvsEta_leadJet3_Elec_CR","h_HT5HT_vsdPhi_METJet3_Elec_CR","h_EtavsPhi_leadJet4_Elec_CR","h_PtvsPhi_leadJet4_Elec_CR","h_PtvsEta_leadJet4_Elec_CR","h_HT5HT_vsdPhi_METJet4_Elec_CR","h_EtavsPhi_matchedJet_Elec_CR","h_PtvsPhi_matchedJet_Elec_CR","h_PtvsEta_matchedJet_Elec_CR","h_minDR_Jets_vs_Em_Pt_Elec_CR","h_btaggervalue_vs_qmulti_Elec_CRs","h_btaggervalue_vs_minDR_Jets_Elec_CR","h_minDR_Jets_vsqMulti_Elec_CR","h_Emobje_pt_vs_Jet_Pt_Elec_CR"};//,"h_qmulti_vs_phopt_bin_HEM_veto_Elec_CR","h_qmulti_vs_phopt_bin_L1Trig_Elec_CR","h_qmulti_vs_phopt_bin_ProbL1Trig_Elec_CR"};
-    varName3 ={"h_qmultiVsEmobjPT","h_qmultiVsnJets","h_ST_vs_EMObjPt","h_Emobj_PtvsEta","h_Emobj_PtvsPhi","h_Emobj_EtavsPhi","h_nBjets_vs_qmulti","h_qmultiVs_MET","h_qmultiVs_ST","h_leadbjet_tag_vs_leadQmulti","h_leadbjet_tag_vsQmulti","h_leadjet_ptvsqmulti","h_qmulti_vs_phopt_bin","h_EtavsPhi_leadJet1","h_PtvsPhi_leadJet1","h_PtvsEta_leadJet1","h_HT5HT_vsdPhi_METJet1","h_EtavsPhi_leadJet2","h_PtvsPhi_leadJet2","h_PtvsEta_leadJet2","h_HT5HT_vsdPhi_METJet2","h_EtavsPhi_leadJet3","h_PtvsPhi_leadJet3","h_PtvsEta_leadJet3","h_HT5HT_vsdPhi_METJet3","h_EtavsPhi_leadJet4","h_PtvsPhi_leadJet4","h_PtvsEta_leadJet4","h_HT5HT_vsdPhi_METJet4","h_EtavsPhi_matchedJet","h_PtvsPhi_matchedJet","h_PtvsEta_matchedJet","h_minDR_Jets_vs_Em_Pt","h_btaggervalue_vs_qmultis","h_btaggervalue_vs_minDR_Jets","h_minDR_Jets_vsqMulti","h_Emobje_pt_vs_Jet_Pt"};
-    }
+   vector<string>bin_string2=  {"binno_9","binno_10","binno_11to12","binno_13to14","binno_15","binno_16","binno_17to18","binno30to33"};
 
-    else if(which_plots==1){ //after HEM veto
-varName2 ={"h_qmultiVsEmobjPT_HEM_veto_Pho_SR","h_qmultiVsnJets_HEM_veto_Pho_SR","h_ST_vs_EMObjPt_HEM_veto_Pho_SR","h_Emobj_PtvsEta_HEM_veto_Pho_SR","h_Emobj_PtvsPhi_HEM_veto_Pho_SR","h_Emobj_EtavsPhi_HEM_veto_Pho_SR","h_nBjets_vs_qmulti_HEM_veto_Pho_SR","h_qmultiVs_MET_HEM_veto_Pho_SR","h_qmultiVs_ST_HEM_veto_Pho_SR","h_leadbjet_tag_vs_leadQmulti_HEM_veto_Pho_SR","h_leadbjet_tag_vsQmulti_HEM_veto_Pho_SR","h_leadjet_ptvsqmulti_HEM_veto_Pho_SR","h_qmulti_vs_phopt_bin_HEM_veto_Pho_SR","h_EtavsPhi_leadJet1_HEM_veto_Pho_SR","h_PtvsPhi_leadJet1_HEM_veto_Pho_SR","h_PtvsEta_leadJet1_HEM_veto_Pho_SR","h_HT5HT_vsdPhi_METJet1_HEM_veto_Pho_SR","h_EtavsPhi_leadJet2_HEM_veto_Pho_SR","h_PtvsPhi_leadJet2_HEM_veto_Pho_SR","h_PtvsEta_leadJet2_HEM_veto_Pho_SR","h_HT5HT_vsdPhi_METJet2_HEM_veto_Pho_SR","h_EtavsPhi_leadJet3_HEM_veto_Pho_SR","h_PtvsPhi_leadJet3_HEM_veto_Pho_SR","h_PtvsEta_leadJet3_HEM_veto_Pho_SR","h_HT5HT_vsdPhi_METJet3_HEM_veto_Pho_SR","h_EtavsPhi_leadJet4_HEM_veto_Pho_SR","h_PtvsPhi_leadJet4_HEM_veto_Pho_SR","h_PtvsEta_leadJet4_HEM_veto_Pho_SR","h_HT5HT_vsdPhi_METJet4_HEM_veto_Pho_SR","h_EtavsPhi_matchedJet_HEM_veto_Pho_SR","h_PtvsPhi_matchedJet_HEM_veto_Pho_SR","h_PtvsEta_matchedJet_HEM_veto_Pho_SR","h_minDR_Jets_vs_Em_Pt_HEM_veto_Pho_SR","h_btaggervalue_vs_qmulti_HEM_veto_Pho_SRs","h_btaggervalue_vs_minDR_Jets_HEM_veto_Pho_SR","h_minDR_Jets_vsqMulti_HEM_veto_Pho_SR","h_Emobje_pt_vs_Jet_Pt_HEM_veto_Pho_SR"}; 
-
- varName={"h_qmultiVsEmobjPT_HEM_veto_Elec_CR","h_qmultiVsnJets_HEM_veto_Elec_CR","h_ST_vs_EMObjPt_HEM_veto_Elec_CR","h_Emobj_PtvsEta_HEM_veto_Elec_CR","h_Emobj_PtvsPhi_HEM_veto_Elec_CR","h_Emobj_EtavsPhi_HEM_veto_Elec_CR","h_nBjets_vs_qmulti_HEM_veto_Elec_CR","h_qmultiVs_MET_HEM_veto_Elec_CR","h_qmultiVs_ST_HEM_veto_Elec_CR","h_leadbjet_tag_vs_leadQmulti_HEM_veto_Elec_CR","h_leadbjet_tag_vsQmulti_HEM_veto_Elec_CR","h_leadjet_ptvsqmulti_HEM_veto_Elec_CR","h_qmulti_vs_phopt_bin_HEM_veto_Elec_CR","h_EtavsPhi_leadJet1_HEM_veto_Elec_CR","h_PtvsPhi_leadJet1_HEM_veto_Elec_CR","h_PtvsEta_leadJet1_HEM_veto_Elec_CR","h_HT5HT_vsdPhi_METJet1_HEM_veto_Elec_CR","h_EtavsPhi_leadJet2_HEM_veto_Elec_CR","h_PtvsPhi_leadJet2_HEM_veto_Elec_CR","h_PtvsEta_leadJet2_HEM_veto_Elec_CR","h_HT5HT_vsdPhi_METJet2_HEM_veto_Elec_CR","h_EtavsPhi_leadJet3_HEM_veto_Elec_CR","h_PtvsPhi_leadJet3_HEM_veto_Elec_CR","h_PtvsEta_leadJet3_HEM_veto_Elec_CR","h_HT5HT_vsdPhi_METJet3_HEM_veto_Elec_CR","h_EtavsPhi_leadJet4_HEM_veto_Elec_CR","h_PtvsPhi_leadJet4_HEM_veto_Elec_CR","h_PtvsEta_leadJet4_HEM_veto_Elec_CR","h_HT5HT_vsdPhi_METJet4_HEM_veto_Elec_CR","h_EtavsPhi_matchedJet_HEM_veto_Elec_CR","h_PtvsPhi_matchedJet_HEM_veto_Elec_CR","h_PtvsEta_matchedJet_HEM_veto_Elec_CR","h_minDR_Jets_vs_Em_Pt_HEM_veto_Elec_CR","h_btaggervalue_vs_qmulti_HEM_veto_Elec_CRs","h_btaggervalue_vs_minDR_Jets_HEM_veto_Elec_CR","h_minDR_Jets_vsqMulti_HEM_veto_Elec_CR","h_Emobje_pt_vs_Jet_Pt_HEM_veto_Elec_CR"};
-
-  varName3 ={"h_qmultiVsEmobjPT_HEM_veto","h_qmultiVsnJets_HEM_veto","h_ST_vs_EMObjPt_HEM_veto","h_Emobj_PtvsEta_HEM_veto","h_Emobj_PtvsPhi_HEM_veto","h_Emobj_EtavsPhi_HEM_veto","h_nBjets_vs_qmulti_HEM_veto","h_qmultiVs_MET_HEM_veto","h_qmultiVs_ST_HEM_veto","h_leadbjet_tag_vs_leadQmulti_HEM_veto","h_leadbjet_tag_vsQmulti_HEM_veto","h_leadjet_ptvsqmulti_HEM_veto","h_qmulti_vs_phopt_bin_HEM_veto","h_EtavsPhi_leadJet1_HEM_veto","h_PtvsPhi_leadJet1_HEM_veto","h_PtvsEta_leadJet1_HEM_veto","h_HT5HT_vsdPhi_METJet1_HEM_veto","h_EtavsPhi_leadJet2_HEM_veto","h_PtvsPhi_leadJet2_HEM_veto","h_PtvsEta_leadJet2_HEM_veto","h_HT5HT_vsdPhi_METJet2_HEM_veto","h_EtavsPhi_leadJet3_HEM_veto","h_PtvsPhi_leadJet3_HEM_veto","h_PtvsEta_leadJet3_HEM_veto","h_HT5HT_vsdPhi_METJet3_HEM_veto","h_EtavsPhi_leadJet4_HEM_veto","h_PtvsPhi_leadJet4_HEM_veto","h_PtvsEta_leadJet4_HEM_veto","h_HT5HT_vsdPhi_METJet4_HEM_veto","h_EtavsPhi_matchedJet_HEM_veto","h_PtvsPhi_matchedJet_HEM_veto","h_PtvsEta_matchedJet_HEM_veto","h_minDR_Jets_vs_Em_Pt_HEM_veto","h_btaggervalue_vs_qmultis_HEM_veto","h_btaggervalue_vs_minDR_Jets_HEM_veto","h_minDR_Jets_vsqMulti_HEM_veto","h_Emobje_pt_vs_Jet_Pt_HEM_veto"};
-
-    }
-    else if (which_plots==2){
-varName2 ={"h_qmultiVsEmobjPT_ProbL1Trig_Pho_SR","h_qmultiVsnJets_ProbL1Trig_Pho_SR","h_ST_vs_EMObjPt_ProbL1Trig_Pho_SR","h_Emobj_PtvsEta_ProbL1Trig_Pho_SR","h_Emobj_PtvsPhi_ProbL1Trig_Pho_SR","h_Emobj_EtavsPhi_ProbL1Trig_Pho_SR","h_nBjets_vs_qmulti_ProbL1Trig_Pho_SR","h_qmultiVs_MET_ProbL1Trig_Pho_SR","h_qmultiVs_ST_ProbL1Trig_Pho_SR","h_leadbjet_tag_vs_leadQmulti_ProbL1Trig_Pho_SR","h_leadbjet_tag_vsQmulti_ProbL1Trig_Pho_SR","h_leadjet_ptvsqmulti_ProbL1Trig_Pho_SR","h_qmulti_vs_phopt_bin_ProbL1Trig_Pho_SR","h_EtavsPhi_leadJet1_ProbL1Trig_Pho_SR","h_PtvsPhi_leadJet1_ProbL1Trig_Pho_SR","h_PtvsEta_leadJet1_ProbL1Trig_Pho_SR","h_HT5HT_vsdPhi_METJet1_ProbL1Trig_Pho_SR","h_EtavsPhi_leadJet2_ProbL1Trig_Pho_SR","h_PtvsPhi_leadJet2_ProbL1Trig_Pho_SR","h_PtvsEta_leadJet2_ProbL1Trig_Pho_SR","h_HT5HT_vsdPhi_METJet2_ProbL1Trig_Pho_SR","h_EtavsPhi_leadJet3_ProbL1Trig_Pho_SR","h_PtvsPhi_leadJet3_ProbL1Trig_Pho_SR","h_PtvsEta_leadJet3_ProbL1Trig_Pho_SR","h_HT5HT_vsdPhi_METJet3_ProbL1Trig_Pho_SR","h_EtavsPhi_leadJet4_ProbL1Trig_Pho_SR","h_PtvsPhi_leadJet4_ProbL1Trig_Pho_SR","h_PtvsEta_leadJet4_ProbL1Trig_Pho_SR","h_HT5HT_vsdPhi_METJet4_ProbL1Trig_Pho_SR","h_EtavsPhi_matchedJet_ProbL1Trig_Pho_SR","h_PtvsPhi_matchedJet_ProbL1Trig_Pho_SR","h_PtvsEta_matchedJet_ProbL1Trig_Pho_SR","h_minDR_Jets_vs_Em_Pt_ProbL1Trig_Pho_SR","h_btaggervalue_vs_qmulti_ProbL1Trig_Pho_SRs","h_btaggervalue_vs_minDR_Jets_ProbL1Trig_Pho_SR","h_minDR_Jets_vsqMulti_ProbL1Trig_Pho_SR","h_Emobje_pt_vs_Jet_Pt_ProbL1Trig_Pho_SR"};
-
- varName={"h_qmultiVsEmobjPT_ProbL1Trig_Elec_CR","h_qmultiVsnJets_ProbL1Trig_Elec_CR","h_ST_vs_EMObjPt_ProbL1Trig_Elec_CR","h_Emobj_PtvsEta_ProbL1Trig_Elec_CR","h_Emobj_PtvsPhi_ProbL1Trig_Elec_CR","h_Emobj_EtavsPhi_ProbL1Trig_Elec_CR","h_nBjets_vs_qmulti_ProbL1Trig_Elec_CR","h_qmultiVs_MET_ProbL1Trig_Elec_CR","h_qmultiVs_ST_ProbL1Trig_Elec_CR","h_leadbjet_tag_vs_leadQmulti_ProbL1Trig_Elec_CR","h_leadbjet_tag_vsQmulti_ProbL1Trig_Elec_CR","h_leadjet_ptvsqmulti_ProbL1Trig_Elec_CR","h_qmulti_vs_phopt_bin_ProbL1Trig_Elec_CR","h_EtavsPhi_leadJet1_ProbL1Trig_Elec_CR","h_PtvsPhi_leadJet1_ProbL1Trig_Elec_CR","h_PtvsEta_leadJet1_ProbL1Trig_Elec_CR","h_HT5HT_vsdPhi_METJet1_ProbL1Trig_Elec_CR","h_EtavsPhi_leadJet2_ProbL1Trig_Elec_CR","h_PtvsPhi_leadJet2_ProbL1Trig_Elec_CR","h_PtvsEta_leadJet2_ProbL1Trig_Elec_CR","h_HT5HT_vsdPhi_METJet2_ProbL1Trig_Elec_CR","h_EtavsPhi_leadJet3_ProbL1Trig_Elec_CR","h_PtvsPhi_leadJet3_ProbL1Trig_Elec_CR","h_PtvsEta_leadJet3_ProbL1Trig_Elec_CR","h_HT5HT_vsdPhi_METJet3_ProbL1Trig_Elec_CR","h_EtavsPhi_leadJet4_ProbL1Trig_Elec_CR","h_PtvsPhi_leadJet4_ProbL1Trig_Elec_CR","h_PtvsEta_leadJet4_ProbL1Trig_Elec_CR","h_HT5HT_vsdPhi_METJet4_ProbL1Trig_Elec_CR","h_EtavsPhi_matchedJet_ProbL1Trig_Elec_CR","h_PtvsPhi_matchedJet_ProbL1Trig_Elec_CR","h_PtvsEta_matchedJet_ProbL1Trig_Elec_CR","h_minDR_Jets_vs_Em_Pt_ProbL1Trig_Elec_CR","h_btaggervalue_vs_qmulti_ProbL1Trig_Elec_CRs","h_btaggervalue_vs_minDR_Jets_ProbL1Trig_Elec_CR","h_minDR_Jets_vsqMulti_ProbL1Trig_Elec_CR","h_Emobje_pt_vs_Jet_Pt_ProbL1Trig_Elec_CR"};
-
-  varName3 ={"h_qmultiVsEmobjPT_ProbL1Trig","h_qmultiVsnJets_ProbL1Trig","h_ST_vs_EMObjPt_ProbL1Trig","h_Emobj_PtvsEta_ProbL1Trig","h_Emobj_PtvsPhi_ProbL1Trig","h_Emobj_EtavsPhi_ProbL1Trig","h_nBjets_vs_qmulti_ProbL1Trig","h_qmultiVs_MET_ProbL1Trig","h_qmultiVs_ST_ProbL1Trig","h_leadbjet_tag_vs_leadQmulti_ProbL1Trig","h_leadbjet_tag_vsQmulti_ProbL1Trig","h_leadjet_ptvsqmulti_ProbL1Trig","h_qmulti_vs_phopt_bin_ProbL1Trig","h_EtavsPhi_leadJet1_ProbL1Trig","h_PtvsPhi_leadJet1_ProbL1Trig","h_PtvsEta_leadJet1_ProbL1Trig","h_HT5HT_vsdPhi_METJet1_ProbL1Trig","h_EtavsPhi_leadJet2_ProbL1Trig","h_PtvsPhi_leadJet2_ProbL1Trig","h_PtvsEta_leadJet2_ProbL1Trig","h_HT5HT_vsdPhi_METJet2_ProbL1Trig","h_EtavsPhi_leadJet3_ProbL1Trig","h_PtvsPhi_leadJet3_ProbL1Trig","h_PtvsEta_leadJet3_ProbL1Trig","h_HT5HT_vsdPhi_METJet3_ProbL1Trig","h_EtavsPhi_leadJet4_ProbL1Trig","h_PtvsPhi_leadJet4_ProbL1Trig","h_PtvsEta_leadJet4_ProbL1Trig","h_HT5HT_vsdPhi_METJet4_ProbL1Trig","h_EtavsPhi_matchedJet_ProbL1Trig","h_PtvsPhi_matchedJet_ProbL1Trig","h_PtvsEta_matchedJet_ProbL1Trig","h_minDR_Jets_vs_Em_Pt_ProbL1Trig","h_btaggervalue_vs_qmultis_ProbL1Trig","h_btaggervalue_vs_minDR_Jets_ProbL1Trig","h_minDR_Jets_vsqMulti_ProbL1Trig","h_Emobje_pt_vs_Jet_Pt_ProbL1Trig"};
-    }
-    vector <string>  xLabel;
+  vector <string>  xLabel;
      //       {"h_qmultiVsEmobjPT","h_qmultiVsnJets","h_ST_vs_EMObjPt","h_Emobj_PtvsEta","h_nBjets_vs_qmulti","h_qmultiVs_MET","h_qmultiVs_ST","h_leadbjet_tag_vs_leadQmulti","h_leadbjet_tag_vsQmulti","h_leadjet_ptvsqmulti"};
 
-    xLabel={"P_{T}^{EM obj}","N_{jets}","P_{T}^{EM obj}","P_{T}^{EM obj}","P_{T}^{EM obj}","Eta coordinate of EM-obj","N_{ b-jets}","p_{T}^{miss} [GeV]","Sum of P_{T}^{Jets} & P_{T}^{EM-obj} [GeV]","lead jets' b tagger value","lead jets' b tagger value","P_{T}^{leading Jet}","P_{T}^{EM obj}","Eta of leadJet1","P_{T}^{leadJet1}","P_{T}^{leadJet1}","d#phi(P_{T}^{miss},lead Jet1)","Eta of leadJet2","P_{T}^{leadJet2}","P_{T}^{leadJet2}","d#phi(P_{T}^{miss},lead Jet2)","Eta of leadJet3","P_{T}^{leadJet3}","P_{T}^{leadJet3}","d#phi(P_{T}^{miss},lead Jet3)","Eta of leadJet4","P_{T}^{leadJet4}","P_{T}^{leadJet4}","d#phi(P_{T}^{miss},lead Jet4)","Eta coordinate of matched Jet","P_{T} of matched jet","P_{T} of matched jet","P_{T}^{EM obj}","qmulti","mindR(matched Jet, EM object)","qmulti","P_{T}^{EM obj}"};//"Sum of P_{T}^{Jets} & P_{T}^{EM-obj} [GeV]","HT[GeV]","N_{jets}","N_{ b-jets}","p_{T}^{miss} [
+    xLabel={"Q-multi","Q-multi","Q-multi","P_{T}^{EM obj}","P_{T}^{EM obj}","Eta coordinate of EM-obj"};//,"N_{ b-jets}","p_{T}^{miss} [GeV]","Sum of P_{T}^{Jets} & P_{T}^{EM-obj} [GeV]","lead jets' b tagger value","lead jets' b tagger value","P_{T}^{leading Jet}","P_{T}^{EM obj}","Eta of leadJet1","P_{T}^{leadJet1}","P_{T}^{leadJet1}","d#phi(P_{T}^{miss},lead Jet1)","Eta of leadJet2","P_{T}^{leadJet2}","P_{T}^{leadJet2}","d#phi(P_{T}^{miss},lead Jet2)","Eta of leadJet3","P_{T}^{leadJet3}","P_{T}^{leadJet3}","d#phi(P_{T}^{miss},lead Jet3)","Eta of leadJet4","P_{T}^{leadJet4}","P_{T}^{leadJet4}","d#phi(P_{T}^{miss},lead Jet4)","Eta coordinate of matched Jet","P_{T} of matched jet","P_{T} of matched jet","P_{T}^{EM obj}","qmulti","mindR(matched Jet, EM object)","qmulti","P_{T}^{EM obj}"};//"Sum of P_{T}^{Jets} & P_{T}^{EM-obj} [GeV]","HT[GeV]","N_{jets}","N_{ b-jets}","p_{T}^{miss} [
     vector<string> yLabel;
-    yLabel = {"qmulti","qmulti","Sum of P_{T}^{Jets} & P_{T}^{EM-obj} [GeV]","Eta coordinate of EM-obj","Phi coordinate of EM-obj","Phi coordinate of EM-obj","qmulti","qmulti","qmulti","lead q-multi","qmulti","qmulti","qmulti","Phi of leadJet1","Phi of leadJet1","Eta of leadJet1","HT5/HT","Phi of leadJet2","Phi of leadJet2","Eta of leadJet2","HT5/HT","Phi of leadJet3","Phi of leadJet3","Eta of leadJet3","HT5/HT","Phi of leadJet4","Phi of leadJet4","Eta of leadJet4","HT5/HT","Phi coordinate of matched Jet","Phi coordinate of matched Jet","Eta coordinate of matched Jet","mindR(matched Jet, EM object)","lead jets' b tagger value","lead jets' b tagger value","mindR(matched Jet, EM object)","Matched Jet pT"};
+    yLabel = {"P_{T}^{EM obj}","qmulti","Eta coordinate of EM-obj","Phi coordinate of EM-obj","Eta coordinate of EM-obj","Phi coordinate of EM-obj","Phi coordinate of EM-obj"};//,"qmulti","qmulti","qmulti","lead q-multi","qmulti","qmulti","qmulti","Phi of leadJet1","Phi of leadJet1","Eta of leadJet1","HT5/HT","Phi of leadJet2","Phi of leadJet2","Eta of leadJet2","HT5/HT","Phi of leadJet3","Phi of leadJet3","Eta of leadJet3","HT5/HT","Phi of leadJet4","Phi of leadJet4","Eta of leadJet4","HT5/HT","Phi coordinate of matched Jet","Phi coordinate of matched Jet","Eta coordinate of matched Jet","mindR(matched Jet, EM object)","lead jets' b tagger value","lead jets' b tagger value","mindR(matched Jet, EM object)","Matched Jet pT"};
   vector <int> rebin;
-  rebin={5,5,5,5,5,5,1,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5};
-  vector<double> ymin ={0,0,200,-5,-5,-5,0,0,0,0,0,0,0,0,-5,-5,-5,0.9,-5,-5,-5,.9,-5,-5,-5,0.9,-5,-5,-5,0.9,-5,-5,-5,0,0,0,0,0};//1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
-  vector<double> ymax={100,100,2000,5,5,5,100,100,100,100,100,100,100,100,5,5,5,2,5,5,5,2,5,5,5,2,5,5,5,2,5,5,5,1,1,1,1,1000};//100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000};
-  vector<double> xmin ={20,0,20,20,20,-5,0,100,200,0,0,0,20,-5,0,0,0,-5,0,0,0,-5,0,0,0,-5,0,0,0,-5,0,0,20,0,0,0,20};//0,100,20,0,-10,-10,-10,0,0,0};
-  vector<double> xmax={1000,20,1000,1000,1000,5,20,1500,2000,1,1,1000,1000,5,1000,1000,1,5,1000,1000,1,5,1000,1000,1,5,1000,1000,1,5,1000,1000,1000,100,0.5,100,1000};//,8,1000,800,100,10,10,10,100,1000,1};
+  rebin={2,2,2,2,2,2,1,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5};
+  vector<double> ymin ={20,-5,-5,-5,-5,-5,0,0,0,0,0,0,0,-5,-5,-5,0.9,-5,-5,-5,.9,-5,-5,-5,0.9,-5,-5,-5,0.9,-5,-5,-5,0,0,0,0,0};//1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
+  vector<double> ymax={600,5,5,5,5,5,100,100,100,100,100,100,100,100,5,5,5,2,5,5,5,2,5,5,5,2,5,5,5,2,5,5,5,1,1,1,1,1000};//100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000};
+  vector<double> xmin ={0,0,0,20,20,-5,0,100,200,0,0,0,20,-5,0,0,0,-5,0,0,0,-5,0,0,0,-5,0,0,0,-5,0,0,20,0,0,0,20};//0,100,20,0,-10,-10,-10,0,0,0};
+  vector<double> xmax={50,50,50,1000,1000,5,20,1500,2000,1,1,1000,1000,5,1000,1000,1,5,1000,1000,1,5,1000,1000,1,5,1000,1000,1,5,1000,1000,1000,100,0.5,100,1000};//,8,1000,800,100,10,10,10,100,1000,1};
 
+
+  
 
     //sprintf(hname,"");
     sprintf(string_png,"Electron_FR_%s",TFbins_str);
-    sprintf(hname,"%s_phoID_loose_09Jan24",string_png);
-    //cout<<string_png<<"\t"<<TFbins_str<<"\t"<<which_TFBins<<endl;
-      f[0] = new TFile("Summer20UL18_TTGJets_PhoIdloose_phopt40_MET200.root");
-      f[1] = new TFile("Summer20UL17_TTGJets_PhoIdloose_phopt40_MET200.root");
-      f[2] = new TFile("Summer20UL16_TTGJets_PhoIdloose_phopt40_MET200.root");
-      f[3]= new TFile("FullRun2_TTGJets_PhoIdloose_phopt40_MET200.root");
-
-      f[4] = new TFile("Summer20UL18_WGJets_PhoIdloose_phopt40_MET200.root");
-      f[5] = new TFile("Summer20UL17_WGJets_PhoIdloose_phopt40_MET200.root");
-      f[6] = new TFile("Summer20UL16_WGJets_PhoIdloose_phopt40_MET200.root");
-      f[7]= new TFile("FullRun2_WGJets_PhoIdloose_phopt40_MET200.root");
-      f[8] = new TFile("Summer20UL18_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[9] = new TFile("Summer20UL17_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[10] = new TFile("Summer20UL16_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[11]= new TFile("FullRun2_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[12] = new TFile("Summer20UL18_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
-      f[13] = new TFile("Summer20UL17_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
-      f[14] = new TFile("Summer20UL16_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
-      f[15]= new TFile("FullRun2_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
-      f[16] = new TFile("Summer20UL18_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
-      f[17] = new TFile("Summer20UL17_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
-      f[18] = new TFile("Summer20UL16_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
-      f[19] = new TFile("FullRun2_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
-      f[20] = new TFile("Summer20UL18_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[21] = new TFile("Summer20UL17_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[22] = new TFile("Summer20UL16_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[23] = new TFile("FullRun2_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[24]= new TFile("Summer20UL18_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
-      f[25]= new TFile("Summer20UL17_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
-      f[26]= new TFile("Summer20UL16_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
-      f[27]= new TFile("FullRun2_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
-      f[28] = new TFile("Summer20UL16APV_TTGJets_PhoIdloose_phopt40_MET200.root");
-      f[29] = new TFile("Summer20UL16APV_WGJets_PhoIdloose_phopt40_MET200.root");
-      f[30] = new TFile("Summer20UL16APV_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[31] = new TFile("Summer20UL16APV_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
-      f[32] = new TFile("Summer20UL16APV_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
-      f[33] = new TFile("Summer20UL16APV_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[34]= new TFile("Summer20UL16APV_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
-      f[35] = new TFile("Summer20UL_total2016_TTGJets_PhoIdloose_phopt40_MET200.root");
-      f[36] = new TFile("Summer20UL_total2016_WGJets_PhoIdloose_phopt40_MET200.root");
-      f[37] = new TFile("Summer20UL_total2016_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[38] = new TFile("Summer20UL_total2016_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
-      f[39] = new TFile("Summer20UL_total2016_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
-      f[40] = new TFile("Summer20UL_total2016_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[41]= new TFile("Summer20UL_total2016_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
-      f[42]= new TFile("Summer20UL16APV_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
-      f[43]= new TFile("FullRun2_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
-      f[44]= new TFile("Summer20UL18_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
-      f[45]= new TFile("Summer20UL17_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
-      f[46]= new TFile("Summer20UL16_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
-      f[47] = new TFile("./out_Data_UL2018_Allruns_MET_phoID_loose_pt40_MET200.root");
-      f[48]= new TFile("./out_Data_UL2017_Allruns_MET_phoID_loose_pt40_MET200.root");
-      f[49]=new TFile("./out_Data_UL20_total2016_Allruns_MET_phoID_loose_pt40_MET200.root");//./out_Data_UL2016_Allruns_MET_phoID_loose_pt40_MET200.root");
-      f[50]=new TFile("./out_Data_FullRun2_Allruns_MET_phoID_loose_pt40_MET200.root");
-      vector<string> filetag=  {"TTGJets_2018","TTGJets_2017","TTGJets_2016postVFP","Run2_TTGJets","WGJets_2018","WGJets_2017","WGJets_2016postVFP","Run2_WGJets","TTJets_2018","TTJets_2017","TTJets_2016postVFP","Run2_TTJets","WJets_2018","WJets_2017","WJets_2016postVFP","Run2_WJets","WGJets+WJets_2018","WGJets+WJets_2017","WGJets+WJets_2016postVFP","Run2_WGJets+WJets","TTGJets+TTJets_2018","TTGJets+TTJets_2017","TTGJets+TTJets_2016postVFP","Run2_TTGJets+TTJets","W+TTBar_2018","W+TTBar_2017","W+TTBar_2016postVFP","W+TTBar_FullRun2","TTGJets_2016preVFP","WGJets_2016preVFP","TTJets_2016preVFP","WJets_2016preVFP","WGJets+WJets_2016preVFP","TTGJets+TTJets_2016preVFP","W+TTBar_2016preVFP","TTGJets_2016","WGJets_2016","TTJets_2016","WJets_2016","WGJets+WJets_2016","TTGJets+TTJets_2016","W+TTBar_2016","W+TTBar_2016preVFP","W+TTBar_FullRun2","W+TTBar_2018","W+TTBar_2017","W+TTBar_2016postVFP","Data_2018","Data_2017","Data_2016","Data_FullRun2"};
-      vector<float> energyy={59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,19.5,19.5,19.5,19.5,19.5,19.5,19.5,36.0,36.0,36.0,36.0,36.0,36.0,36.0,19.5,137.19,59.74,41.529,16.5,59.74,41.529,36.0,137.19};
-
-
-  // vector<string> filetag={"W+TTBar_2016preVFP","W+TTBar_2016postVFP","W+TTBar_2017","W+TTBar_2018","W+TTBar_FullRun2","TTGJets+TTJets_2016preVFP","TTGJets+TTJets_2016postVFP","TTGJets+TTJets_2017","TTGJets+TTJets_2018","TTGJets+TTJets_FullRun2","WGJets+WJets_2016preVFP","WGJets+WJets_2016postVFP","WGJets+WJets_2017","WGJets+WJets_2018","WGJets+WJets_FullRun2","TTGJets_2018","TTGJets_2017","TTGJets_2016postVFP","Run2_TTGJets","WGJets_2018","WGJets_2017","WGJets_2016postVFP","Run2_WGJets","TTJets_2018","TTJets_2017","TTJets_2016postVFP","Run2_TTJets","WJets_2018","WJets_2017","WJets_2016postVFP","Run2_WJets","WGJets+WJets_2018","WGJets+WJets_2017","WGJets+WJets_2016postVFP","Run2_WGJets+WJets","TTGJets+TTJets_2018","TTGJets+TTJets_2017","TTGJets+TTJets_2016postVFP","Run2_TTGJets+TTJets","W+TTBar_2018","W+TTBar_2017","W+TTBar_2016postVFP","W+TTBar_FullRun2","TTGJets_2016preVFP","WGJets_2016preVFP","TTJets_2016preVFP","WJets_2016preVFP","WGJets+WJets_2016preVFP","TTGJets+TTJets_2016preVFP","W+TTBar_2016preVFP","TTGJets_2016","WGJets_2016","TTJets_2016","WJets_2016","WGJets+WJets_2016","TTGJets+TTJets_2016","W+TTBar_2016"};
-  // vector<float> energyy = {19.5,16.5,41.529,59.74,137.19,19.5,16.5,41.529,59.74,137.19,19.5,16.5,41.529,59.74,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,19.5,19.5,19.5,19.5,19.5,19.5,19.5,36.0,36.0,36.0,36.0,36.0,36.0,36.0};
-//   if(which_Lept==3){
-//     energyy = {19.5,16.5,41.529,59.74,137.19,19.5,16.5,41.529,59.74,137.19,19.5,16.5,41.529,59.74,137.19,36.0,36.0,36.0};
-//     filetag={"W+TTBar_2016preVFP","W+TTBar_2016postVFP","W+TTBar_2017","W+TTBar_2018","W+TTBar_FullRun2","TTGJets+TTJets_2016preVFP","TTGJets+TTJets_2016postVF\
-// P","TTGJets+TTJets_2017","TTGJets+TTJets_2018","TTGJets+TTJets_FullRun2","WGJets+WJets_2016preVFP","WGJets+WJets_2016postVFP","WGJets+WJets_2017","WGJets+WJets_2018","WGJets+WJets_FullRun2","WGJets+WJets_2016","TTGJets+TTJets_2016","W+TTBar_2016"};
-//   }
-  bool flag=false;
-  //  const char* filetag[10]={"TTGJets","pMSSM_MCMC_70_90438","pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451","WJets","GJets","T5bbbbZG_10","T5bbbbZG_50","T5bbbbZG_200","T5bbbbZG_1500"};
-   /* vector<TH2F*> hist_list_Njets; */
-   /*    vector<TH2F*> hist_list_Bjets; */
-   /*    vector<TH2F*> hist_list_MET; */
-   /*    vector<TH2F*> hist_list_PhoPt; */
-   /*    //vector<TH2F*> hist_list_Mt;                                                                                                                                    */
-   /*    vector<TH2F*> hist_list_ST; */
-   /*    vector<TH2F*> hist_list_HT; */
-
-  //  TFile* fout = new TFile("TF_allin1_LLEstimation_electron.root","RECREATE");
-  // sprintf(hname1,"%s",hname); 
-  // TFile* fout = new TFile(hname1,"RECREATE");
-  // sprintf(hname,"EventYields_TF_LL_muon_allProcess_binsV3_phoID_loose_09Jan24.txt");
-  // std::ofstream file_;
-  // file_.open(hname,ios::out);
-  //n_files=1;  
-  for(int i_file=0; i_file<42;i_file++)
-    {      
-      vector<TH2F*> hist_list_Njets;
-      vector<TH2F*> hist_list_Bjets;
-      vector<TH2F*> hist_list_MET;
-      vector<TH2F*> hist_list_PhoPt;
-      //vector<TH2F*> hist_list_Mt;
-      vector<TH2F*> hist_list_ST;
-      vector<TH2F*> hist_list_HT;
-      vector<TH2F*> hist_BDTresp;
+    sprintf(hname,"%s_phoID_loose",string_png);
+    f[0]= new TFile("Summer20UL18_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+    f[1]= new TFile("Summer20UL17_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+    f[2]= new TFile("Summer20UL16_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+    f[5]= new TFile("FullRun2_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+    f[3]= new TFile("Summer20UL16APV_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+    f[4]= new TFile("Summer20UL_total2016_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+    vector<string> filetag=  {"W+TTBar_2018","W+TTBar_2017","W+TTBar_2016postVFP","W+TTBar_2016preVFP","W+TTBar_2016","W+TTBar_FullRun2"};
+    vector<float> energyy={59.74,41.529,16.5,19.5,36,137.19};
+    bool flag=false;
+    for(int i_file=0; i_file<6;i_file++)
+      {      
+	vector<TH2F*> hist_list_Njets;
+	vector<TH2F*> hist_list_Bjets;
+	vector<TH2F*> hist_list_MET;
+	vector<TH2F*> hist_list_PhoPt;
+	//vector<TH2F*> hist_list_Mt;
+	vector<TH2F*> hist_list_ST;
+	vector<TH2F*> hist_list_HT;
+	vector<TH2F*> hist_BDTresp;
       // sprintf(hist_name,"h_TFbins_ElecLL_%s_%s",baseline1[4].c_str(),filetag[i_file]);
       // TH2F* hNjets_SR = new TH2F(hist_name,hist_name,30,0,30);
       // sprintf(hist_name,"h_TFbins_ElecCR_%s_%s",baseline1[5].c_str(),filetag[i_file]);
@@ -904,12 +818,18 @@ varName2 ={"h_qmultiVsEmobjPT_ProbL1Trig_Pho_SR","h_qmultiVsnJets_ProbL1Trig_Pho
 //       std::ofstream file_i;
 //       file_i.open(hname1,ios::out);
 // '
-      for(int i_cut=0; i_cut<varName2.size();i_cut++)
+      for(int i_cut=0; i_cut<varName.size();i_cut++)
 	{
 	  //if(i_cut==1) continue;
           vector<TH2F*> hist_list_Njets;
-          sprintf(hist_name,"%s",varName[i_cut].c_str());
-          sprintf(hist_name2,"%s",varName2[i_cut].c_str());
+	  for(int s=0;s<bin_string1.size();s++){
+            vector<TH2F*> hist_list_Njets;
+	    
+	     sprintf(hist_name,"%s_%s",varName[i_cut].c_str(),bin_string[s].c_str());
+            sprintf(hist_name2,"%s_%s",varName[i_cut].c_str(),bin_string1[s].c_str());
+
+          // sprintf(hist_name,"%s",varName[i_cut].c_str());
+          // sprintf(hist_name2,"%s",varName2[i_cut].c_str());
           cout<<hist_name<<"\t"<<hist_name2<<"\t"<<i_cut<<"\t"<<i_file<<"\t"<<f[i_file]->GetName()<<endl;
           TH2F* h_resp = (TH2F*)f[i_file]->Get(hist_name);
           TH2F* h_resp2 = (TH2F*)f[i_file]->Get(hist_name2);
@@ -928,11 +848,12 @@ varName2 ={"h_qmultiVsEmobjPT_ProbL1Trig_Pho_SR","h_qmultiVsnJets_ProbL1Trig_Pho
       cout<<" hist_list_Njets.size() "<<hist_list_Njets.size()<<"\t hist_list_Bjets.size() "<<hist_list_Bjets.size()<<endl;
       cout<<" input param "<<rebin[i_cut]<<"\t"<<ymin[i_cut]<<"\t"<<ymax[i_cut]<<"\t"<<xmin[i_cut]<<"\t"<<xmax[i_cut]<<endl;
       //path to save the png file
-      sprintf(full_path,"%s/%s_%s",pathname.c_str(),varName3[i_cut].c_str(),filetag[i_file].c_str());
+      sprintf(full_path,"%s/%s_%s_%s",pathname.c_str(),varName[i_cut].c_str(),bin_string2[s].c_str(),filetag[i_file].c_str());
 
       float energy=energyy[i_file];
       int xrange=0.0;
       generate_1Dplot(hist_list_Njets,full_path,xLabel[i_cut].c_str(),yLabel[i_cut].c_str(),energy,rebin[i_cut],ymin[i_cut],ymax[i_cut],xmin[i_cut],xmax[i_cut],leg_head,false,false,false,true,filetag[i_file].c_str(),legend_texts);
+	  }
 	}
    }
   //  fout->Close();
