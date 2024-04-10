@@ -29,11 +29,6 @@ int main(int argc, char* argv[])
   const char *sample=argv[4];
   const char *phoID = argv[5];
   //TString pho_ID = phoID;
-
-
-
-
-
   AnalyzeLightBSM ana(inputFileList, outFileName, data,sample, phoID);
   cout << "dataset " << data << " " << endl;
   cout<<"Which pho_ID: "<<"\t"<<phoID<<endl;
@@ -173,32 +168,37 @@ void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, cons
   // char* hname1 = new char [200];
   // sprintf(hname1, "Lepton_LL_TFbins_v2_nJetsBjets_PhoPt_phoID_loose_09Jan24.root");//"TF_Electron_LLEstimation_binsV0_phoID_%s_08Aug23.root",phoID);
    char* hname2 = new char [200];
-  sprintf(hname2, "Electron_FR_TFbins_v3_phopt_qmulti_phoID_loose_09Jan24.root");// "TF_allin1_LLEstimation_binsV0_phoID_%s_08Aug23.root",phoID);
-  TFile* f_TFbins= new TFile(hname2);
-  // TFile* f_TFbins_v1 =new TFile(hname1);
-  // TFile* f_TFbins_v2= new TFile(hname2);
+   sprintf(hname2, "Electron_FR_TFbins_v1_phopT_qmulti_phoID_loose_09Jan24.root");//Electron_FR_TFbins_v2_qmulti_nJetsBjets_phoID_loose_09Jan24.root");// "TF_allin1_LLEstimation_binsV0_phoID_%s_08Aug23.root",phoID);
+  TFile* f_TFbins= new TFile(hname);
+  TFile* f_TFbins_v1 =new TFile(hname2);
+  char* hname3 = new char[200];
+  sprintf(hname3,"out_SF_FR_Data_MC_Default.root");
+  TFile* f_SF =  new TFile(hname3);
    char* histname = new char[2000];
   TH1F* h_TF;
-  // TH1F* h_TF1;
-  // TH1F* h_TF2;
+  TH1F* h_TF1;
+  
+  TH1F* h_SF_Data;
  // auto sample1="";
  // if(s_sample.Contains("Autumn18.WGJets_MonoPhoton_PtG-130")|| s_sample.Contains("Autumn18.WGJets_MonoPhoton_PtG-40to130"))
  //   sample1 = "WGJets";
  // else
  //   sample1 = sample;
   
-  sprintf(histname,"h_TFbins_LL_W+TTBar_%s",data);//FullRun2");//h_TFbins_LL_W+TTBar_FullRun2");//2018",data);                                                                  
+  sprintf(histname,"h_TFbins_LL_W+TTBar_FullRun2");//%s",data);//FullRun2");//h_TFbins_LL_W+TTBar_FullRun2");//2018",data);                                                                  
  h_TF = (TH1F*)f_TFbins->Get(histname);
- // h_TF1 = (TH1F*)f_TFbins_v1->Get(histname);
- // h_TF2 = (TH1F*)f_TFbins_v2->Get(histname);
+ h_TF1 = (TH1F*)f_TFbins_v1->Get(histname);
+ sprintf(histname,"FR_nbtagBins_Elec_CR_%s",data);
+ h_SF_Data = (TH1F*)f_SF->Get(histname);
  cout<<"Reading TF for lost electron estimation:  "<<"\t"<<histname<<endl;
  for(int i=0; i<h_TF->GetNbinsX();i++)
    {cout<<"TFBIns_v0"<<"\t"<<i<<"\t"<<h_TF->GetBinContent(i)<<endl;}
 
- // for(int i=0; i<h_TF1->GetNbinsX();i++)
- //   {cout<<"TFBIns_v1"<<"\t"<<i<<"\t"<<h_TF1->GetBinContent(i)<<endl;}
- // for(int i=0; i<h_TF2->GetNbinsX();i++)
- //   {cout<<"TFBIns_v2"<<"\t"<<i<<"\t"<<h_TF2->GetBinContent(i)<<endl;}
+ for(int i=0; i<h_TF1->GetNbinsX();i++)
+   {cout<<"TFBIns_v1"<<"\t"<<i<<"\t"<<h_TF1->GetBinContent(i)<<endl;}
+ 
+ for(int i=0; i<h_SF_Data->GetNbinsX();i++)
+   {cout<<"SF data "<<"\t"<<i<<"\t"<<h_SF_Data->GetBinContent(i)<<endl;}
   int coutt=0;
   //nentries=1000;
   for (Long64_t jentry=0; jentry<nentries;jentry++)
@@ -267,6 +267,13 @@ void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, cons
 	  else tighte_trgpass=false;	  
 	  if(tighte_trgpass==false)  continue;
 	}
+      if(s_data.Contains("2016") || s_data.Contains("2017")){ //L1 prefire issue                                                                                                                           
+        wt= wt*NonPrefiringProb;
+      }
+
+      if(!s_sample.Contains("data") && applyPUwt)
+        wt = wt*puWeight;
+
       if(!s_sample.Contains("data") && !s_sample.Contains("signal") && applyTrgEff)
 	{
 	  wt = wt * (((TMath::Erf((MET - p0)/p1)+1)/2.0)*p2);
@@ -452,12 +459,12 @@ int hasEle=0;
       sortTLorVec(&v_recEle);
       //applying hemveto
       bool HEMaffected=false, extracondition=false;
-      for(int i=0; i<Electrons_v1.size();i++){
-	if (abs(Electrons_v1[i].Eta()) >1.44 && abs(Electrons_v1[i].Eta()) <1.57) {extracondition=true; break; }
-      }
-      for(int i=0; i<Photons_v1.size();i++){
-	if (abs(Photons_v1[i].Eta()) >1.44 && abs(Photons_v1[i].Eta()) <1.57) {extracondition=true; break;}
-      }
+      // for(int i=0; i<Electrons_v1.size();i++){
+      // 	if (abs(Electrons_v1[i].Eta()) >1.44 && abs(Electrons_v1[i].Eta()) <1.57) {extracondition=true; break; }
+      // }
+      // for(int i=0; i<Photons_v1.size();i++){
+      // 	if (abs(Photons_v1[i].Eta()) >1.44 && abs(Photons_v1[i].Eta()) <1.57) {extracondition=true; break;}
+      // }
       
       if(s_data.Contains("2018") && applyHEMveto){
 	for(int i=0; i<Electrons_v1.size();i++){
@@ -468,7 +475,7 @@ int hasEle=0;
 	for(int i=0; i<Jets_v1.size();i++){
 	  if(Jets_v1[i].Pt() > 30 && Jets_v1[i].Eta() > -3.2 && Jets_v1[i].Eta() < -1.2 && Jets_v1[i].Phi() > -1.77 && Jets_v1[i].Phi() < -0.67 && DeltaPhi(Jets_v1[i].Pt(),METPhi)<0.5) {HEMaffected = true; break;}
 	}
-	//if(HEMaffected == true) continue;
+	if(HEMaffected == true) continue;
       }
 
 
@@ -734,8 +741,8 @@ int hasEle=0;
     //apply pixelveto                                                                                                                                               
     if(apply_pixelveto){
 
-      if(s_data.Contains("2017") && ((bestEMObj.Eta() > 1.0 && bestEMObj.Eta() < 1.5 && bestEMObj.Phi() > 2.7))) continue;
-      if(s_data.Contains("2018") && ((bestEMObj.Eta() > 0.3 && bestEMObj.Eta() < 1.2 && bestEMObj.Phi() > 0.4 && bestEMObj.Phi() < 0.8))) continue;
+      if(s_data.Contains("2017") && ((bestEMObj.Eta() > 0.0 && bestEMObj.Eta() < 1.5 && bestEMObj.Phi() > 2.7))) continue;
+      if(s_data.Contains("2018") && ((bestEMObj.Eta() > 0.0 && bestEMObj.Eta() < 1.5 && bestEMObj.Phi() > 0.4 && bestEMObj.Phi() < 0.8))) continue;
     }
 
      
@@ -857,11 +864,150 @@ int hasEle=0;
       //      cout<<"TFbins " <<TFbins<<"\t"<<h_TF->GetBinContent(TFbins+1)<<"\t"<<wt_LL<<endl;
       if(elec_CR) {     FillHistogram_Kinematics(2,nHadJets,BTags,bestEMObj.Pt(),mTPhoMET,dPhi_PhoMET,ST,bestEMObj.Eta(),bestEMObj.Phi(),bestEMObj.E(),METPhi,qmulti, leadjet_qmulti, leadjet_Pt,leadbjet_tag,minDR,Jet_matched, hadJets, hadJets[0], NVtx,mindr_Pho_genlep,wt);
 	FillHistogram_Kinematics_varBin(2,nHadJets, BTags, bestEMObj.Pt(),ST,qmulti,wt);
+	int searchBins = getBinNoV6_WithOnlyBLSelec(nHadJets,BTags);
+	if(searchBins==9){
+	  h_Njets_binWise[0]->Fill(nHadJets,wt);
+	  h_Nbjets_binWise[0]->Fill(BTags,wt);
+	  h_MET_binWise[0]->Fill(MET,wt);
+	  h_PhotonPt_binWise[0]->Fill(bestEMObj.Pt(),wt);
+	  h_PhotonEta_binWise[0]->Fill(bestEMObj.Eta(),wt);
+	  h_PhotonPhi_binWise[0]->Fill(bestEMObj.Phi(),wt);
+	  h_Qmulti_binWise[0]->Fill(qmulti,wt);
+	  h_QmultivsPhotonpT_binWise[0]->Fill(qmulti,bestEMObj.Pt(),wt);
+	  h_QmultivsPhotonEta_binWise[0]->Fill(qmulti,bestEMObj.Eta(),wt);
+	  h_QmultivsPhotonPhi_binWise[0]->Fill(qmulti,bestEMObj.Phi(),wt);
+	  h_PhotonPtvsPhotonEta_binWise[0]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt);
+	  h_PhotonPtvsPhotonPhi_binWise[0]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt);
+	  h_PhotonEtavsPhotonPhi_binWise[0]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt);
+	  
+	}
+	if(searchBins==10){
+          h_Njets_binWise[1]->Fill(nHadJets,wt);
+          h_Nbjets_binWise[1]->Fill(BTags,wt);
+          h_MET_binWise[1]->Fill(MET,wt);
+          h_PhotonPt_binWise[1]->Fill(bestEMObj.Pt(),wt);
+          h_PhotonEta_binWise[1]->Fill(bestEMObj.Eta(),wt);
+          h_PhotonPhi_binWise[1]->Fill(bestEMObj.Phi(),wt);
+          h_Qmulti_binWise[1]->Fill(qmulti,wt);
+	  h_QmultivsPhotonpT_binWise[1]->Fill(qmulti,bestEMObj.Pt(),wt);
+          h_QmultivsPhotonEta_binWise[1]->Fill(qmulti,bestEMObj.Eta(),wt);
+          h_QmultivsPhotonPhi_binWise[1]->Fill(qmulti,bestEMObj.Phi(),wt);
+          h_PhotonPtvsPhotonEta_binWise[1]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt);
+          h_PhotonPtvsPhotonPhi_binWise[1]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt);
+          h_PhotonEtavsPhotonPhi_binWise[1]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt);
+
+        }
+	if(searchBins==11 || searchBins==12){
+          h_Njets_binWise[2]->Fill(nHadJets,wt);
+          h_Nbjets_binWise[2]->Fill(BTags,wt);
+          h_MET_binWise[2]->Fill(MET,wt);
+          h_PhotonPt_binWise[2]->Fill(bestEMObj.Pt(),wt);
+          h_PhotonEta_binWise[2]->Fill(bestEMObj.Eta(),wt);
+          h_PhotonPhi_binWise[2]->Fill(bestEMObj.Phi(),wt);
+          h_Qmulti_binWise[2]->Fill(qmulti,wt);
+	  h_QmultivsPhotonpT_binWise[2]->Fill(qmulti,bestEMObj.Pt(),wt);
+          h_QmultivsPhotonEta_binWise[2]->Fill(qmulti,bestEMObj.Eta(),wt);
+          h_QmultivsPhotonPhi_binWise[2]->Fill(qmulti,bestEMObj.Phi(),wt);
+          h_PhotonPtvsPhotonEta_binWise[2]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt);
+          h_PhotonPtvsPhotonPhi_binWise[2]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt);
+          h_PhotonEtavsPhotonPhi_binWise[2]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt);
+
+        }
+	if(searchBins==13||  searchBins==14){
+          h_Njets_binWise[3]->Fill(nHadJets,wt);
+          h_Nbjets_binWise[3]->Fill(BTags,wt);
+          h_MET_binWise[3]->Fill(MET,wt);
+          h_PhotonPt_binWise[3]->Fill(bestEMObj.Pt(),wt);
+          h_PhotonEta_binWise[3]->Fill(bestEMObj.Eta(),wt);
+          h_PhotonPhi_binWise[3]->Fill(bestEMObj.Phi(),wt);
+          h_Qmulti_binWise[3]->Fill(qmulti,wt);
+	  h_QmultivsPhotonpT_binWise[3]->Fill(qmulti,bestEMObj.Pt(),wt);
+          h_QmultivsPhotonEta_binWise[3]->Fill(qmulti,bestEMObj.Eta(),wt);
+          h_QmultivsPhotonPhi_binWise[3]->Fill(qmulti,bestEMObj.Phi(),wt);
+          h_PhotonPtvsPhotonEta_binWise[3]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt);
+          h_PhotonPtvsPhotonPhi_binWise[3]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt);
+          h_PhotonEtavsPhotonPhi_binWise[3]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt);
+
+        }
+	if(searchBins==15){
+          h_Njets_binWise[4]->Fill(nHadJets,wt);
+          h_Nbjets_binWise[4]->Fill(BTags,wt);
+          h_MET_binWise[4]->Fill(MET,wt);
+          h_PhotonPt_binWise[4]->Fill(bestEMObj.Pt(),wt);
+          h_PhotonEta_binWise[4]->Fill(bestEMObj.Eta(),wt);
+          h_PhotonPhi_binWise[4]->Fill(bestEMObj.Phi(),wt);
+          h_Qmulti_binWise[4]->Fill(qmulti,wt);
+	  h_QmultivsPhotonpT_binWise[4]->Fill(qmulti,bestEMObj.Pt(),wt);
+          h_QmultivsPhotonEta_binWise[4]->Fill(qmulti,bestEMObj.Eta(),wt);
+          h_QmultivsPhotonPhi_binWise[4]->Fill(qmulti,bestEMObj.Phi(),wt);
+          h_PhotonPtvsPhotonEta_binWise[4]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt);
+          h_PhotonPtvsPhotonPhi_binWise[4]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt);
+          h_PhotonEtavsPhotonPhi_binWise[4]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt);
+
+        }
+
+	if(searchBins==16){
+          h_Njets_binWise[5]->Fill(nHadJets,wt);
+          h_Nbjets_binWise[5]->Fill(BTags,wt);
+          h_MET_binWise[5]->Fill(MET,wt);
+          h_PhotonPt_binWise[5]->Fill(bestEMObj.Pt(),wt);
+          h_PhotonEta_binWise[5]->Fill(bestEMObj.Eta(),wt);
+          h_PhotonPhi_binWise[5]->Fill(bestEMObj.Phi(),wt);
+          h_Qmulti_binWise[5]->Fill(qmulti,wt);
+	  h_QmultivsPhotonpT_binWise[5]->Fill(qmulti,bestEMObj.Pt(),wt);
+          h_QmultivsPhotonEta_binWise[5]->Fill(qmulti,bestEMObj.Eta(),wt);
+          h_QmultivsPhotonPhi_binWise[5]->Fill(qmulti,bestEMObj.Phi(),wt);
+          h_PhotonPtvsPhotonEta_binWise[5]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt);
+          h_PhotonPtvsPhotonPhi_binWise[5]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt);
+          h_PhotonEtavsPhotonPhi_binWise[5]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt);
+
+        }
+
+	if(searchBins==17 || searchBins==18){
+          h_Njets_binWise[6]->Fill(nHadJets,wt);
+          h_Nbjets_binWise[6]->Fill(BTags,wt);
+          h_MET_binWise[6]->Fill(MET,wt);
+          h_PhotonPt_binWise[6]->Fill(bestEMObj.Pt(),wt);
+          h_PhotonEta_binWise[6]->Fill(bestEMObj.Eta(),wt);
+          h_PhotonPhi_binWise[6]->Fill(bestEMObj.Phi(),wt);
+          h_Qmulti_binWise[6]->Fill(qmulti,wt);
+	  h_QmultivsPhotonpT_binWise[6]->Fill(qmulti,bestEMObj.Pt(),wt);
+          h_QmultivsPhotonEta_binWise[6]->Fill(qmulti,bestEMObj.Eta(),wt);
+          h_QmultivsPhotonPhi_binWise[6]->Fill(qmulti,bestEMObj.Phi(),wt);
+          h_PhotonPtvsPhotonEta_binWise[6]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt);
+          h_PhotonPtvsPhotonPhi_binWise[6]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt);
+          h_PhotonEtavsPhotonPhi_binWise[6]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt);
+
+        }
+
+	if(searchBins>=30 && searchBins<=34){
+          h_Njets_binWise[7]->Fill(nHadJets,wt);
+          h_Nbjets_binWise[7]->Fill(BTags,wt);
+          h_MET_binWise[7]->Fill(MET,wt);
+          h_PhotonPt_binWise[7]->Fill(bestEMObj.Pt(),wt);
+          h_PhotonEta_binWise[7]->Fill(bestEMObj.Eta(),wt);
+          h_PhotonPhi_binWise[7]->Fill(bestEMObj.Phi(),wt);
+          h_Qmulti_binWise[7]->Fill(qmulti,wt);
+	  h_QmultivsPhotonpT_binWise[7]->Fill(qmulti,bestEMObj.Pt(),wt);
+          h_QmultivsPhotonEta_binWise[7]->Fill(qmulti,bestEMObj.Eta(),wt);
+          h_QmultivsPhotonPhi_binWise[7]->Fill(qmulti,bestEMObj.Phi(),wt);
+          h_PhotonPtvsPhotonEta_binWise[7]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt);
+          h_PhotonPtvsPhotonPhi_binWise[7]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt);
+          h_PhotonEtavsPhotonPhi_binWise[7]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt);
+
+        }
+
+
+
+
+
+
+
 	//Should be moved before the preselections once verified
-	if(HEMaffected == true) continue;
+	// if(HEMaffected == true) continue;
       
-	FillHistogram_Kinematics(4,nHadJets,BTags,bestEMObj.Pt(),mTPhoMET,dPhi_PhoMET,ST,bestEMObj.Eta(),bestEMObj.Phi(),bestEMObj.E(),METPhi,qmulti,leadjet_qmulti, leadjet_Pt,leadbjet_tag,minDR,Jet_matched, hadJets, hadJets[0], NVtx,mindr_Pho_genlep,wt);
-	FillHistogram_Kinematics_varBin(4,nHadJets, BTags, bestEMObj.Pt(),ST,qmulti,wt);
+	// FillHistogram_Kinematics(4,nHadJets,BTags,bestEMObj.Pt(),mTPhoMET,dPhi_PhoMET,ST,bestEMObj.Eta(),bestEMObj.Phi(),bestEMObj.E(),METPhi,qmulti,leadjet_qmulti, leadjet_Pt,leadbjet_tag,minDR,Jet_matched, hadJets, hadJets[0], NVtx,mindr_Pho_genlep,wt);
+	// FillHistogram_Kinematics_varBin(4,nHadJets, BTags, bestEMObj.Pt(),ST,qmulti,wt);
 
 	  //applying l1 prefire issue correction
 	// if(!extracondition) {
@@ -869,23 +1015,178 @@ int hasEle=0;
           // FillHistogram_Kinematics_varBin(6,nHadJets, BTags, bestEMObj.Pt(),ST,qmulti,wt);
 	  
 	  //}
-	double wt1= wt;
-        if(applyL1TrigFire_prob && (s_data.Contains("2016") ||  s_data.Contains("2017") ))
-          {
-            wt1 =wt*NonPrefiringProb;
-          }
+	// double wt1= wt;
+        // if(applyL1TrigFire_prob && (s_data.Contains("2016") ||  s_data.Contains("2017") ))
+        //   {
+        //     wt1 =wt*NonPrefiringProb;
+        //   }
 
-	FillHistogram_Kinematics(8,nHadJets,BTags,bestEMObj.Pt(),mTPhoMET,dPhi_PhoMET,ST,bestEMObj.Eta(),bestEMObj.Phi(),bestEMObj.E(),METPhi,qmulti,leadjet_qmulti, leadjet_Pt,leadbjet_tag,minDR,Jet_matched, hadJets, hadJets[0], NVtx,mindr_Pho_genlep,wt1);
-	FillHistogram_Kinematics_varBin(8,nHadJets, BTags, bestEMObj.Pt(),ST,qmulti,wt1);
+	// FillHistogram_Kinematics(8,nHadJets,BTags,bestEMObj.Pt(),mTPhoMET,dPhi_PhoMET,ST,bestEMObj.Eta(),bestEMObj.Phi(),bestEMObj.E(),METPhi,qmulti,leadjet_qmulti, leadjet_Pt,leadbjet_tag,minDR,Jet_matched, hadJets, hadJets[0], NVtx,mindr_Pho_genlep,wt1);
+	// FillHistogram_Kinematics_varBin(8,nHadJets, BTags, bestEMObj.Pt(),ST,qmulti,wt1);
 	//applying validation
 	int TFbins = getBinNo_v0FR(bestEMObj.Pt(), qmulti, 0.1);
 	double wt_LL = wt*h_TF->GetBinContent(TFbins+1);
-	FillTFBins_Valid(8,nHadJets,BTags,bestEMObj.Pt(),mTPhoMET,dPhi_PhoMET,ST,bestEMObj.Eta(),bestEMObj.Phi(),bestEMObj.E(),METPhi,qmulti,leadjet_qmulti, leadjet_Pt,leadbjet_tag,minDR,Jet_matched, hadJets, hadJets[0], NVtx,mindr_Pho_genlep,wt_LL,wt_LL,wt_LL);
-	
-	if (!extracondition)
-	  {	  FillHistogram_Kinematics(6,nHadJets,BTags,bestEMObj.Pt(),mTPhoMET,dPhi_PhoMET,ST,bestEMObj.Eta(),bestEMObj.Phi(),bestEMObj.E(),METPhi,qmulti,leadjet_qmulti, leadjet_Pt,leadbjet_tag,minDR,Jet_matched, hadJets, hadJets[0], NVtx,mindr_Pho_genlep,wt);
-	    FillHistogram_Kinematics_varBin(6,nHadJets, BTags, bestEMObj.Pt(),ST,qmulti,wt);
+	int TFbins_v7 = getBinNoV1_le(bestEMObj.Pt(),qmulti);//,nHadJets,BTags);
+	double SF_data = h_SF_Data->GetBinContent(2);
+	if(BTags==0)
+	  SF_data = h_SF_Data->GetBinContent(2);
+	else
+	  SF_data = h_SF_Data->GetBinContent(3);
+	double wt_LL1 = wt*h_TF1->GetBinContent(TFbins_v7+1);
+	if(s_sample.Contains("data"))
+	  {
+	    wt_LL  = wt_LL*SF_data;
+	    wt_LL1  = wt_LL1*SF_data;
 	  }
+	FillTFBins_Valid(2,nHadJets,BTags,bestEMObj.Pt(),mTPhoMET,dPhi_PhoMET,ST,bestEMObj.Eta(),bestEMObj.Phi(),bestEMObj.E(),METPhi,qmulti,leadjet_qmulti, leadjet_Pt,leadbjet_tag,minDR,Jet_matched, hadJets, hadJets[0], NVtx,mindr_Pho_genlep,wt_LL,wt_LL1,wt_LL);
+	if(searchBins==9){
+          h_Njets_binWise[16]->Fill(nHadJets,wt_LL);
+          h_Nbjets_binWise[16]->Fill(BTags,wt_LL);
+	  h_MET_binWise[16]->Fill(MET,wt_LL);
+          h_PhotonPt_binWise[16]->Fill(bestEMObj.Pt(),wt_LL);
+          h_PhotonEta_binWise[16]->Fill(bestEMObj.Eta(),wt_LL);
+          h_PhotonPhi_binWise[16]->Fill(bestEMObj.Phi(),wt_LL);
+          h_Qmulti_binWise[16]->Fill(qmulti,wt_LL);
+	  h_QmultivsPhotonpT_binWise[16]->Fill(qmulti,bestEMObj.Pt(),wt_LL);
+          h_QmultivsPhotonEta_binWise[16]->Fill(qmulti,bestEMObj.Eta(),wt_LL);
+          h_QmultivsPhotonPhi_binWise[16]->Fill(qmulti,bestEMObj.Phi(),wt_LL);
+          h_PhotonPtvsPhotonEta_binWise[16]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt_LL);
+          h_PhotonPtvsPhotonPhi_binWise[16]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt_LL);
+          h_PhotonEtavsPhotonPhi_binWise[16]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt_LL);
+
+        }
+        if(searchBins==10){
+          h_Njets_binWise[17]->Fill(nHadJets,wt_LL);
+          h_Nbjets_binWise[17]->Fill(BTags,wt_LL);
+          h_MET_binWise[17]->Fill(MET,wt_LL);
+          h_PhotonPt_binWise[17]->Fill(bestEMObj.Pt(),wt_LL);
+          h_PhotonEta_binWise[17]->Fill(bestEMObj.Eta(),wt_LL);
+          h_PhotonPhi_binWise[17]->Fill(bestEMObj.Phi(),wt_LL);
+          h_Qmulti_binWise[17]->Fill(qmulti,wt_LL);
+	  h_QmultivsPhotonpT_binWise[17]->Fill(qmulti,bestEMObj.Pt(),wt_LL);
+          h_QmultivsPhotonEta_binWise[17]->Fill(qmulti,bestEMObj.Eta(),wt_LL);
+          h_QmultivsPhotonPhi_binWise[17]->Fill(qmulti,bestEMObj.Phi(),wt_LL);
+          h_PhotonPtvsPhotonEta_binWise[17]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt_LL);
+          h_PhotonPtvsPhotonPhi_binWise[17]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt_LL);
+          h_PhotonEtavsPhotonPhi_binWise[17]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt_LL);
+
+        }
+
+	if(searchBins==11 || searchBins==12){
+          h_Njets_binWise[18]->Fill(nHadJets,wt_LL);
+          h_Nbjets_binWise[18]->Fill(BTags,wt_LL);
+          h_MET_binWise[18]->Fill(MET,wt_LL);
+          h_PhotonPt_binWise[18]->Fill(bestEMObj.Pt(),wt_LL);
+          h_PhotonEta_binWise[18]->Fill(bestEMObj.Eta(),wt_LL);
+          h_PhotonPhi_binWise[18]->Fill(bestEMObj.Phi(),wt_LL);
+          h_Qmulti_binWise[18]->Fill(qmulti,wt_LL);
+	  h_QmultivsPhotonpT_binWise[18]->Fill(qmulti,bestEMObj.Pt(),wt_LL);
+          h_QmultivsPhotonEta_binWise[18]->Fill(qmulti,bestEMObj.Eta(),wt_LL);
+          h_QmultivsPhotonPhi_binWise[18]->Fill(qmulti,bestEMObj.Phi(),wt_LL);
+          h_PhotonPtvsPhotonEta_binWise[18]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt_LL);
+          h_PhotonPtvsPhotonPhi_binWise[18]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt_LL);
+          h_PhotonEtavsPhotonPhi_binWise[18]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt_LL);
+
+        }
+        if(searchBins==13||  searchBins==14){
+          h_Njets_binWise[19]->Fill(nHadJets,wt_LL);
+          h_Nbjets_binWise[19]->Fill(BTags,wt_LL);
+          h_MET_binWise[19]->Fill(MET,wt_LL);
+          h_PhotonPt_binWise[19]->Fill(bestEMObj.Pt(),wt_LL);
+          h_PhotonEta_binWise[19]->Fill(bestEMObj.Eta(),wt_LL);
+          h_PhotonPhi_binWise[19]->Fill(bestEMObj.Phi(),wt_LL);
+          h_Qmulti_binWise[19]->Fill(qmulti,wt_LL);
+	  h_QmultivsPhotonpT_binWise[19]->Fill(qmulti,bestEMObj.Pt(),wt_LL);
+          h_QmultivsPhotonEta_binWise[19]->Fill(qmulti,bestEMObj.Eta(),wt_LL);
+          h_QmultivsPhotonPhi_binWise[19]->Fill(qmulti,bestEMObj.Phi(),wt_LL);
+          h_PhotonPtvsPhotonEta_binWise[19]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt_LL);
+          h_PhotonPtvsPhotonPhi_binWise[19]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt_LL);
+          h_PhotonEtavsPhotonPhi_binWise[19]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt_LL);
+
+        }
+        if(searchBins==15){
+          h_Njets_binWise[20]->Fill(nHadJets,wt_LL);
+          h_Nbjets_binWise[20]->Fill(BTags,wt_LL);
+          h_MET_binWise[20]->Fill(MET,wt_LL);
+          h_PhotonPt_binWise[20]->Fill(bestEMObj.Pt(),wt_LL);
+          h_PhotonEta_binWise[20]->Fill(bestEMObj.Eta(),wt_LL);
+          h_PhotonPhi_binWise[20]->Fill(bestEMObj.Phi(),wt_LL);
+          h_Qmulti_binWise[20]->Fill(qmulti,wt_LL);
+	  h_QmultivsPhotonpT_binWise[20]->Fill(qmulti,bestEMObj.Pt(),wt_LL);
+          h_QmultivsPhotonEta_binWise[20]->Fill(qmulti,bestEMObj.Eta(),wt_LL);
+          h_QmultivsPhotonPhi_binWise[20]->Fill(qmulti,bestEMObj.Phi(),wt_LL);
+          h_PhotonPtvsPhotonEta_binWise[20]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt_LL);
+          h_PhotonPtvsPhotonPhi_binWise[20]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt_LL);
+          h_PhotonEtavsPhotonPhi_binWise[20]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt_LL);
+
+        }
+
+        if(searchBins==16){
+          h_Njets_binWise[21]->Fill(nHadJets,wt_LL);
+          h_Nbjets_binWise[21]->Fill(BTags,wt_LL);
+          h_MET_binWise[21]->Fill(MET,wt_LL);
+          h_PhotonPt_binWise[21]->Fill(bestEMObj.Pt(),wt_LL);
+          h_PhotonEta_binWise[21]->Fill(bestEMObj.Eta(),wt_LL);
+          h_PhotonPhi_binWise[21]->Fill(bestEMObj.Phi(),wt_LL);
+          h_Qmulti_binWise[21]->Fill(qmulti,wt_LL);
+	  h_QmultivsPhotonpT_binWise[21]->Fill(qmulti,bestEMObj.Pt(),wt_LL);
+          h_QmultivsPhotonEta_binWise[21]->Fill(qmulti,bestEMObj.Eta(),wt_LL);
+          h_QmultivsPhotonPhi_binWise[21]->Fill(qmulti,bestEMObj.Phi(),wt_LL);
+          h_PhotonPtvsPhotonEta_binWise[21]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt_LL);
+          h_PhotonPtvsPhotonPhi_binWise[21]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt_LL);
+          h_PhotonEtavsPhotonPhi_binWise[21]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt_LL);
+
+        }
+
+        if(searchBins==17 || searchBins==18){
+          h_Njets_binWise[22]->Fill(nHadJets,wt_LL);
+          h_Nbjets_binWise[22]->Fill(BTags,wt_LL);
+          h_MET_binWise[22]->Fill(MET,wt_LL);
+          h_PhotonPt_binWise[22]->Fill(bestEMObj.Pt(),wt_LL);
+          h_PhotonEta_binWise[22]->Fill(bestEMObj.Eta(),wt_LL);
+          h_PhotonPhi_binWise[22]->Fill(bestEMObj.Phi(),wt_LL);
+          h_Qmulti_binWise[22]->Fill(qmulti,wt_LL);
+	  h_QmultivsPhotonpT_binWise[22]->Fill(qmulti,bestEMObj.Pt(),wt_LL);
+          h_QmultivsPhotonEta_binWise[22]->Fill(qmulti,bestEMObj.Eta(),wt_LL);
+          h_QmultivsPhotonPhi_binWise[22]->Fill(qmulti,bestEMObj.Phi(),wt_LL);
+          h_PhotonPtvsPhotonEta_binWise[22]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt_LL);
+          h_PhotonPtvsPhotonPhi_binWise[22]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt_LL);
+          h_PhotonEtavsPhotonPhi_binWise[22]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt_LL);
+
+        }
+
+        if(searchBins>=30 && searchBins<=34){
+          h_Njets_binWise[23]->Fill(nHadJets,wt_LL);
+          h_Nbjets_binWise[23]->Fill(BTags,wt_LL);
+          h_MET_binWise[23]->Fill(MET,wt_LL);
+          h_PhotonPt_binWise[23]->Fill(bestEMObj.Pt(),wt_LL);
+          h_PhotonEta_binWise[23]->Fill(bestEMObj.Eta(),wt_LL);
+          h_PhotonPhi_binWise[23]->Fill(bestEMObj.Phi(),wt_LL);
+          h_Qmulti_binWise[23]->Fill(qmulti,wt_LL);
+	  h_QmultivsPhotonpT_binWise[23]->Fill(qmulti,bestEMObj.Pt(),wt_LL);
+          h_QmultivsPhotonEta_binWise[23]->Fill(qmulti,bestEMObj.Eta(),wt_LL);
+          h_QmultivsPhotonPhi_binWise[23]->Fill(qmulti,bestEMObj.Phi(),wt_LL);
+          h_PhotonPtvsPhotonEta_binWise[23]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt_LL);
+          h_PhotonPtvsPhotonPhi_binWise[23]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt_LL);
+          h_PhotonEtavsPhotonPhi_binWise[23]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt_LL);
+
+        }
+
+      
+	h_QmultivsPhotonpT_binWise[24]->Fill(qmulti,bestEMObj.Pt(),wt);
+	h_QmultivsPhotonEta_binWise[24]->Fill(qmulti,bestEMObj.Eta(),wt);
+	h_QmultivsPhotonPhi_binWise[24]->Fill(qmulti,bestEMObj.Phi(),wt);
+	h_PhotonPtvsPhotonEta_binWise[24]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt);
+	h_PhotonPtvsPhotonPhi_binWise[24]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt);
+	h_PhotonEtavsPhotonPhi_binWise[24]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt);
+
+
+
+	
+	// if (!extracondition)
+	//   {	  FillHistogram_Kinematics(6,nHadJets,BTags,bestEMObj.Pt(),mTPhoMET,dPhi_PhoMET,ST,bestEMObj.Eta(),bestEMObj.Phi(),bestEMObj.E(),METPhi,qmulti,leadjet_qmulti, leadjet_Pt,leadbjet_tag,minDR,Jet_matched, hadJets, hadJets[0], NVtx,mindr_Pho_genlep,wt);
+	//     FillHistogram_Kinematics_varBin(6,nHadJets, BTags, bestEMObj.Pt(),ST,qmulti,wt);
+	//   }
       
       }
     }
@@ -916,30 +1217,172 @@ int hasEle=0;
       if(pho_SR) {
 	FillHistogram_Kinematics(3,nHadJets,BTags,bestEMObj.Pt(),mTPhoMET,dPhi_PhoMET,ST,bestEMObj.Eta(),bestEMObj.Phi(),bestEMObj.E(),METPhi,qmulti, leadjet_qmulti, leadjet_Pt,leadbjet_tag,minDR,Jet_matched, hadJets, hadJets[0], NVtx,mindr_Pho_genlep,wt);
 	FillHistogram_Kinematics_varBin(3,nHadJets, BTags, bestEMObj.Pt(),ST,qmulti,wt);
+	h_QmultivsPhotonpT_binWise[25]->Fill(qmulti,bestEMObj.Pt(),wt);
+	h_QmultivsPhotonEta_binWise[25]->Fill(qmulti,bestEMObj.Eta(),wt);
+	h_QmultivsPhotonPhi_binWise[25]->Fill(qmulti,bestEMObj.Phi(),wt);
+	h_PhotonPtvsPhotonEta_binWise[25]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt);
+	h_PhotonPtvsPhotonPhi_binWise[25]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt);
+	h_PhotonEtavsPhotonPhi_binWise[25]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt);
+
+	int searchBins = getBinNoV6_WithOnlyBLSelec(nHadJets,BTags);	
+	if(searchBins==9){
+          h_Njets_binWise[8]->Fill(nHadJets,wt);
+          h_Nbjets_binWise[8]->Fill(BTags,wt);
+          h_MET_binWise[8]->Fill(MET,wt);
+          h_PhotonPt_binWise[8]->Fill(bestEMObj.Pt(),wt);
+          h_PhotonEta_binWise[8]->Fill(bestEMObj.Eta(),wt);
+          h_PhotonPhi_binWise[8]->Fill(bestEMObj.Phi(),wt);
+          h_Qmulti_binWise[8]->Fill(qmulti,wt);
+	  h_QmultivsPhotonpT_binWise[8]->Fill(qmulti,bestEMObj.Pt(),wt);
+          h_QmultivsPhotonEta_binWise[8]->Fill(qmulti,bestEMObj.Eta(),wt);
+          h_QmultivsPhotonPhi_binWise[8]->Fill(qmulti,bestEMObj.Phi(),wt);
+          h_PhotonPtvsPhotonEta_binWise[8]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt);
+          h_PhotonPtvsPhotonPhi_binWise[8]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt);
+          h_PhotonEtavsPhotonPhi_binWise[8]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt);
+
+        }
+        if(searchBins==10){
+          h_Njets_binWise[9]->Fill(nHadJets,wt);
+          h_Nbjets_binWise[9]->Fill(BTags,wt);
+          h_MET_binWise[9]->Fill(MET,wt);
+          h_PhotonPt_binWise[9]->Fill(bestEMObj.Pt(),wt);
+          h_PhotonEta_binWise[9]->Fill(bestEMObj.Eta(),wt);
+          h_PhotonPhi_binWise[9]->Fill(bestEMObj.Phi(),wt);
+          h_Qmulti_binWise[9]->Fill(qmulti,wt);
+	  h_QmultivsPhotonpT_binWise[9]->Fill(qmulti,bestEMObj.Pt(),wt);
+          h_QmultivsPhotonEta_binWise[9]->Fill(qmulti,bestEMObj.Eta(),wt);
+          h_QmultivsPhotonPhi_binWise[9]->Fill(qmulti,bestEMObj.Phi(),wt);
+          h_PhotonPtvsPhotonEta_binWise[9]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt);
+          h_PhotonPtvsPhotonPhi_binWise[9]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt);
+          h_PhotonEtavsPhotonPhi_binWise[9]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt);
+
+	}
+        if(searchBins==11 || searchBins==12){
+          h_Njets_binWise[10]->Fill(nHadJets,wt);
+          h_Nbjets_binWise[10]->Fill(BTags,wt);
+          h_MET_binWise[10]->Fill(MET,wt);
+	  h_PhotonPt_binWise[10]->Fill(bestEMObj.Pt(),wt);
+          h_PhotonEta_binWise[10]->Fill(bestEMObj.Eta(),wt);
+          h_PhotonPhi_binWise[10]->Fill(bestEMObj.Phi(),wt);
+          h_Qmulti_binWise[10]->Fill(qmulti,wt);
+	  h_QmultivsPhotonpT_binWise[10]->Fill(qmulti,bestEMObj.Pt(),wt);
+          h_QmultivsPhotonEta_binWise[10]->Fill(qmulti,bestEMObj.Eta(),wt);
+          h_QmultivsPhotonPhi_binWise[10]->Fill(qmulti,bestEMObj.Phi(),wt);
+          h_PhotonPtvsPhotonEta_binWise[10]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt);
+          h_PhotonPtvsPhotonPhi_binWise[10]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt);
+          h_PhotonEtavsPhotonPhi_binWise[10]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt);
+
+        }
+
+	if(searchBins==13||  searchBins==14){
+          h_Njets_binWise[11]->Fill(nHadJets,wt);
+          h_Nbjets_binWise[11]->Fill(BTags,wt);
+          h_MET_binWise[11]->Fill(MET,wt);
+          h_PhotonPt_binWise[11]->Fill(bestEMObj.Pt(),wt);
+          h_PhotonEta_binWise[11]->Fill(bestEMObj.Eta(),wt);
+          h_PhotonPhi_binWise[11]->Fill(bestEMObj.Phi(),wt);
+          h_Qmulti_binWise[11]->Fill(qmulti,wt);
+	  h_QmultivsPhotonpT_binWise[11]->Fill(qmulti,bestEMObj.Pt(),wt);
+          h_QmultivsPhotonEta_binWise[11]->Fill(qmulti,bestEMObj.Eta(),wt);
+          h_QmultivsPhotonPhi_binWise[11]->Fill(qmulti,bestEMObj.Phi(),wt);
+          h_PhotonPtvsPhotonEta_binWise[11]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt);
+          h_PhotonPtvsPhotonPhi_binWise[11]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt);
+          h_PhotonEtavsPhotonPhi_binWise[11]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt);
+
+        }
+
+	if(searchBins==15){
+          h_Njets_binWise[12]->Fill(nHadJets,wt);
+          h_Nbjets_binWise[12]->Fill(BTags,wt);
+          h_MET_binWise[12]->Fill(MET,wt);
+          h_PhotonPt_binWise[12]->Fill(bestEMObj.Pt(),wt);
+          h_PhotonEta_binWise[12]->Fill(bestEMObj.Eta(),wt);
+          h_PhotonPhi_binWise[12]->Fill(bestEMObj.Phi(),wt);
+          h_Qmulti_binWise[12]->Fill(qmulti,wt);
+	  h_QmultivsPhotonpT_binWise[12]->Fill(qmulti,bestEMObj.Pt(),wt);
+          h_QmultivsPhotonEta_binWise[12]->Fill(qmulti,bestEMObj.Eta(),wt);
+          h_QmultivsPhotonPhi_binWise[12]->Fill(qmulti,bestEMObj.Phi(),wt);
+          h_PhotonPtvsPhotonEta_binWise[12]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt);
+          h_PhotonPtvsPhotonPhi_binWise[12]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt);
+          h_PhotonEtavsPhotonPhi_binWise[12]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt);
+
+        }
+
+        if(searchBins==16){
+          h_Njets_binWise[13]->Fill(nHadJets,wt);
+          h_Nbjets_binWise[13]->Fill(BTags,wt);
+          h_MET_binWise[13]->Fill(MET,wt);
+          h_PhotonPt_binWise[13]->Fill(bestEMObj.Pt(),wt);
+          h_PhotonEta_binWise[13]->Fill(bestEMObj.Eta(),wt);
+          h_PhotonPhi_binWise[13]->Fill(bestEMObj.Phi(),wt);
+          h_Qmulti_binWise[13]->Fill(qmulti,wt);
+	  h_QmultivsPhotonpT_binWise[13]->Fill(qmulti,bestEMObj.Pt(),wt);
+          h_QmultivsPhotonEta_binWise[13]->Fill(qmulti,bestEMObj.Eta(),wt);
+          h_QmultivsPhotonPhi_binWise[13]->Fill(qmulti,bestEMObj.Phi(),wt);
+          h_PhotonPtvsPhotonEta_binWise[13]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt);
+          h_PhotonPtvsPhotonPhi_binWise[13]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt);
+          h_PhotonEtavsPhotonPhi_binWise[13]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt);
+
+        }
+
+        if(searchBins==17 || searchBins==18){
+          h_Njets_binWise[14]->Fill(nHadJets,wt);
+          h_Nbjets_binWise[14]->Fill(BTags,wt);
+          h_MET_binWise[14]->Fill(MET,wt);
+          h_PhotonPt_binWise[14]->Fill(bestEMObj.Pt(),wt);
+          h_PhotonEta_binWise[14]->Fill(bestEMObj.Eta(),wt);
+          h_PhotonPhi_binWise[14]->Fill(bestEMObj.Phi(),wt);
+          h_Qmulti_binWise[14]->Fill(qmulti,wt);
+	  h_QmultivsPhotonpT_binWise[14]->Fill(qmulti,bestEMObj.Pt(),wt);
+          h_QmultivsPhotonEta_binWise[14]->Fill(qmulti,bestEMObj.Eta(),wt);
+          h_QmultivsPhotonPhi_binWise[14]->Fill(qmulti,bestEMObj.Phi(),wt);
+          h_PhotonPtvsPhotonEta_binWise[14]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt);
+          h_PhotonPtvsPhotonPhi_binWise[14]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt);
+          h_PhotonEtavsPhotonPhi_binWise[14]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt);
+
+        }
+
+        if(searchBins>=30 && searchBins<=34){
+          h_Njets_binWise[15]->Fill(nHadJets,wt);
+          h_Nbjets_binWise[15]->Fill(BTags,wt);
+          h_MET_binWise[15]->Fill(MET,wt);
+          h_PhotonPt_binWise[15]->Fill(bestEMObj.Pt(),wt);
+          h_PhotonEta_binWise[15]->Fill(bestEMObj.Eta(),wt);
+          h_PhotonPhi_binWise[15]->Fill(bestEMObj.Phi(),wt);
+          h_Qmulti_binWise[15]->Fill(qmulti,wt);
+	  h_QmultivsPhotonpT_binWise[15]->Fill(qmulti,bestEMObj.Pt(),wt);
+          h_QmultivsPhotonEta_binWise[15]->Fill(qmulti,bestEMObj.Eta(),wt);
+          h_QmultivsPhotonPhi_binWise[15]->Fill(qmulti,bestEMObj.Phi(),wt);
+          h_PhotonPtvsPhotonEta_binWise[15]->Fill(bestEMObj.Pt(),bestEMObj.Eta(),wt);
+          h_PhotonPtvsPhotonPhi_binWise[15]->Fill(bestEMObj.Pt(),bestEMObj.Phi(),wt);
+          h_PhotonEtavsPhotonPhi_binWise[15]->Fill(bestEMObj.Eta(),bestEMObj.Phi(),wt);
+
+        }
+
 
         // // //Should be moved before the preselections once verified                                                                                                     
-	if(HEMaffected == true) continue;
+	// if(HEMaffected == true) continue;
       
-	FillHistogram_Kinematics(5,nHadJets,BTags,bestEMObj.Pt(),mTPhoMET,dPhi_PhoMET,ST,bestEMObj.Eta(),bestEMObj.Phi(),bestEMObj.E(),METPhi,qmulti,leadjet_qmulti, leadjet_Pt,leadbjet_tag,minDR,Jet_matched, hadJets, hadJets[0], NVtx,mindr_Pho_genlep,wt);
-	FillHistogram_Kinematics_varBin(5,nHadJets, BTags, bestEMObj.Pt(),ST,qmulti,wt);
+	// FillHistogram_Kinematics(5,nHadJets,BTags,bestEMObj.Pt(),mTPhoMET,dPhi_PhoMET,ST,bestEMObj.Eta(),bestEMObj.Phi(),bestEMObj.E(),METPhi,qmulti,leadjet_qmulti, leadjet_Pt,leadbjet_tag,minDR,Jet_matched, hadJets, hadJets[0], NVtx,mindr_Pho_genlep,wt);
+	// FillHistogram_Kinematics_varBin(5,nHadJets, BTags, bestEMObj.Pt(),ST,qmulti,wt);
 
 	
-	// if(!L1prefire_issue) {
-	//   FillHistogram_Kinematics(7,nHadJets,BTags,bestEMObj.Pt(),mTPhoMET,dPhi_PhoMET,ST,bestEMObj.Eta(),bestEMObj.Phi(),bestEMObj.E(),METPhi,qmulti,leadjet_qmulti , leadjet_Pt,leadbjet_tag,minDR,Jet_matched, hadJets, hadJets[0], NVtx,mindr_Pho_genlep,wt);
-	//   FillHistogram_Kinematics_varBin(7,nHadJets, BTags, bestEMObj.Pt(),ST,qmulti,wt);
-	// }
-	double wt1= wt;
-	if(applyL1TrigFire_prob && (s_data.Contains("2016") ||  s_data.Contains("2017") ))
-	  {
-	    wt1 =wt*NonPrefiringProb;
-	  }
-	FillHistogram_Kinematics(9,nHadJets,BTags,bestEMObj.Pt(),mTPhoMET,dPhi_PhoMET,ST,bestEMObj.Eta(),bestEMObj.Phi(),bestEMObj.E(),METPhi,qmulti,leadjet_qmulti, leadjet_Pt,leadbjet_tag,minDR,Jet_matched, hadJets, hadJets[0], NVtx,mindr_Pho_genlep,wt1);
-	FillHistogram_Kinematics_varBin(9,nHadJets, BTags, bestEMObj.Pt(),ST,qmulti,wt1);		
+	// // if(!L1prefire_issue) {
+	// //   FillHistogram_Kinematics(7,nHadJets,BTags,bestEMObj.Pt(),mTPhoMET,dPhi_PhoMET,ST,bestEMObj.Eta(),bestEMObj.Phi(),bestEMObj.E(),METPhi,qmulti,leadjet_qmulti , leadjet_Pt,leadbjet_tag,minDR,Jet_matched, hadJets, hadJets[0], NVtx,mindr_Pho_genlep,wt);
+	// //   FillHistogram_Kinematics_varBin(7,nHadJets, BTags, bestEMObj.Pt(),ST,qmulti,wt);
+	// // }
+	// double wt1= wt;
+	// if(applyL1TrigFire_prob && (s_data.Contains("2016") ||  s_data.Contains("2017") ))
+	//   {
+	//     wt1 =wt*NonPrefiringProb;
+	//   }
+	// FillHistogram_Kinematics(9,nHadJets,BTags,bestEMObj.Pt(),mTPhoMET,dPhi_PhoMET,ST,bestEMObj.Eta(),bestEMObj.Phi(),bestEMObj.E(),METPhi,qmulti,leadjet_qmulti, leadjet_Pt,leadbjet_tag,minDR,Jet_matched, hadJets, hadJets[0], NVtx,mindr_Pho_genlep,wt1);
+	// FillHistogram_Kinematics_varBin(9,nHadJets, BTags, bestEMObj.Pt(),ST,qmulti,wt1);		
 
-	if (!extracondition)
-          {       FillHistogram_Kinematics(7,nHadJets,BTags,bestEMObj.Pt(),mTPhoMET,dPhi_PhoMET,ST,bestEMObj.Eta(),bestEMObj.Phi(),bestEMObj.E(),METPhi,qmulti,leadjet_qmulti, leadjet_Pt,leadbjet_tag,minDR,Jet_matched, hadJets, hadJets[0], NVtx,mindr_Pho_genlep,wt);
-            FillHistogram_Kinematics_varBin(7,nHadJets, BTags, bestEMObj.Pt(),ST,qmulti,wt);
-          }
+	// if (!extracondition)
+        //   {       FillHistogram_Kinematics(7,nHadJets,BTags,bestEMObj.Pt(),mTPhoMET,dPhi_PhoMET,ST,bestEMObj.Eta(),bestEMObj.Phi(),bestEMObj.E(),METPhi,qmulti,leadjet_qmulti, leadjet_Pt,leadbjet_tag,minDR,Jet_matched, hadJets, hadJets[0], NVtx,mindr_Pho_genlep,wt);
+        //     FillHistogram_Kinematics_varBin(7,nHadJets, BTags, bestEMObj.Pt(),ST,qmulti,wt);
+        //   }
 
 
       }
@@ -998,7 +1441,7 @@ int hasEle=0;
 int AnalyzeLightBSM::getBinNo_v0FR(double pho_pt,double qmulti, double minDRindx){
   int sBin=0,m_i=1,sBin1=0,n_i=0; 
   for(int i=0;i<BestPhotonPtBinLowEdge.size()-1;i++){
-    if(BestPhotonPtBinLowEdge[i]<99.99) continue; 
+    //if(BestPhotonPtBinLowEdge[i]<99.99) continue; 
     //if(qmulti>=10) continue;
     if(i!=0)
       m_i++;  
@@ -1036,7 +1479,7 @@ int AnalyzeLightBSM::getBinNo_v0FR(double pho_pt,double qmulti, double minDRindx
 int AnalyzeLightBSM::getBinNo_v1FR(double pho_pt, int nHadJets){
   int sBin=0,m_i=1,sBin1=0,n_i=0; 
   for(int i=0;i<BestPhotonPtBinLowEdge.size()-1;i++){
-    if(BestPhotonPtBinLowEdge[i]<99.99) continue; 
+    //    if(BestPhotonPtBinLowEdge[i]<99.99) continue; 
     if (i!=0)
       m_i++;  
     if(pho_pt >= BestPhotonPtBinLowEdge[i] && pho_pt < BestPhotonPtBinLowEdge[i+1])
@@ -1285,22 +1728,51 @@ int AnalyzeLightBSM::getBinNoV16_le(int nHadJets, int nbjets, double photon_pT){
 }
 
 
-int AnalyzeLightBSM::getBinNoV1_le( int nHadJets, int nbjets){
-  int sBin=-100,m_i=0;
-  if(nbjets==0){
-    if(nHadJets==2)     { sBin=1;}
-    else if(nHadJets==3)     { sBin=2;}
-    else if(nHadJets==4)     { sBin=3;}
-    else if((nHadJets==5 || nHadJets==6)){ sBin=4;}
-    else if(nHadJets>=7)   { sBin=5;}
+int AnalyzeLightBSM::getBinNoV1_le( double pho_pt,double qmulti){
+  int sBin=0,m_i=1,sBin1=0,n_i=0;
+  for(int i=0;i<BestPhotonPtBinLowEdge1.size()-1;i++){
+    if(i!=0)
+      m_i++;
+    if(pho_pt >= BestPhotonPtBinLowEdge1[i] && pho_pt < BestPhotonPtBinLowEdge1[i+1])
+      {
+        sBin = sBin+((m_i-1)*3);
+
+        break;
+
+      }
+    else if(pho_pt >= BestPhotonPtBinLowEdge1[BestPhotonPtBinLowEdge1.size()-1])
+      {
+        sBin = 27;
+        break;
+      }
   }
-  else{
-    if(nHadJets>=2 && nHadJets<=4)      { sBin=6;}
-    else if((nHadJets==5 || nHadJets==6)){ sBin=7;}
-    else if(nHadJets>=7)   { sBin=8;}
-  }
-  return sBin;
+  if(sBin%3==0)
+    {
+      for(int i=0;i<QMultLowedge1.size()-1;i++){
+        n_i++;
+        if(qmulti>=QMultLowedge1[i] && qmulti<QMultLowedge1[i+1]) {sBin1=sBin+n_i; break;}
+        else if(qmulti>=QMultLowedge1[QMultLowedge1.size()-1]){sBin1=sBin1+(QMultLowedge1.size()-1); break;}
+      }
+    }
+  return sBin1;
 }
+
+    
+  // int sBin=-100,m_i=0;
+  // if(nbjets==0){
+  //   if(nHadJets==2)     { sBin=1;}
+  //   else if(nHadJets==3)     { sBin=2;}
+  //   else if(nHadJets==4)     { sBin=3;}
+  //   else if((nHadJets==5 || nHadJets==6)){ sBin=4;}
+  //   else if(nHadJets>=7)   { sBin=5;}
+  // }
+  // else{
+  //   if(nHadJets>=2 && nHadJets<=4)      { sBin=6;}
+  //   else if((nHadJets==5 || nHadJets==6)){ sBin=7;}
+  //   else if(nHadJets>=7)   { sBin=8;}
+  // }
+  // return sBin;
+
 int AnalyzeLightBSM::getBinNoV7(int nHadJets, int btags){
   int sBin=-100,m_i=0;
   if(btags==0){
@@ -1635,7 +2107,7 @@ void AnalyzeLightBSM::FillHistogram_Kinematics(int i, int Njets, int btags, doub
   h_leadbjet_tag_vsQmulti[i]->Fill(leadbjet_tag,qmulti,wt);
   h_leadjet_ptvsqmulti[i]->Fill(leadJet_Pt,qmulti,wt);
 
-  int TFbins_v2 = getBinNoV1_le(Njets,btags);
+  int TFbins_v2 = getBinNoV1_le(pho_Pt, qmulti);
   int TFbins_v3 = getBinNoV16_le(Njets,btags,pho_Pt);
   int searchBin = getBinNoV6_WithOnlyBLSelec(Njets,btags);
   int TFbins_v4 = getBinNoV7_le(Njets,btags);
@@ -1666,19 +2138,16 @@ void AnalyzeLightBSM::FillTFBins_Valid(int i, int Njets, int btags, double pho_P
   h_St_validation[i]->Fill(ST,wt);
   h_Photon_Eta_validation[i]->Fill(Eta,wt);
   h_Photon_Phi_validation[i]->Fill(Phi,wt);
-  //  cout<<"just after EM phi  "<<endl;
 
   h_Photon_E_validation[i]->Fill(E,wt);
   h_MET_Phi_validation[i]->Fill(METPhi,wt);
   h_qmulti_1_validation[i]->Fill(qmulti,wt);
   h_nvrtx_validation[i]->Fill(nvrtx,wt);
-  //cout<<"just after n vertex "<<endl;
 
   h_minDR_Jets_EMObject_validation[i]->Fill(mindR,wt);
   h_Phi_matchedJet_validation[i]->Fill(Jet_matched.Phi(),wt);
   h_Pt_matchedJet_validation[i]->Fill(Jet_matched.Pt(),wt);
   h_Eta_matchedJet_validation[i]->Fill(Jet_matched.Eta(),wt);
-  //  cout<<"just after matched jet  "<<endl;
 
   h_HT5HT_validation[i]->Fill(HT5/HT,wt);
   for(int j=0; j<hadJets.size();j++){
@@ -1691,12 +2160,43 @@ void AnalyzeLightBSM::FillTFBins_Valid(int i, int Njets, int btags, double pho_P
     double dPhi_METjet = abs(Met.DeltaPhi(hadJets[j]));
     h_dPhi_METJet_validation[j][i]->Fill(dPhi_METjet,wt);
   }
-  //cout<<"just after jet loop  "<<endl;
-
   h_leadJets_qmulti_validation[i]->Fill(leadJets_qmulti,wt);
   h_leadJet_Pt_validation[i]->Fill(leadJet_Pt,wt);
   h_leadbjet_tag_validation[i]->Fill(leadbjet_tag,wt);
-  //cout<<"just after lead jet  "<<endl;
+
+
+  //
+  h_Mt_PhoMET_validation_TFbins_v2[i]->Fill(mt_phoMET,wt1);
+  h_dPhi_PhoMET_validation_TFbins_v2[i]->Fill(dPhi,wt1);
+  h_St_validation_TFbins_v2[i]->Fill(ST,wt1);
+  h_Photon_Eta_validation_TFbins_v2[i]->Fill(Eta,wt1);
+  h_Photon_Phi_validation_TFbins_v2[i]->Fill(Phi,wt1);
+
+  h_Photon_E_validation_TFbins_v2[i]->Fill(E,wt1);
+  h_MET_Phi_validation_TFbins_v2[i]->Fill(METPhi,wt1);
+  h_qmulti_1_validation_TFbins_v2[i]->Fill(qmulti,wt1);
+  h_nvrtx_validation_TFbins_v2[i]->Fill(nvrtx,wt1);
+
+  h_minDR_Jets_EMObject_validation_TFbins_v2[i]->Fill(mindR,wt1);
+  h_Phi_matchedJet_validation_TFbins_v2[i]->Fill(Jet_matched.Phi(),wt1);
+  h_Pt_matchedJet_validation_TFbins_v2[i]->Fill(Jet_matched.Pt(),wt1);
+  h_Eta_matchedJet_validation_TFbins_v2[i]->Fill(Jet_matched.Eta(),wt1);
+
+  h_HT5HT_validation_TFbins_v2[i]->Fill(HT5/HT,wt1);
+  for(int j=0; j<hadJets.size();j++){
+    if (j>=4) continue;
+    h_Phi_leadJet_validation_TFbins_v2[j][i]->Fill(hadJets[j].Phi(),wt1);
+    h_Pt_leadJet_validation_TFbins_v2[j][i]->Fill(hadJets[j].Pt(),wt1);
+    h_Eta_leadJet_validation_TFbins_v2[j][i]->Fill(hadJets[j].Eta(),wt1);
+    TLorentzVector Met;
+    Met.SetPtEtaPhiE(MET,0,METPhi,0);
+    double dPhi_METjet = abs(Met.DeltaPhi(hadJets[j]));
+    h_dPhi_METJet_validation_TFbins_v2[j][i]->Fill(dPhi_METjet,wt1);
+  }
+  h_leadJets_qmulti_validation_TFbins_v2[i]->Fill(leadJets_qmulti,wt1);
+  h_leadJet_Pt_validation_TFbins_v2[i]->Fill(leadJet_Pt,wt1);
+  h_leadbjet_tag_validation_TFbins_v2[i]->Fill(leadbjet_tag,wt1);
+
 
   //old ones
   int TFbins_v2 = getBinNo_v0FR(pho_Pt, qmulti, 0.1);
@@ -1741,7 +2241,7 @@ void AnalyzeLightBSM::FillHistogram_Kinematics_varBin(int i, int Njets, int btag
   h_PhotonPt_Varbin[i]->Fill(pho_Pt,wt);
   h_St_Varbin[i]->Fill(ST,wt);
   h_qmulti_Varbin[i]->Fill(qmulti,wt);
-    h_qmultiVs_phopT_Varbin[i]->Fill(pho_Pt,qmulti,wt);
+  h_qmultiVs_phopT_Varbin[i]->Fill(pho_Pt,qmulti,wt);
   //h_HT_Varbin[i]->Fill(HT,wt);
   //cout<<h_Njets[i]->GetMean()<<endl;                                                                                                            
 

@@ -1,0 +1,16 @@
+root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV20/Run2016F-UL2016-v2/MET/0_RA2AnalysisTree.root
+root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV20/Run2016F-UL2016-v2/MET/10_RA2AnalysisTree.root
+root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV20/Run2016F-UL2016-v2/MET/11_RA2AnalysisTree.root
+root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV20/Run2016F-UL2016-v2/MET/12_RA2AnalysisTree.root
+root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV20/Run2016F-UL2016-v2/MET/13_RA2AnalysisTree.root
+root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV20/Run2016F-UL2016-v2/MET/14_RA2AnalysisTree.root
+root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV20/Run2016F-UL2016-v2/MET/15_RA2AnalysisTree.root
+root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV20/Run2016F-UL2016-v2/MET/1_RA2AnalysisTree.root
+root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV20/Run2016F-UL2016-v2/MET/2_RA2AnalysisTree.root
+root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV20/Run2016F-UL2016-v2/MET/3_RA2AnalysisTree.root
+root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV20/Run2016F-UL2016-v2/MET/4_RA2AnalysisTree.root
+root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV20/Run2016F-UL2016-v2/MET/5_RA2AnalysisTree.root
+root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV20/Run2016F-UL2016-v2/MET/6_RA2AnalysisTree.root
+root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV20/Run2016F-UL2016-v2/MET/7_RA2AnalysisTree.root
+root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV20/Run2016F-UL2016-v2/MET/8_RA2AnalysisTree.root
+root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV20/Run2016F-UL2016-v2/MET/9_RA2AnalysisTree.root

@@ -1,0 +1,1 @@
+root://cmseos.fnal.gov//store/user/lpcsusyphotons/kalpana/SkimsUL_June2023/skimmed_Summer20UL16_WGJets_MonoPhoton_PtG-130_TuneCP5_13TeV-madgraph-pythia8.root

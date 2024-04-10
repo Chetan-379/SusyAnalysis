@@ -1,0 +1,7 @@
+root://cmseos.fnal.gov//store/user/lpcsusyphotons/kalpana/SkimsUL_June2023/skimmed_Summer20UL17_QCD_HT-1000to1500_TuneCP5_PSWeights_13TeV-madgraph-pythia8.root
+root://cmseos.fnal.gov//store/user/lpcsusyphotons/kalpana/SkimsUL_June2023/skimmed_Summer20UL17_QCD_HT-1500to2000_TuneCP5_PSWeights_13TeV-madgraph-pythia8.root
+root://cmseos.fnal.gov//store/user/lpcsusyphotons/kalpana/SkimsUL_June2023/skimmed_Summer20UL17_QCD_HT-2000toInf_TuneCP5_PSWeights_13TeV-madgraph-pythia8.root
+root://cmseos.fnal.gov//store/user/lpcsusyphotons/kalpana/SkimsUL_June2023/skimmed_Summer20UL17_QCD_HT-200to300_TuneCP5_PSWeights_13TeV-madgraph-pythia8.root
+root://cmseos.fnal.gov//store/user/lpcsusyphotons/kalpana/SkimsUL_June2023/skimmed_Summer20UL17_QCD_HT-300to500_TuneCP5_PSWeights_13TeV-madgraph-pythia8.root
+root://cmseos.fnal.gov//store/user/lpcsusyphotons/kalpana/SkimsUL_June2023/skimmed_Summer20UL17_QCD_HT-500to700_TuneCP5_PSWeights_13TeV-madgraph-pythia8.root
+root://cmseos.fnal.gov//store/user/lpcsusyphotons/kalpana/SkimsUL_June2023/skimmed_Summer20UL17_QCD_HT-700to1000_TuneCP5_PSWeights_13TeV-madgraph-pythia8.root

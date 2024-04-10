@@ -51,7 +51,7 @@ class AnalyzeLightBSM : public NtupleVariables{
   double getGenLep(TLorentzVector);
   double getGenRecodRLep(TLorentzVector);
   int getBinNoV7_le(int , int);
-  int getBinNoV1_le(double , double);
+  int getBinNoV1_le(int , int);
   int getBinNoV2_st(int,int, int, int);
   int   getBinNoV7_highMET(int, int);
   int getBinNoV16_le(int, int, double);
@@ -62,7 +62,7 @@ class AnalyzeLightBSM : public NtupleVariables{
   //  void findObjMatchedtoG(TLorentzVector);
   double NumEvents;
   //  double   Weight;
-  double wt,lumiInfb=35.9;//35.86;//36.814;//35.862824;//36.814;
+  double wt=1,lumiInfb=35.9;//35.86;//36.814;//35.862824;//36.814;
   int bestPhotonIndxAmongPhotons=-100;
   int N_0emt=0,N_all=0,N_1e=0,N_2e=0,N_1m=0,N_2m=0,N_1t=0,N_2t=0;
   int n_electrons,n_muon,n_tau;
@@ -80,7 +80,20 @@ class AnalyzeLightBSM : public NtupleVariables{
   vector<TLorentzVector> Muons_v1;
   vector<TLorentzVector> Taus_v1;
   vector<TLorentzVector> Jets_v1;
-  
+  vector<TLorentzVector>HLTElectronObjects_v1;
+  vector<TLorentzVector> TAPElectronTracks_v1;
+  int HLTElectronObjects_ =0;
+  int  TAPElectronTracks_=0;
+  int Jets_ =0;
+  int Taus_=0;
+  int Muons_=0;
+  int Photons_=0;
+  int Electrons_=0;
+  int GenJets_=0;
+  int GenTaus_ =0;
+  int  GenMuons_=0;
+  int GenParticles_=0;
+  int GenElectrons_=0;
   int BTags;
   bool isSignal=false;
   /* vector<double> METLowEdge={200,270,350,450,750,2000}; */
@@ -100,10 +113,6 @@ class AnalyzeLightBSM : public NtupleVariables{
   vector<double> METLowEdge_v3_2={200,300,370,450,600};
   vector<double> BestPhotonPtBinLowEdge={40,70,100,120,140,160,200,240,300,450,600,1000};
   vector<double> QMultLowedge={0,2,4,7,100};
-  vector<double> BestPhotonPtBinLowEdge1={40,70,100,120,140,160,200,240,300,450,1000};
-  vector<double> QMultLowedge1={0,4,7,100};//3,4,7,10,100};
-
-  
   vector<double>  nJetsLowedge={2,5,10,20};
   vector<double>  nbtagsLowedge={0,1,10};
   TH1F *h_selectBaselineYields;
@@ -118,22 +127,6 @@ class AnalyzeLightBSM : public NtupleVariables{
   TFile *oFile;
   /* TH1F *h_events; */
   /* TH1D *h_nEvts; */
-
-  TH1D* h_Njets_binWise[60];
-  TH1D* h_Nbjets_binWise[60];
-  TH1F *h_MET_binWise[60];
-  TH1F *h_PhotonPt_binWise[60];
-  TH1F *h_Qmulti_binWise[60];
-  TH1F *h_PhotonEta_binWise[60];
-  TH1F *h_PhotonPhi_binWise[60];
-  TH2F *h_QmultivsPhotonpT_binWise[60];
-  TH2F *h_QmultivsPhotonEta_binWise[60];
-  TH2F *h_QmultivsPhotonPhi_binWise[60];
-  TH2F *h_PhotonPtvsPhotonEta_binWise[60];
-  TH2F *h_PhotonEtavsPhotonPhi_binWise[60];
-  TH2F *h_PhotonPtvsPhotonPhi_binWise[60];
-
-
   TH1I *h_RunNum;
   TH1D *h_intLumi;
   TH1D *h_Njets[60];
@@ -165,6 +158,64 @@ class AnalyzeLightBSM : public NtupleVariables{
   TH1D *h_Nbjets_validation_TFbins_v3[100];
   TH1F *h_MET_validation_TFbins_v3[100];
   TH1F *h_St_validation_TFbins_v3[100];
+  TH1F* h_invariantMass[60];
+  TH1F* h_ngenE;
+  TH1F* h_nHLTE;
+  TH1F* h_nRecoElec;
+  
+  TH1F* h_dR_HLTvsRecoElec1;
+  TH1F* h_dR_HLTvsRecoElec2;
+  TH1F* h_dR_HLTvsRecoElec1_categ1;
+  TH1F* h_dR_HLTvsRecoElec2_categ1;
+  TH1F* h_dR_HLTvsRecoElec1_categ2;
+  TH1F* h_dR_HLTvsRecoElec2_categ2;
+  TH1F* h_dR_HLTvsRecoElec1_categ3;
+  TH1F* h_dR_HLTvsRecoElec2_categ3;
+  TH1F* h_InvariantMass_noselec;
+  
+  TH1F* h_ZpT[60];
+  TH1D* FR_nbtagBins[60];
+  TH1F* h_invariantMass_noCut[60];
+  TH1F* h_minDr_bestphovsTagEle[60];
+  TH1F* h_nevents_withDifferentCateg;  
+  TH2F* h2_minDr_tagEle_pt[60];
+  TH1F* h_trackEle_pT;
+  TH1F* h_trackEle_Eta;
+  TH1F* h_trackEle_Phi;
+  TH1F* h_nTracks;
+  TH2F* h_tagpT_vsTrackPT;
+  TH1F* h_tagEle_pT;
+  TH1F* h_tagEle_Eta;
+  TH1F* h_tagEle_Phi;
+  
+  TH1F* h_tagEle_pT_Elec_CR;
+  TH1F* h_tagEle_Eta_Elec_CR;
+  TH1F* h_tagEle_Phi_Elec_CR;
+  TH2F* h_tagEle_EtaVsPhi_Elec_CR;
+  TH2F* h_tagEle_PtVsPhi_Elec_CR;
+  TH2F* h_tagEle_PtVsEta_Elec_CR;
+  
+  TH1F* h_trackEle_pT_Elec_CR;
+  TH1F* h_trackEle_Eta_Elec_CR;
+  TH1F* h_trackEle_Phi_Elec_CR;
+  TH2F* h_trackEle_EtaVsPhi_Elec_CR;
+  TH2F* h_trackEle_PtVsPhi_Elec_CR;
+  TH2F* h_trackEle_PtVsEta_Elec_CR;
+
+  TH1F* h_tagEle_pT_Pho_SR;
+  TH1F* h_tagEle_Eta_Pho_SR;
+  TH1F* h_tagEle_Phi_Pho_SR;
+  TH2F* h_tagEle_EtaVsPhi_Pho_SR;
+  TH2F* h_tagEle_PtVsPhi_Pho_SR;
+  TH2F* h_tagEle_PtVsEta_Pho_SR;
+
+  TH1F* h_trackEle_pT_Pho_SR;
+  TH1F* h_trackEle_Eta_Pho_SR;
+  TH1F* h_trackEle_Phi_Pho_SR;
+  TH2F* h_trackEle_EtaVsPhi_Pho_SR;
+  TH2F* h_trackEle_PtVsPhi_Pho_SR;
+  TH2F* h_trackEle_PtVsEta_Pho_SR;
+
   
 
   TH1F *h_Mt_PhoMET[60];
@@ -239,28 +290,6 @@ class AnalyzeLightBSM : public NtupleVariables{
   TH1F* h_Pt_matchedJet_validation[60];   
   TH1F* h_HT5HT_validation[60];  
   TH1F* h_dPhi_METJet_validation[4][60]; 
-
-
-  TH1F *h_Mt_PhoMET_validation_TFbins_v2[60];
-  TH1F *h_dPhi_PhoMET_validation_TFbins_v2[60];
-  TH1F *h_Photon_Eta_validation_TFbins_v2[60];
-  TH1F *h_Photon_Phi_validation_TFbins_v2[60];
-  TH1F *h_Photon_E_validation_TFbins_v2[60];
-  TH1F *h_MET_Phi_validation_TFbins_v2[60];
-  TH1F *h_qmulti_1_validation_TFbins_v2[60];
-  TH1F *h_leadJets_qmulti_validation_TFbins_v2[60];
-  TH1F *h_leadJet_Pt_validation_TFbins_v2[60];
-  TH1F *h_leadbjet_tag_validation_TFbins_v2[60];
-  TH1F* h_nvrtx_validation_TFbins_v2[60];
-  TH1F* h_minDR_Jets_EMObject_validation_TFbins_v2[60];
-  TH1F* h_Phi_leadJet_validation_TFbins_v2[4][60];
-  TH1F* h_Eta_leadJet_validation_TFbins_v2[4][60];
-  TH1F* h_Pt_leadJet_validation_TFbins_v2[4][60];
-  TH1F* h_Phi_matchedJet_validation_TFbins_v2[60];
-  TH1F* h_Eta_matchedJet_validation_TFbins_v2[60];
-  TH1F* h_Pt_matchedJet_validation_TFbins_v2[60];
-  TH1F* h_HT5HT_validation_TFbins_v2[60];
-  TH1F* h_dPhi_METJet_validation_TFbins_v2[4][60];
 
   /* TH1D *h_Njets_CR[60]; */
   /* TH1D *h_Nbjets_CR[60]; */
@@ -570,9 +599,8 @@ void AnalyzeLightBSM::BookHistogram(const char *outFileName, const char *N2_mass
   const char *baseline3[18]={"Wjets_Inclusive","Wjets_SR","Wjets_CR","Wjets_lostElec","Wjets_lostMu","Wjets_lostTau","Wjets_photon","Wjets_unidentified","Elect_Inc","Elect_SR","Elect_CR","Mu_Inc","Mu_SR","Mu_CR","Tau_Inc","Tau_SR","Tau_CR"};//
 
   const char *baseline2[5]={"WjetsVsElec","WjetsVsMu","WjetsVsTau","TauVsElec","TauVsMu"};
-  vector<string> bin_string = {"Elec_CR_binno_9","Elec_CR_binno_10","Elec_CR_binno_11to12","Elec_CR_binno_13to14","Elec_CR_binno_15","Elec_CR_binno_16","Elec_CR_binno_17to18","Elec_CR_binno30to33","Pho_SR_binno_9","Pho_SR_binno_10","Pho_SR_binno_11to12","Pho_SR_binno_13to14","Pho_SR_binno_15","Pho_SR_binno_16","Pho_SR_binno_17to18","Pho_SR_binno30to33","Elec_CR_validation_binno_9","Elec_CR_validation_binno_10","Elec_CR_validation_binno_11to12","Elec_CR_validation_binno_13to14","Elec_CR_validation_binno_15","Elec_CR_validation_binno_16","Elec_CR_validation_binno_17to18","Elec_CR_validation_binno30to33","Elec_CR","Pho_SR"};
   
-  vector<string> checks={"NoSelection","PreSelection","Elec_CR","Pho_SR"};//,"HEM_veto_Elec_CR","HEM_veto_Pho_SR","L1Trig_Elec_CR","L1Trig_Pho_SR","ProbL1Trig_Elec_C \
+  vector<string> checks={"NoSelection","PreSelection","Elec_CR","Pho_SR"};//,"HEM_veto_Elec_CR","HEM_veto_Pho_SR","L1Trig_Elec_CR","L1Trig_Pho_SR","ProbL1Trig_Elec_C
 /* R","ProbL1Trig_Pho_SR"};//"NoSelection","PreSelection","Elec_CR_v1","pho_SR_v1","Mu_CR","Mu_SR","Elec_CR_promptPho_v1","Elec_CR_NonpromptPho_v1","Elec_CR_ElecFake","Elec_CR_Else","Elec_CR_Else_v1","Elec_SR_promptPho_v1","Elec_SR_NonpromptPho_v1","Elec_SR_ElecFake","Elec_SR_Else","Elec_SR_Else_v1","Mu_CR_promptPho_v1","Mu_CR_NonpromptPho_v1","Mu_CR_ElecFake","Mu_CR_Else","Mu_CR_Else_v1","Mu_SR_promptPho_v1","Mu_SR_NonpromptPho_v1","Mu_SR_ElecFake","Mu_SR_Else","Mu_SR_Else_v1","TauHad_SR_promptPho_v1","TauHad_SR_NonpromptPho_v1","TauHad_SR_ElecFake","TauHad_SR_Else","TauHad_SR_Else_v1"}; */
 
   /* char check1[1000]; */
@@ -611,13 +639,26 @@ void AnalyzeLightBSM::BookHistogram(const char *outFileName, const char *N2_mass
 
   //  vector<double> METLowEdge={200,270,350,450,750,2000};
   vector<double> METLowEdge_LL={100,200,300,370,450,600,750,900,2000};
-  vector<double> Pho_pt_Edge_LL={30,40,70,100,120,140,160,200,240,300,450,600,1000};//40,50,70,90,100,150,200,300,500,1000};
+  vector<double> Pho_pt_Edge_LL={30,40,50,70,90,100,150,200,300,500,1000};
   vector<double> qmulti_Edge_LL={0,2,4,7,100};//30,40,50,70,90,100,150,200,300,500,1000};
 
   vector<double> NHadjets_Edge_LL={2,4,5,6,7,8,9,10,11,12,13,14};
   vector<double> NBjets_Edge_LL={0,1,2,4,5,6,7,8,9,10,11,12,13,14};
   vector<double> ST_Edge_LL={300,400,500,700,900,1000,1500};
-
+  vector<double>  nJetsLowedgev1={2,5,20};
+  vector<double>  nJetsLowedge={2,5,20};
+  vector<double>  nbtagsLowedge={0,1,10};
+  vector<double>  EMEtaLowedge={-3.5,-1.5,-1,-0.5,0,0.5,1,1.5,3.5};
+  
+//  vector<double> BestPhotonPtBinLowEdge={100,120,140,160,180,200,230,260,300,380,500,600,1000};
+  vector<double> BestPhotonPtBinLowEdge={40,100,120,140,160,180,200,220,240,260,300,400,600,1000};
+//  vector<double> ptlow2={100,120,140,160,180,200,230,260,300,380,450,600};//phoptbin1
+//  vector<double> ptlow2={100,120,140,160,180,200,230,260,300,380,450,600};//phoptbin1
+vector<double> ptlow2={100,120,140,160,200,240,300,450,600};//phoptbin2 v1
+vector<double> ptlow2_v2={300,330,380,450,600,2000};//phoptbin2 v2
+// vector<double> ptlow2={100,120,140,160,180,200,220,240,260,280,300};//phoptbin3 v1
+// vector<double> ptlow2_v2={300,340,380,420,480,600,2000};//phoptbin3 v2
+double QMultLow[6]={0,2,4,7,100};
   /* for (int i =0; i<14;i++) */
   /*   { */
   /*     sprintf(hname,"h_GenpT_%s",baseline1[i].c_str()); */
@@ -677,7 +718,7 @@ void AnalyzeLightBSM::BookHistogram(const char *outFileName, const char *N2_mass
       sprintf(hname_PhoPt,"h_qmulti_vs_phopt_bin_%s",checks[c].c_str());
       h_qmultiVs_phopT_Varbin[c]= new TH2F(hname_PhoPt,hname_PhoPt,int(Pho_pt_Edge_LL.size())-1,&(Pho_pt_Edge_LL[0]),int(qmulti_Edge_LL.size())-1,&(qmulti_Edge_LL[0]));
 
-      //      h_qmultiVs_phopT_Varbin[c] 
+      //      h_qmultiVs_phopT_Varbin[c]
       /* sprintf(hname_st,"mindr_Pho_genlep_%s",checks[c].c_str()); */
       /* h_mindr_Pho_genlep[c]= new TH1F(hname_st,"mindR(gen-l,#gamma)",1000,0,10); */
       /* sprintf(hname_st,"mindr_Pho_genElec_%s",checks[c].c_str()); */
@@ -686,42 +727,6 @@ void AnalyzeLightBSM::BookHistogram(const char *outFileName, const char *N2_mass
       /* h_mindr_Pho_RecoEle[c] = new TH1F(hname_st,"mindR(reco e, #gamma)",1000,0,10); */
 
     }
-
-  char bin_check[1000];
-  for(int i=0;i<bin_string.size();i++){
-    sprintf(bin_check,"h_Njets_%s",bin_string[i].c_str());
-    h_Njets_binWise[i] = new TH1D(bin_check,bin_check,20,0,20);
-    sprintf(bin_check,"h_Nbjets_%s",bin_string[i].c_str());
-    h_Nbjets_binWise[i] = new TH1D(bin_check,bin_check,20,0,20);
-    
-    sprintf(bin_check,"h_MET_%s",bin_string[i].c_str());
-    h_MET_binWise[i] = new TH1F(bin_check,bin_check,400,0,1500);
-    
-    sprintf(bin_check,"h_PhotonPt_%s",bin_string[i].c_str());
-    h_PhotonPt_binWise[i] = new TH1F(bin_check,bin_check,500,0,1000);
-
-    sprintf(bin_check,"h_PhotonEta_%s",bin_string[i].c_str());
-    h_PhotonEta_binWise[i] = new TH1F(bin_check,bin_check,500,-5,5);
-    sprintf(bin_check,"h_PhotonPhi_%s",bin_string[i].c_str());
-    h_PhotonPhi_binWise[i] = new TH1F(bin_check,bin_check,500,-5,5);
-    sprintf(bin_check,"h_Qmulti_%s",bin_string[i].c_str());
-    h_Qmulti_binWise[i] = new TH1F(bin_check,bin_check,200,0,200);
-    sprintf(bin_check,"h_Qmulti_vsPhotonpT_%s",bin_string[i].c_str());
-    h_QmultivsPhotonpT_binWise[i] = new TH2F(bin_check,bin_check,200,0,200,500,0,1000);
-    sprintf(bin_check,"h_Qmulti_vsPhotonEta_%s",bin_string[i].c_str());
-    h_QmultivsPhotonEta_binWise[i] = new TH2F(bin_check,bin_check,200,0,200,500,-5,5);
-    sprintf(bin_check,"h_Qmulti_vsPhotonPhi_%s",bin_string[i].c_str());
-    h_QmultivsPhotonPhi_binWise[i] = new TH2F(bin_check,bin_check,200,0,200,500,-5,5);
-    
-    sprintf(bin_check,"h_PhotonPt_vsPhotonEta_%s",bin_string[i].c_str());
-    h_PhotonPtvsPhotonEta_binWise[i] = new TH2F(bin_check,bin_check,500,0,1000,500,-5,5);
-    sprintf(bin_check,"h_PhotonPt_vsPhotonPhi_%s",bin_string[i].c_str());
-    h_PhotonPtvsPhotonPhi_binWise[i] = new TH2F(bin_check,bin_check,500,0,1000,500,-5,5);
-    sprintf(bin_check,"h_PhotonEta_vsPhotonPhi_%s",bin_string[i].c_str());
-    h_PhotonEtavsPhotonPhi_binWise[i] = new TH2F(bin_check,bin_check,500,-5,5,500,-5,5);
-
-  }
-
 
   /* /\* for (int i =0; i<5;i++) *\/ */
   /* /\*   { *\/ */
@@ -773,6 +778,61 @@ void AnalyzeLightBSM::BookHistogram(const char *outFileName, const char *N2_mass
   h_mindR_recoPho_genElec = new TH1F("h_mindR_recoPho_genElec","dR(#gamma, Reco-e^{-})",1000,0,10);
   /* h2d_mindRvs_pt_bestPho_genElec = new TH2F("h2d_mindRvs_pt_bestPho_genElec","dR(#gamma, e^{-}) [X-axis], pT_{#gamma}/pT_{e^{-}}",1000,0,10,1000,0,10); */
   h_hasGenPromptPhoton =new TH1F("h_hasGenPromptPhoton","h_hasGenPromptPhoton",2,0,2);
+  h_ngenE = new TH1F("h_ngenE","",10,0,10);
+  h_nHLTE = new TH1F("h_nHLTE","",10,0,10);
+  h_nRecoElec = new TH1F("h_nRecoElec","",10,0,10);
+  h_dR_HLTvsRecoElec1 = new TH1F("h_dR_HLTvsRecoElec1","dR(reco elec1, gen/HLT elec1)",500,0,2);
+  h_dR_HLTvsRecoElec2 = new TH1F("h_dR_HLTvsRecoElec2","dR(reco elec2, gen/HLT elec2)",500,0,2);
+  h_dR_HLTvsRecoElec1_categ1 = new TH1F("h_dR_HLTvsRecoElec1_categ1","dR(reco elec1, gen/HLT elec1)",500,0,2);
+  h_dR_HLTvsRecoElec2_categ1 = new TH1F("h_dR_HLTvsRecoElec2_categ1","dR(reco elec2, gen/HLT elec2)",500,0,2);
+  h_dR_HLTvsRecoElec1_categ2 = new TH1F("h_dR_HLTvsRecoElec1_categ2","dR(reco elec1, gen/HLT elec1)",500,0,2);
+  h_dR_HLTvsRecoElec2_categ2 = new TH1F("h_dR_HLTvsRecoElec2_categ2","dR(reco elec2, gen/HLT elec2)",500,0,2);
+  h_dR_HLTvsRecoElec1_categ3 = new TH1F("h_dR_HLTvsRecoElec1_categ3","dR(reco elec1, gen/HLT elec1)",500,0,2);
+  h_dR_HLTvsRecoElec2_categ3 = new TH1F("h_dR_HLTvsRecoElec2_categ3","dR(reco elec2, gen/HLT elec2)",500,0,2);
+  h_InvariantMass_noselec = new TH1F("h_InvariantMass_noselec","Invariant mass of Z (tag, probe)",1000,0,500);
+  h_nevents_withDifferentCateg = new TH1F("h_nevents_withDifferentCateg","",10,0,10);
+  h_trackEle_pT = new TH1F("h_trackEle_pT","",500,0,1000);
+  h_trackEle_Eta= new TH1F("h_trackEle_Eta","",500,-5,5);
+  h_trackEle_Phi= new TH1F("h_trackEle_Phi","",500,-5,5);
+  h_tagEle_pT= new TH1F("h_tagEle_pT","",500,0,1000);
+  h_tagEle_Eta= new TH1F("h_tagEle_Eta","",500,-5,5);
+  h_tagEle_Phi= new TH1F("h_tagEle_Phi","",500,-5,5);
+  h_tagpT_vsTrackPT = new TH2F("h_tagpT_vsTrackPT","",500,0,1000,500,0,1000);
+  h_nTracks = new TH1F("h_nTracks","",10,0,10);
+   
+
+  h_tagEle_pT_Elec_CR= new TH1F("h_tagEle_pT_Elec_CR","",500,0,1000);
+  h_tagEle_Eta_Elec_CR= new TH1F("h_tagEle_Eta_Elec_CR","",500,-5,5);
+  h_tagEle_Phi_Elec_CR= new TH1F("h_tagEle_Phi_Elec_CR","",500,-5,5);
+  h_tagEle_EtaVsPhi_Elec_CR  = new TH2F("h_tagEle_EtaVsPhi_Elec_CR","",500,-5,5,500,-5,5);
+  h_tagEle_PtVsPhi_Elec_CR  = new TH2F("h_tagEle_PtVsPhi_Elec_CR","",500,0,1000,500,-5,5);
+  h_tagEle_PtVsEta_Elec_CR  = new TH2F("h_tagEle_PtVsEta_Elec_CR","",500,0,1000,500,-5,5);
+
+  h_tagEle_pT_Pho_SR= new TH1F("h_tagEle_pT_Pho_SR","",500,0,1000);
+  h_tagEle_Eta_Pho_SR= new TH1F("h_tagEle_Eta_Pho_SR","",500,-5,5);
+  h_tagEle_Phi_Pho_SR= new TH1F("h_tagEle_Phi_Pho_SR","",500,-5,5);
+  h_tagEle_EtaVsPhi_Pho_SR  = new TH2F("h_tagEle_EtaVsPhi_Pho_SR","",500,-5,5,500,-5,5);
+  h_tagEle_PtVsPhi_Pho_SR  = new TH2F("h_tagEle_PtVsPhi_Pho_SR","",500,0,1000,500,-5,5);
+  h_tagEle_PtVsEta_Pho_SR  = new TH2F("h_tagEle_PtVsEta_Pho_SR","",500,0,1000,500,-5,5);
+
+  
+
+  h_trackEle_pT_Elec_CR= new TH1F("h_trackEle_pT_Elec_CR","",500,0,1000);
+  h_trackEle_Eta_Elec_CR= new TH1F("h_trackEle_Eta_Elec_CR","",500,-5,5);
+  h_trackEle_Phi_Elec_CR= new TH1F("h_trackEle_Phi_Elec_CR","",500,-5,5);
+  h_trackEle_EtaVsPhi_Elec_CR  = new TH2F("h_trackEle_EtaVsPhi_Elec_CR","",500,-5,5,500,-5,5);
+  h_trackEle_PtVsPhi_Elec_CR  = new TH2F("h_trackEle_PtVsPhi_Elec_CR","",500,0,1000,500,-5,5);
+  h_trackEle_PtVsEta_Elec_CR  = new TH2F("h_trackEle_PtVsEta_Elec_CR","",500,0,1000,500,-5,5);
+
+  h_trackEle_pT_Pho_SR= new TH1F("h_trackEle_pT_Pho_SR","",500,0,1000);
+  h_trackEle_Eta_Pho_SR= new TH1F("h_trackEle_Eta_Pho_SR","",500,-5,5);
+  h_trackEle_Phi_Pho_SR= new TH1F("h_trackEle_Phi_Pho_SR","",500,-5,5);
+  h_trackEle_EtaVsPhi_Pho_SR  = new TH2F("h_trackEle_EtaVsPhi_Pho_SR","",500,-5,5,500,-5,5);
+  h_trackEle_PtVsPhi_Pho_SR  = new TH2F("h_trackEle_PtVsPhi_Pho_SR","",500,0,1000,500,-5,5);
+  h_trackEle_PtVsEta_Pho_SR  = new TH2F("h_trackEle_PtVsEta_Pho_SR","",500,0,1000,500,-5,5);
+
+
+
   char* hists_list = new char[1000];
   /* for(int i=0;i<2;i++)//baseline_v2.size();i++) */
   /*   { */
@@ -873,7 +933,7 @@ char hist_name1[1000];
       sprintf(hname_ht,"h_HT_%s",baseline[i].c_str());
       h_Njets[i]= new TH1D(hname_njets, hname_njets,20,0,20);
       h_Nbjets[i]= new TH1D(hname_nBjets, hname_nBjets,15,0,15);
-      h_MET_[i] = new TH1F(hname_Met,hname_Met,400,0,1500);
+      h_MET_[i] = new TH1F(hname_Met,hname_Met,400,0,400);
       h_PhotonPt[i]= new TH1F(hname_PhoPt,hname_PhoPt,500,0,1000);
       h_Mt_PhoMET[i]= new TH1F(hname_Mt_phopt,hname_Mt_phopt,500,0,2500);
       h_dPhi_PhoMET[i]= new TH1F(hname_dPhi,hname_dPhi,200,0,5);
@@ -884,7 +944,7 @@ char hist_name1[1000];
 
       h_Mt_PhoMET_validation[i]= new TH1F(hname_Mt_phopt,hname_Mt_phopt,500,0,2500);
       h_dPhi_PhoMET_validation[i]= new TH1F(hname_dPhi,hname_dPhi,200,0,5);
-      
+
       sprintf(hname_njets,"h_NhadJets_validation_%s",baseline[i].c_str());
       sprintf(hname_nBjets,"h_NBJets_validation_%s",baseline[i].c_str());
       sprintf(hname_Met,"h_MET_validation_%s",baseline[i].c_str());
@@ -895,7 +955,7 @@ char hist_name1[1000];
       sprintf(hname_ht,"h_HT_validation_%s",baseline[i].c_str());
       h_Njets_validation[i]= new TH1D(hname_njets, hname_njets,20,0,20);
       h_Nbjets_validation[i]= new TH1D(hname_nBjets, hname_nBjets,15,0,15);
-      h_MET_validation[i] = new TH1F(hname_Met,hname_Met,400,0,1500);
+      h_MET_validation[i] = new TH1F(hname_Met,hname_Met,400,0,400);
       h_PhotonPt_validation[i]= new TH1F(hname_PhoPt,hname_PhoPt,500,0,1000);
       h_St_validation[i]=new TH1F(hname_st,hname_st,250,0,2500);
 
@@ -907,7 +967,7 @@ char hist_name1[1000];
 
       h_Njets_validation_TFbins_v2[i]= new TH1D(hname_njets, hname_njets,20,0,20);
       h_Nbjets_validation_TFbins_v2[i]= new TH1D(hname_nBjets, hname_nBjets,15,0,15);
-      h_MET_validation_TFbins_v2[i] = new TH1F(hname_Met,hname_Met,400,0,1500);
+      h_MET_validation_TFbins_v2[i] = new TH1F(hname_Met,hname_Met,400,0,400);
       h_PhotonPt_validation_TFbins_v2[i]= new TH1F(hname_PhoPt,hname_PhoPt,500,0,1000);
       h_St_validation_TFbins_v2[i]=new TH1F(hname_st,hname_st,250,0,2500);
 
@@ -927,7 +987,7 @@ char hist_name1[1000];
       sprintf(hname_st,"h_TFbins_ElecLL_v1_%s",baseline[i].c_str());
       h_TFbins_LL_v1[i] = new TH1F(hname_st,hname_st,30,0,30);
       sprintf(hname_st,"h_TFbins_ElecLL_v2_%s",baseline[i].c_str());
-      h_TFbins_LL_v2[i] = new TH1F(hname_st,hname_st,80,0,80);
+      h_TFbins_LL_v2[i] = new TH1F(hname_st,hname_st,30,0,30);
       sprintf(hname_st,"h_TFbins_ElecLL_v3_%s",baseline[i].c_str());
       h_TFbins_LL_v3[i] = new TH1F(hname_st,hname_st,30,0,30);
       sprintf(hname_st,"h_TFbins_ElecLL_v4_%s",baseline[i].c_str());
@@ -977,7 +1037,7 @@ char hist_name1[1000];
       h_Photon_E_validation[i]= new  TH1F(hname_st,"Energy for EM obj",500,0,1000);
       sprintf(hname_st,"h_MET_Phi_validation_%s",baseline[i].c_str());
       h_MET_Phi_validation[i] = new TH1F(hname_st,"Phi MET",200,-5,5);
-      
+
       sprintf(hname_st,"h_qmulti_validation_%s",baseline[i].c_str());
       h_qmulti_1_validation[i] = new TH1F(hname_st,"multiplicity for the jets near to EM objs",500,0,500);
       sprintf(hname_st,"h_leadJets_qmulti_validation_%s",baseline[i].c_str());
@@ -993,35 +1053,6 @@ char hist_name1[1000];
       h_minDR_Jets_EMObject_validation[i] = new TH1F(hname_st,"",1000,0,10);
 
       
-      sprintf(hname_Mt_phopt,"h_Mt_phoMET_validation_TFbins_v2_%s",baseline[i].c_str());
-      sprintf(hname_dPhi,"h_dPhi_phoMet_validation_TFbins_v2_%s",baseline[i].c_str());
-
-      h_Mt_PhoMET_validation_TFbins_v2[i]= new TH1F(hname_Mt_phopt,hname_Mt_phopt,500,0,2500);
-      h_dPhi_PhoMET_validation_TFbins_v2[i]= new TH1F(hname_dPhi,hname_dPhi,200,0,5);
-
-      sprintf(hname_st,"h_Photon_Eta_validation_TFbins_v2_%s",baseline[i].c_str());
-      h_Photon_Eta_validation_TFbins_v2[i] = new TH1F(hname_st,"eta for EM obj",200,-5,5);
-      sprintf(hname_st,"h_Photon_Phi_validation_TFbins_v2_%s",baseline[i].c_str());
-      h_Photon_Phi_validation_TFbins_v2[i] = new TH1F(hname_st,"phi for EM obj",200,-5,5);
-      sprintf(hname_st,"h_Photon_E_validation_TFbins_v2_%s",baseline[i].c_str());
-      h_Photon_E_validation_TFbins_v2[i]= new  TH1F(hname_st,"Energy for EM obj",500,0,1000);
-      sprintf(hname_st,"h_MET_Phi_validation_TFbins_v2_%s",baseline[i].c_str());
-      h_MET_Phi_validation_TFbins_v2[i] = new TH1F(hname_st,"Phi MET",200,-5,5);
-
-      sprintf(hname_st,"h_qmulti_validation_TFbins_v2_%s",baseline[i].c_str());
-      h_qmulti_1_validation_TFbins_v2[i] = new TH1F(hname_st,"multiplicity for the jets near to EM objs",500,0,500);
-      sprintf(hname_st,"h_leadJets_qmulti_validation_TFbins_v2_%s",baseline[i].c_str());
-      h_leadJets_qmulti_validation_TFbins_v2[i] = new TH1F(hname_st,"",500,0,500);
-
-      sprintf(hname_st,"h_leadJet_Pt_validation_TFbins_v2_%s",baseline[i].c_str());
-      h_leadJet_Pt_validation_TFbins_v2[i] = new TH1F(hname_st,"",500,0,1000);
-      sprintf(hname_st,"h_leadbjet_tag_validation_TFbins_v2_%s",baseline[i].c_str());
-      h_leadbjet_tag_validation_TFbins_v2[i] = new TH1F(hname_st,"h_leadbjet_tag",500,0,1);
-      sprintf(hname_st,"h_nvrtx_validation_TFbins_v2_%s",baseline[i].c_str());
-      h_nvrtx_validation_TFbins_v2[i] = new TH1F(hname_st,"",500,0,500);
-      sprintf(hname_st,"h_minDR_Jets_EMObject_validation_TFbins_v2_%s",baseline[i].c_str());
-      h_minDR_Jets_EMObject_validation_TFbins_v2[i] = new TH1F(hname_st,"",1000,0,10);
-
 
       sprintf(hname_st,"h_Sbins_LL_%s",baseline[i].c_str());
       h_Sbins_LL[i] = new TH1F(hname_st,"search bins SP:[0b,1b] x [(NJ=2to4),(NJ:5or6),(NJ>=7)]",52,0,52);
@@ -1113,15 +1144,6 @@ char hist_name1[1000];
       sprintf(hname_st,"h_dPhi_METJet%i_validation_%s",j+1,baseline[i].c_str());
       h_dPhi_METJet_validation[j][i] = new TH1F(hname_st,hname_st,500,-5,5);
 
-      sprintf(hname_st,"h_Phi_leadJet%i_validation_TFbins_v2_%s",j+1,baseline[i].c_str());
-      h_Phi_leadJet_validation_TFbins_v2[j][i] = new TH1F(hname_st,hname_st,500,-5,5);
-      sprintf(hname_st,"h_Eta_leadJet%i_validation_TFbins_v2_%s",j+1,baseline[i].c_str());
-      h_Eta_leadJet_validation_TFbins_v2[j][i] = new TH1F(hname_st,hname_st,500,-5,5);
-      sprintf(hname_st,"h_Pt_leadJet%i_validation_TFbins_v2_%s",j+1,baseline[i].c_str());
-      h_Pt_leadJet_validation_TFbins_v2[j][i] = new TH1F(hname_st,hname_st,500,0,1000);
-      sprintf(hname_st,"h_dPhi_METJet%i_validation_TFbins_v2_%s",j+1,baseline[i].c_str());
-      h_dPhi_METJet_validation_TFbins_v2[j][i] = new TH1F(hname_st,hname_st,500,-5,5);
-
 
       }
       //cout<<i<<"\t"<<baseline[i]<<endl;
@@ -1142,15 +1164,6 @@ char hist_name1[1000];
       h_Pt_matchedJet_validation[i] = new  TH1F(hname_st,hname_st,500,0,1000);
       sprintf(hname_st,"h_HT5HT_validation_%s",baseline[i].c_str());
       h_HT5HT_validation[i] = new TH1F(hname_st,hname_st,500,0,2);
-
-      sprintf(hname_st,"h_Phi_matchedJet_validation_TFbins_v2_%s",baseline[i].c_str());
-      h_Phi_matchedJet_validation_TFbins_v2[i] = new TH1F(hname_st,hname_st,500,-5,5);
-      sprintf(hname_st,"h_Eta_matchedJet_validation_TFbins_v2_%s",baseline[i].c_str());
-      h_Eta_matchedJet_validation_TFbins_v2[i] = new TH1F(hname_st,hname_st,500,-5,5);
-      sprintf(hname_st,"h_Pt_matchedJet_validation_TFbins_v2_%s",baseline[i].c_str());
-      h_Pt_matchedJet_validation_TFbins_v2[i] = new  TH1F(hname_st,hname_st,500,0,1000);
-      sprintf(hname_st,"h_HT5HT_validation_TFbins_v2_%s",baseline[i].c_str());
-      h_HT5HT_validation_TFbins_v2[i] = new TH1F(hname_st,hname_st,500,0,2);
 
       sprintf(hname_st,"h_EtavsPhi_matchedJet_%s",baseline[i].c_str());
       h_EtavsPhi_matchedJet[i] = new TH2F(hname_st,hname_st,500,-5,5,500,-5,5);
@@ -1173,7 +1186,20 @@ char hist_name1[1000];
       h_HT5HT[i] = new TH1F(hname_st,hname_st,500,0,2);
       sprintf(hname_st,"h_Emobje_pt_vs_Jet_Pt_%s",baseline[i].c_str());
       h_Emobje_pt_vs_Jet_Pt[i] = new TH2F(hname_st,hname_st,500,0,1000,500,0,1000);
-      /* sprintf(hname_st,"h_dPhi_METJet_%s",baseline[i].c_str()); */
+      sprintf(hname_st,"h_invariantMass_%s",baseline[i].c_str());
+      h_invariantMass[i]= new TH1F(hname_st,hname_st,500,0,200);
+      sprintf(hname_st,"h_invariantMass_noCut_%s",baseline[i].c_str());
+      h_invariantMass_noCut[i]= new TH1F(hname_st,hname_st,500,0,500);
+
+      sprintf(hname_st,"h_ZpT_%s",baseline[i].c_str());
+      h_ZpT[i] = new TH1F(hname_st,hname_st,500,0,1000);
+      sprintf(hname_st,"FR_nbtagBins_%s",baseline[i].c_str());
+      FR_nbtagBins[i] = new TH1D(hname_st, hname_st,5,0,5);
+      sprintf(hname_st,"h_minDr_bestphovsTagEle_%s",baseline[i].c_str());
+      h_minDr_bestphovsTagEle[i] = new TH1F(hname_st,hname_st,500,0,2);
+      sprintf(hname_st,"h2_minDr_tagEle_pt_%s",baseline[i].c_str());
+      h2_minDr_tagEle_pt[i] = new TH2F(hname_st,hname_st,500,0,2,500,0,1000);
+      
       /* h_dPhi_METJet */
       
       //      sprintf(hname_st,
