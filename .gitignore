@@ -1,0 +1,5 @@
+#ignoring the root files in the repo
+*.root
+
+#ignoring the autosaved files in the repo
+*~
