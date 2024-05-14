@@ -1,7 +1,7 @@
 const int n_pl = 4;
 bool logx = false;
 //defining the legends for each plots
-TString legend_text[10] = {"no cut","MET>200","Pho_Pt>20", "NJet>2", "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
+TString legend_text[10] = {"no cut","MET>200","Pho_Pt>20", "NJet>2","ST>300","No IsoTracks" "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
 int line_width[12] = {2,2,2,2,2,2,2,2,2,2,2,2};
 int line_style[12] = {1,1,1,1,1,1,1,1,1,1,1,1};
 int line_color[9] = {kBlack, kBlue, kGreen+2, kMagenta, kRed - 3, kBlue + 2 , kCyan + 1 , kGreen + 3 };
@@ -285,23 +285,49 @@ void test(string pathname)
   f[0] = new TFile("out.root");
   f[1] = new TFile("out.root");
   //define your histograms to be read from here
+
+ 
+  vector<string> histname1, histname2, histname3;
+    char hname_NJets[100], hname_Jet_Pt[100], hname_Jet_Eta[100], hname_Jet_Phi[100], hname_Met[100], hname_PhoPt[100], hname_PhoEta[100], hname_PhoPhi[100];
+  //vector<string> histPhoPt[100]
+  // Book your histograms & summary counters here
+  vector<string> selection = {"no_cut", "MET", "Pho_pT", "Njets", "ST", "IsoTracks"};
+
+  for (int i=0; i<selection.size();i++)
+    {
+      sprintf(hname_NJets,"h_NJets_%s",selection[i].c_str());
+      *(histname3[i]) = hname_NJets;
+      sprintf(hname_Jet_Pt, "h_Jet_Pt_%s",selection[i].c_str());
+      sprintf(hname_Jet_Eta, "h_Jet_Eta_%s",selection[i].c_str());
+      sprintf(hname_Jet_Phi, "h_Jet_Phi_%s",selection[i].c_str());
+      sprintf(hname_Met, "h_MET_%s",selection[i].c_str());
+      histname2[i] = hname_Met; 
+      sprintf(hname_PhoPt, "h_Pho_Pt_%s",selection[i].c_str());
+      histname1[i] = hname_PhoPt; 
+      sprintf(hname_PhoEta, "h_Pho_Eta_%s",selection[i].c_str());
+      sprintf(hname_PhoPhi, "h_Pho_Phi_%s",selection[i].c_str());
+
+      //cout << "HISTOGram: " << histname3[i] << endl;
+    }
+
   vector<vector<string>> bigbaseline;
-  vector<string> baseline1, baseline2, baseline3, baseline4;
+  vector<string> baseline1, baseline2, baseline3;
 
   //baseline1 = {"h_pho_pT0","h_pho_pT3","h_pho_pT4", "h_pho_pT5"};
-  baseline1 = {"h_pho_pT0", "h_pho_pT3", "h_pho_pT4", "h_pho_pT5"};
-  //baseline2 = {"h_pho_eta0","h_pho_eta3"};
+  baseline1 = {histname1[0], histname1[1], histname1[2], histname1[3], histname1[4], histname1[5]};
+  //baseline2 = {"h_pho_eta0","h_pho_eta3"};s
   //baseline3 = {"h_pho_phi0","h_pho_phi3"};
   //baseline4 = {"h_Jet_pT2", "h_Jet_pT3"};
   //baseline5 = {"h_Jet_Eta2", "h_Jet_Eta3"};
   //baseline6 = {"h_NJets2", "h_NJets3"};
-  baseline2 = {"h_MET0", "h_MET3", "h_MET4", "h_MET5"};
-  baseline3 = {"h_NJets2", "h_NJets3", "h_NJets4", "h_NJets5"};
-  baseline4 = {"h_NHadJets0", "h_NHadJets3", "h_NHadJets4", "h_NHadJets5"};
+  baseline2 = {histname2[0], histname2[1], histname2[2], histname2[3], histname2[4], histname2[5]}; 
+  baseline3 = {histname3[0], histname3[1], histname3[2], histname3[3], histname3[4], histname3[5]};
+  //baseline4 = {"h_NHadJets0", "h_NHadJets3", "h_NHadJets4", "h_NHadJets5"};
   
 
+
   //string to be added to output file name - useful when you have different files and reading the same histograms from these
-  bigbaseline = {baseline1, baseline2, baseline3, baseline4};
+  bigbaseline = {baseline1, baseline2, baseline3};
 
   for (int bigi=0; bigi<bigbaseline.size(); bigi++)
     {

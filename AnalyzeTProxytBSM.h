@@ -34,50 +34,14 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   myLV   getBestPhoton(int);
   //TLorentzVector  getBestPhoton(int);
   int    bestPhotonIndxAmongPhotons=-100;
-  vector<string> selection={"no_cut", "MET", "Pho_pT", "Njets"};
+  vector<string> selection = {"no_cut", "MET", "Pho_pT", "Njets", "ST", "IsoTracks"};
   TFile *oFile;
   TH1F *h_MET[100];
-  /* //TH1F *h_MET3; */
-  /* TH1F *h_MET4; */
-  /* TH1F *h_MET5; */
-  /* TH1F *h_EvtBrk; */
-  /* TH1F *h_hadJets_Pt; */
-  /* TH1F *h_hadJets_Pt1; */
-  /* TH1F *h_hadJets_Eta; */
-  /* TH1F *h_hadJets_Eta1; */
-  TH1F *h_NJets[100];   //jets with no cuts
-  /* TH1F *h_NJets1;   // jets with cut on Pt */
-  /* TH1F *h_NJets2;   // along with eta cut */
-  /* TH1F *h_NJets3;   // along with MET cut */
-  /* TH1F *h_NJets4;   // cut on photon pt */
-  /* TH1F *h_NJets5;   // cut on NJets */
-
-  /* TH1F *h_NHadJets0; */
-  /* TH1F *h_NHadJets3; */
-  /* TH1F *h_NHadJets4; */
-  /* TH1F *h_NHadJets5; */
-  
-  TH1F *h_Jet_pT[100];
-  TH1F *h_Jet_eta[100];
-  TH1F *h_Jet_phi[100];
-  /* TH1F *h_Jet_pT0, *h_Jet_eta0, *h_Jet_phi0;  //0 stands for no cut  */
-  /* TH1F *h_Jet_pT1, *h_Jet_eta1;   //1 stands for cut in the pT  */
-  /* TH1F *h_Jet_pT2, *h_Jet_eta2;   //2 stands for cut in pT and Eta */
-  /* TH1F *h_Jet_pT3, *h_Jet_eta3, *h_Jet_phi3;   //3 stands for cut in pT and Eta and MET */
-  /* TH1F *h_Jet_pT4, *h_Jet_eta4, *h_Jet_phi4; */
-  /* TH1F *h_Jet_pT5, *h_Jet_eta5, *h_Jet_phi5; */
-  
-  
-  //TH2F *h_NJet_MET, *h_NJet_PhoPt, *h_NJet_genPhoPt; 
-
-  //TH1F *h_ele_pT0, *h_ele_eta0, *h_ele_phi0; 
-  // TH1F *h_ele_pT3, *h_ele_eta3, *h_ele_phi3;  
+  TH1F *h_NJets[100];  
+  TH1F *h_Jet_pT[100], *h_Jet_eta[100], *h_Jet_phi[100];
   TH1F *h_Pho_pT[100], *h_Pho_eta[100], *h_Pho_phi[100];
-  /* TH1F *h_pho_eta0,*h_pho_eta3, *h_pho_eta4, *h_pho_eta5; */
-  /* TH1F *h_pho_pT0, *h_pho_pT3, *h_pho_pT4, *h_pho_pT5; */
-  /* TH1F *h_pho_phi0, *h_pho_phi3, *h_pho_phi4, *h_pho_phi5; */
-  //TH1F *h_gen_pT0, *h_gen_eta0, *h_gen_phi0;
-  //TH1F *h_gen_pT3, *h_gen_eta3, *h_gen_phi3;
+ 
+  TH2F *h_NJets_pTSum; 
 };
 #endif
 
@@ -97,7 +61,7 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
       sprintf(hname_NJets,"h_NJets_%s",selection[i].c_str());
       sprintf(hname_Jet_Pt,"h_Jet_Pt_%s",selection[i].c_str());
       sprintf(hname_Jet_Eta,"h_Jet_Eta_%s",selection[i].c_str());
-      sprintf(hname_Jet_Phi,"h_Jet_Phi%s",selection[i].c_str());
+      sprintf(hname_Jet_Phi,"h_Jet_Phi_%s",selection[i].c_str());
       sprintf(hname_Met,"h_MET_%s",selection[i].c_str());
       sprintf(hname_PhoPt,"h_Pho_Pt_%s",selection[i].c_str());
       sprintf(hname_PhoEta,"h_Pho_Eta_%s",selection[i].c_str());
@@ -106,12 +70,67 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
       h_Jet_pT[i]  = new TH1F(hname_Jet_Pt,hname_Jet_Pt, 100,0.0, 1000.0);
       h_Jet_eta[i] = new TH1F(hname_Jet_Eta,hname_Jet_Eta, 100, -10.0, 10.0);
       h_Jet_phi[i] = new TH1F(hname_Jet_Phi,hname_Jet_Phi,100, -3.2, 3.2);
-      h_MET[i] = new TH1F(hname_Met,hname_Met,100,0,1000);
+      h_MET[i] = new TH1F(hname_Met,hname_Met,100,0,5000);
       h_Pho_pT[i]= new TH1F(hname_PhoPt,hname_PhoPt,100,0,1000);
       h_Pho_eta[i] = new TH1F(hname_PhoEta,hname_PhoEta,100, -3.0, 3.0);
       h_Pho_phi[i] = new TH1F(hname_PhoPhi,hname_PhoPhi,100, -3.2, 3.2);
     }
-      //h_MET0 = new TH1F("h_MET0", "h_MET0", 100, 0.0, 1000.0);
+     
+
+  h_NJets_pTSum = new TH2F("NJets_pTSum","NJets_pTSum",50,0,50,10000,0,3500);
+    
+}
+
+AnalyzeTProxytBSM::AnalyzeTProxytBSM(const TString &inputFileList, const char *outFileName,const char *dataset, const char *sample, const char* LostlepFlag, const char* phoID) {
+  
+  std::cout << outFileName << std::endl;
+
+  string nameData=dataset;//vvv
+
+  if(nameData!="signalH") nameData="BG";
+  if(nameData=="signalH") nameData="signal";
+  cout<<"Treating the input files as "<<nameData<<" for setting tree branches"<<endl;
+  BookHistogram(outFileName); //, N2_mass);
+  //CrossSection_Map_Init();
+}
+
+AnalyzeTProxytBSM::~AnalyzeTProxytBSM() { 
+  if (!fChain) return;
+  delete fChain->GetCurrentFile();
+  oFile->cd();
+  oFile->Write();
+  oFile->Close();
+}
+
+#endif // AnalyzeTProxytBSM_cxx
+
+
+
+
+
+
+//backups
+
+/* TH1F *h_Jet_pT0, *h_Jet_eta0, *h_Jet_phi0;  //0 stands for no cut  */
+  /* TH1F *h_Jet_pT1, *h_Jet_eta1;   //1 stands for cut in the pT  */
+  /* TH1F *h_Jet_pT2, *h_Jet_eta2;   //2 stands for cut in pT and Eta */
+  /* TH1F *h_Jet_pT3, *h_Jet_eta3, *h_Jet_phi3;   //3 stands for cut in pT and Eta and MET */
+  /* TH1F *h_Jet_pT4, *h_Jet_eta4, *h_Jet_phi4; */
+  /* TH1F *h_Jet_pT5, *h_Jet_eta5, *h_Jet_phi5; */
+  
+  
+  //TH2F *h_NJet_MET, *h_NJet_PhoPt, *h_NJet_genPhoPt; 
+
+  //TH1F *h_ele_pT0, *h_ele_eta0, *h_ele_phi0; 
+  // TH1F *h_ele_pT3, *h_ele_eta3, *h_ele_phi3;  
+  
+  /* TH1F *h_pho_eta0,*h_pho_eta3, *h_pho_eta4, *h_pho_eta5; */
+  /* TH1F *h_pho_pT0, *h_pho_pT3, *h_pho_pT4, *h_pho_pT5; */
+  /* TH1F *h_pho_phi0, *h_pho_phi3, *h_pho_phi4, *h_pho_phi5; */
+  //TH1F *h_gen_pT0, *h_gen_eta0, *h_gen_phi0;
+  //TH1F *h_gen_pT3, *h_gen_eta3, *h_gen_phi3;
+
+ //h_MET0 = new TH1F("h_MET0", "h_MET0", 100, 0.0, 1000.0);
   /* h_MET3 = new TH1F("h_MET3", "hMET3", 100, 0.0, 1000.0); */
   /* h_MET4 = new TH1F("h_MET4", "hMET4", 100, 0.0, 1000.0); */
   /* h_MET5 = new TH1F("h_MET5", "hMET5", 100, 0.0, 1000.0); */
@@ -204,28 +223,24 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
   // h_EvtBrk->GetXaxis()->SetBinLabel(10,"mu-tau");
   // h_EvtBrk->GetXaxis()->SetBinLabel(11,"q-q");
 
-    
-}
+  /* //TH1F *h_MET3; */
+  /* TH1F *h_MET4; */
+  /* TH1F *h_MET5; */
+  /* TH1F *h_EvtBrk; */
+  /* TH1F *h_hadJets_Pt; */
+  /* TH1F *h_hadJets_Pt1; */
+  /* TH1F *h_hadJets_Eta; */
+  /* TH1F *h_hadJets_Eta1; */
 
-AnalyzeTProxytBSM::AnalyzeTProxytBSM(const TString &inputFileList, const char *outFileName,const char *dataset, const char *sample, const char* LostlepFlag, const char* phoID) {
-  
-  std::cout << outFileName << std::endl;
 
-  string nameData=dataset;//vvv
+/* TH1F *h_NHadJets0; */
+  /* TH1F *h_NHadJets3; */
+  /* TH1F *h_NHadJets4; */
+  /* TH1F *h_NHadJets5; */
 
-  if(nameData!="signalH") nameData="BG";
-  if(nameData=="signalH") nameData="signal";
-  cout<<"Treating the input files as "<<nameData<<" for setting tree branches"<<endl;
-  BookHistogram(outFileName); //, N2_mass);
-  //CrossSection_Map_Init();
-}
-
-AnalyzeTProxytBSM::~AnalyzeTProxytBSM() { 
-  if (!fChain) return;
-  delete fChain->GetCurrentFile();
-  oFile->cd();
-  oFile->Write();
-  oFile->Close();
-}
-
-#endif // AnalyzeTProxytBSM_cxx
+ //jets with no cuts
+  /* TH1F *h_NJets1;   // jets with cut on Pt */
+  /* TH1F *h_NJets2;   // along with eta cut */
+  /* TH1F *h_NJets3;   // along with MET cut */
+  /* TH1F *h_NJets4;   // cut on photon pt */
+  /* TH1F *h_NJets5;   // cut on NJets */
