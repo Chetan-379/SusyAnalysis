@@ -1,10 +1,10 @@
 const int n_pl = 4;
 bool logx = false;
 //defining the legends for each plots
-TString legend_text[10] = {"no cut","MET>200","Pho_Pt>20", "NJet>2","ST>300","No IsoTracks" "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
+TString legend_text[10] = {"no cut","MET>200","Pho_Pt>20", "NJet>2","ST>300","Lep_veto", "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
 int line_width[12] = {2,2,2,2,2,2,2,2,2,2,2,2};
 int line_style[12] = {1,1,1,1,1,1,1,1,1,1,1,1};
-int line_color[9] = {kBlack, kBlue, kGreen+2, kMagenta, kRed - 3, kBlue + 2 , kCyan + 1 , kGreen + 3 };
+int line_color[9] = {kBlack, kBlue, kGreen+2, kMagenta, kRed - 3, kAzure + 7 , kCyan + 1 , kGreen + 3 };
 TH1F* setLastBinAsOverFlow(TH1F*, int);
 TH1F* setMyRange(TH1F*,double,double);
 TH1F* DrawOverflow(TH1F*);
@@ -282,12 +282,12 @@ void test(string pathname)
   char *leg_head = new char[200];
   //define your files here
   int n_files=2; //you have two files in this example
-  f[0] = new TFile("out.root");
-  f[1] = new TFile("out.root");
+  f[0] = new TFile("out2.root");
+  f[1] = new TFile("out2.root");
   //define your histograms to be read from here
 
  
-  vector<string> histname1, histname2, histname3;
+  string histname1[100], histname2[100], histname3[100];
     char hname_NJets[100], hname_Jet_Pt[100], hname_Jet_Eta[100], hname_Jet_Phi[100], hname_Met[100], hname_PhoPt[100], hname_PhoEta[100], hname_PhoPhi[100];
   //vector<string> histPhoPt[100]
   // Book your histograms & summary counters here
@@ -296,7 +296,7 @@ void test(string pathname)
   for (int i=0; i<selection.size();i++)
     {
       sprintf(hname_NJets,"h_NJets_%s",selection[i].c_str());
-      *(histname3[i]) = hname_NJets;
+      histname3[i] = hname_NJets;
       sprintf(hname_Jet_Pt, "h_Jet_Pt_%s",selection[i].c_str());
       sprintf(hname_Jet_Eta, "h_Jet_Eta_%s",selection[i].c_str());
       sprintf(hname_Jet_Phi, "h_Jet_Phi_%s",selection[i].c_str());
@@ -332,7 +332,7 @@ void test(string pathname)
   for (int bigi=0; bigi<bigbaseline.size(); bigi++)
     {
       vector<string> filetag;
-      filetag={"TTGJets_2018","TTGJets_2017"};
+      filetag={"TTGJets_2018","TTGJets_2018"};
       //luminosity for each year - depends if you want to use it or - generate1Dplot uses this number and add it on the top
       vector<float>energyy;
       energyy={59.74,41.529};//,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,19.5,19.5,19.5,19.5,19.5,19.5,19.5,36.0,36.0,36.0,36.0,36.0,36.0,36.0};
