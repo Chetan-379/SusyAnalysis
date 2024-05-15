@@ -327,7 +327,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
     
       h_NJets_pTSum->Fill(NJets2,Jets_pT_Sum);
       //if (jentry < 100 && IsoTracks==0) cout << NJets2 << endl;
-      if (jentry <100) cout << Weight << endl;
+      //if (jentry <100) cout << Weight << endl;
   } // end jentry loop 
   cout << "No. of events with MET>100: " << nEvents << endl;
   //cout << "nentries: " << nentries << endl;
