@@ -91,8 +91,8 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
   // int NEvtlep3 = 0;
   // int NEvtlep4 = 0;
   int nEvents=0;
-  //for (Long64_t jentry=0; jentry<fChain->GetEntries(); jentry++){
-  for (Long64_t jentry=0; jentry<10000; jentry++){
+  for (Long64_t jentry=0; jentry<fChain->GetEntries(); jentry++){
+  //for (Long64_t jentry=0; jentry<10000; jentry++){
     
       fDirector.SetReadEntry(jentry);
       
@@ -123,8 +123,8 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
       int NJets2=0;
       float Jets_pT_Sum=0;
       float ST=0;
-      int Iso_Lep_Tracks;
-      double mT; 
+      int Iso_Lep_Tracks, NEMu;
+      // double mT; 
 
      
       for(int i=0;i<Jets->size();i++){
@@ -141,7 +141,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
 	cout<<"===load tree entry  ==="<<"\t"<<jentry<<"\t"<<"Jets check == "<<minDR<<endl;
      
       Iso_Lep_Tracks = isoElectronTracks + isoMuonTracks + isoPionTracks;
- 
+      NEMu = NElectrons + NMuons;
       for(int i=0;i<Jets->size();i++){
       	//zif(Debug)
       	  //cout<<"  = Jets.Pt()  ==  "<<Jets_v1[i].Pt()<<"\t"<< " = Jets.Eta() == "<<Jets_v1[i].Eta()<<endl;
@@ -160,7 +160,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
 		    NJets2++;
 		    
 		    
-		    
+	      
       		    // hadJets_hadronFlavor.push_back((*Jets_hadronFlavor)[i]);
       		    // hadJets_HTMask.push_back((*Jets_HTMask)[i]);
       		    // hadJets_bJetTagDeepCSVBvsAll.push_back((*Jets_bJetTagDeepCSVBvsAll)[i]);
@@ -196,16 +196,21 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
 		  h_Jet_pT[2]->Fill(Jets[i].Pt());
 		  h_Jet_eta[2]->Fill(Jets[i].Eta());
 		  h_Jet_phi[2]->Fill(Jets[i].Phi());
-		
+		  
 		  if (NJets2 < 2) continue;
 		  h_Jet_pT[3]->Fill(Jets[i].Pt());
 		  h_Jet_eta[3]->Fill(Jets[i].Eta());
 		  h_Jet_phi[3]->Fill(Jets[i].Phi());
-
-		  if (!(Iso_Lep_Tracks == 0)) continue;
+		  
+		  if (!(NEMu == 0)) continue;
 		  h_Jet_pT[5]->Fill(Jets[i].Pt());
 		  h_Jet_eta[5]->Fill(Jets[i].Eta());
 		  h_Jet_phi[5]->Fill(Jets[i].Phi());
+
+		  if (!(Iso_Lep_Tracks == 0)) continue;
+		  h_Jet_pT[6]->Fill(Jets[i].Pt());
+		  h_Jet_eta[6]->Fill(Jets[i].Eta());
+		  h_Jet_phi[6]->Fill(Jets[i].Phi());
 
 		
 		}
@@ -305,16 +310,24 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
 	h_Pho_eta[4] -> Fill(bestPhoton.Eta());
 	h_Pho_phi[4] -> Fill(bestPhoton.Phi());
 	h_NJets[4]-> Fill(NJets2);
-	if (!(Iso_Lep_Tracks == 0)) continue;
+	if (!(NEMu == 0)) continue;
 	h_MET[5] ->Fill(MET);
 	h_Pho_pT[5] ->Fill(bestPhoton.Pt());
 	h_Pho_eta[5] -> Fill(bestPhoton.Eta());
 	h_Pho_phi[5] -> Fill(bestPhoton.Phi());
 	h_NJets[5]-> Fill(NJets2);
+	
+	if (!(Iso_Lep_Tracks == 0)) continue;
+	h_MET[6] ->Fill(MET);
+	h_Pho_pT[6] ->Fill(bestPhoton.Pt());
+	h_Pho_eta[6] -> Fill(bestPhoton.Eta());
+	h_Pho_phi[6] -> Fill(bestPhoton.Phi());
+	h_NJets[6] -> Fill(NJets2);
       }
     
       h_NJets_pTSum->Fill(NJets2,Jets_pT_Sum);
-      //if (jentry < 100 && IsoTracks==0) cout << NJets2 << endl;   
+      //if (jentry < 100 && IsoTracks==0) cout << NJets2 << endl;
+      if (jentry <100) cout << Weight << endl;
   } // end jentry loop 
   cout << "No. of events with MET>100: " << nEvents << endl;
   //cout << "nentries: " << nentries << endl;

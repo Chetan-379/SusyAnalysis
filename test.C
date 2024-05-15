@@ -1,7 +1,7 @@
 const int n_pl = 4;
 bool logx = false;
 //defining the legends for each plots
-TString legend_text[10] = {"no cut","MET>200","Pho_Pt>20", "NJet>2","ST>300","Lep_veto", "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
+TString legend_text[10] = {"no cut","MET>200","Pho_Pt>20", "NJet>2","ST>300","e/mu_veto", "Iso_lep_trk_veto", "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
 int line_width[12] = {2,2,2,2,2,2,2,2,2,2,2,2};
 int line_style[12] = {1,1,1,1,1,1,1,1,1,1,1,1};
 int line_color[9] = {kBlack, kBlue, kGreen+2, kMagenta, kRed - 3, kAzure + 7 , kCyan + 1 , kGreen + 3 };
@@ -146,7 +146,7 @@ void generate_1Dplot(vector<TH1F*> hist, char const *tag_name="", float energy=-
     //hist.at(i)= setLastBinAsOverFlow(hist.at(i),xrange);
      
 
-    // normalize = true;
+    normalize = true;
     if(normalize) {
       	hist.at(i)->Scale(1.0/hist.at(i)->Integral());
       	hist.at(i)->GetYaxis()->SetTitle("Normalized");
@@ -282,7 +282,7 @@ void test(string pathname)
   char *leg_head = new char[200];
   //define your files here
   int n_files=2; //you have two files in this example
-  f[0] = new TFile("out2.root");
+  f[0] = new TFile("out.root");
   f[1] = new TFile("out2.root");
   //define your histograms to be read from here
 
@@ -291,7 +291,7 @@ void test(string pathname)
     char hname_NJets[100], hname_Jet_Pt[100], hname_Jet_Eta[100], hname_Jet_Phi[100], hname_Met[100], hname_PhoPt[100], hname_PhoEta[100], hname_PhoPhi[100];
   //vector<string> histPhoPt[100]
   // Book your histograms & summary counters here
-  vector<string> selection = {"no_cut", "MET", "Pho_pT", "Njets", "ST", "IsoTracks"};
+    vector<string> selection = {"no_cut", "MET", "Pho_pT", "Njets", "ST", "Lep_veto", "Iso_Lep_Trk_veto"};
 
   for (int i=0; i<selection.size();i++)
     {
@@ -314,14 +314,14 @@ void test(string pathname)
   vector<string> baseline1, baseline2, baseline3;
 
   //baseline1 = {"h_pho_pT0","h_pho_pT3","h_pho_pT4", "h_pho_pT5"};
-  baseline1 = {histname1[0], histname1[1], histname1[2], histname1[3], histname1[4], histname1[5]};
+  baseline1 = {histname1[0], histname1[1], histname1[2], histname1[3], histname1[4], histname1[5], histname1[6]};
   //baseline2 = {"h_pho_eta0","h_pho_eta3"};s
   //baseline3 = {"h_pho_phi0","h_pho_phi3"};
   //baseline4 = {"h_Jet_pT2", "h_Jet_pT3"};
   //baseline5 = {"h_Jet_Eta2", "h_Jet_Eta3"};
   //baseline6 = {"h_NJets2", "h_NJets3"};
-  baseline2 = {histname2[0], histname2[1], histname2[2], histname2[3], histname2[4], histname2[5]}; 
-  baseline3 = {histname3[0], histname3[1], histname3[2], histname3[3], histname3[4], histname3[5]};
+  baseline2 = {histname2[0], histname2[1], histname2[2], histname2[3], histname2[4], histname2[5], histname2[6]}; 
+  baseline3 = {histname3[0], histname3[1], histname3[2], histname3[3], histname3[4], histname3[5], histname3[6]};
   //baseline4 = {"h_NHadJets0", "h_NHadJets3", "h_NHadJets4", "h_NHadJets5"};
   
 
@@ -332,7 +332,7 @@ void test(string pathname)
   for (int bigi=0; bigi<bigbaseline.size(); bigi++)
     {
       vector<string> filetag;
-      filetag={"TTGJets_2018","TTGJets_2018"};
+      filetag={"TTJets_2018","TTGJets_2018"};
       //luminosity for each year - depends if you want to use it or - generate1Dplot uses this number and add it on the top
       vector<float>energyy;
       energyy={59.74,41.529};//,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,19.5,19.5,19.5,19.5,19.5,19.5,19.5,36.0,36.0,36.0,36.0,36.0,36.0,36.0};
@@ -347,7 +347,7 @@ void test(string pathname)
       vector<int>xmin = {0,0};
 
       //looping over each files///  
-      for(int i_file=0; i_file<1; i_file++) //looping over each file
+      for(int i_file=0; i_file<2; i_file++) //looping over each file
 	{
 	  vector<TH1F*> hist_list_Njets;
 	  for(int i_cut=0; i_cut<bigbaseline[bigi].size();i_cut++) //looping over different histograms which should be overlayed on the same canvas and these histograms are saved in the same file
@@ -368,7 +368,9 @@ void test(string pathname)
 	  xtitle = {diff_title[bigi],diff_title[bigi]};
 	 
 	  //path to save the files a jpg or pdf
-	  sprintf(full_path,"%s/%s_MET_comparisons_%s",pathname.c_str(),diff_title[bigi].c_str(),filetag[i_file].c_str());
+	  vector<string> folder;
+	  folder = {"plots/TTJ/", "plots/TTGJ/"};
+	  sprintf(full_path,"%s/%s%s_Normalised_MET_comparisons_%s",pathname.c_str(),folder[i_file].c_str(),diff_title[bigi].c_str(),filetag[i_file].c_str());
 	 	    
 	  //calling generate_1Dplot which will take this vector of histograms and 
 	  generate_1Dplot(hist_list_Njets,full_path,energy,xmax[i_file],xmin[i_file],leg_head,false,true,false,true,filetag[i_file].c_str(),xtitle[i_file].c_str(),rebin[i_file]);

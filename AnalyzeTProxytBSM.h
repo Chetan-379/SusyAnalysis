@@ -34,7 +34,7 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   myLV   getBestPhoton(int);
   //TLorentzVector  getBestPhoton(int);
   int    bestPhotonIndxAmongPhotons=-100;
-  vector<string> selection = {"no_cut", "MET", "Pho_pT", "Njets", "ST", "IsoTracks"};
+  vector<string> selection = {"no_cut", "MET", "Pho_pT", "Njets", "ST", "Lep_veto", "Iso_Lep_Trk_veto"};
   TFile *oFile;
   TH1F *h_MET[100];
   TH1F *h_NJets[100];  
