@@ -126,12 +126,22 @@ void generate_1Dplot(vector<TH1F*> hist, char const *tag_name="", float energy=-
   legend->SetTextSize(0.030);
   legend->SetLineColor(kWhite);
   char* lhead = new char[100];
+
+  TLegend *legend1; //legend to be drawn on the plot - shift x,ys if you want to move this on the canvas
+  legend1 = new TLegend(0.3,0.65,0.75,0.9);  
+  legend1->SetTextSize(0.030);
+  legend1->SetLineColor(kWhite);
+  //char* lhead = new char[100];
   
   sprintf(lhead,"#bf{%s} ",title); // legend header -- for example you are plotting this for WGJets then title string can be "WGJets"
   legend->SetHeader(lhead);
   legend->SetLineColor(kWhite);
-  
+
+  legend1->SetHeader(lhead);
+  legend1->SetLineColor(kWhite);
+
   TLegendEntry* leg_entry[11];
+  TLegendEntry* leg_entry1[11];
   float x_label_size = 0.045;
   double ymin = 100000.0;
   double ymax = 0.0;
@@ -190,10 +200,19 @@ void generate_1Dplot(vector<TH1F*> hist, char const *tag_name="", float energy=-
      hist.at(i)->Rebin(rebin);
     }
     //setting up the legend style and all
+       vector <string> Intg;
+    char final_label[100];
+    sprintf(final_label,"Int=%lf Ent=%lf", hist.at(i)->Integral(),hist.at(i)->GetEntries()); 
+
+    
+    //leg_entry[i] = legend->AddEntry(hist.at(i),(hist.at(i)->Integral().c_str()),"xsl");
+
     legName.push_back(hist.at(i)->GetName());
     leg_entry[i] = legend->AddEntry(hist.at(i),legend_text[i],"l");
+    leg_entry1[i] = legend1->AddEntry(hist.at(i),final_label,"l");
     //leg_entry[i] = legend->AddEntry(hist.at(i),(hist.at(i)->Integral().c_str()),"xsl");
     leg_entry[i]->SetTextColor(hist.at(i)->GetLineColor());
+    leg_entry1[i]->SetTextColor(hist.at(i)->GetLineColor());
     if(hist.at(i)->GetMaximum() > ymax) ymax = hist.at(i)->GetMaximum();
     if(hist.at(i)->GetMinimum() < ymin) ymin = hist.at(i)->GetMinimum();
     //setLastBinAsOverFlow(hist.at(i),0);
@@ -214,6 +233,7 @@ void generate_1Dplot(vector<TH1F*> hist, char const *tag_name="", float energy=-
   }
   
   legend->Draw();
+  legend1->Draw();
 
 
   if(log_flag) 
@@ -370,7 +390,7 @@ void test(string pathname)
 	  //path to save the files a jpg or pdf
 	  vector<string> folder;
 	  folder = {"plots/TTJ/", "plots/TTGJ/"};
-	  sprintf(full_path,"%s/%s%s_Normalised_MET_comparisons_%s",pathname.c_str(),folder[i_file].c_str(),diff_title[bigi].c_str(),filetag[i_file].c_str());
+	  sprintf(full_path,"%s/%s%s_MET_comparisons_%s",pathname.c_str(),folder[i_file].c_str(),diff_title[bigi].c_str(),filetag[i_file].c_str());
 	 	    
 	  //calling generate_1Dplot which will take this vector of histograms and 
 	  generate_1Dplot(hist_list_Njets,full_path,energy,xmax[i_file],xmin[i_file],leg_head,false,true,false,true,filetag[i_file].c_str(),xtitle[i_file].c_str(),rebin[i_file]);
