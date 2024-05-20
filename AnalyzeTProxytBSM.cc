@@ -120,7 +120,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
       myLV bestPhoton=getBestPhoton(pho_ID);
       int hadJetID=-999;
       int NJets0=Jets->size();
-      int NJets2=0;
+      int NHadJets = 0;
       float Jets_pT_Sum=0;
       float ST=0;
       int Iso_Lep_Tracks, NEMu;
@@ -157,7 +157,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
       		if(hadJetID)
       		  {
       		    hadJets.push_back(Jets[i]);
-		    NJets2++;
+		    NHadJets++;
 		    
 		    
 	      
@@ -186,7 +186,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
 		h_Jet_pT[0]->Fill(Jets[i].Pt());
 		h_Jet_eta[0]->Fill(Jets[i].Eta());
 		h_Jet_phi[0]->Fill(Jets[i].Phi());
-		    
+		
 		if (MET>200){
 		  h_Jet_pT[1]->Fill(Jets[i].Pt());
 		  h_Jet_eta[1]->Fill(Jets[i].Eta());
@@ -197,7 +197,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
 		  h_Jet_eta[2]->Fill(Jets[i].Eta());
 		  h_Jet_phi[2]->Fill(Jets[i].Phi());
 		  
-		  if (NJets2 < 2) continue;
+		  if (NHadJets < 2) continue;
 		  h_Jet_pT[3]->Fill(Jets[i].Pt());
 		  h_Jet_eta[3]->Fill(Jets[i].Eta());
 		  h_Jet_phi[3]->Fill(Jets[i].Phi());
@@ -244,7 +244,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
       
 	    //for counting no. of leptons in an event
       int PdgId = GenParticles_PdgId[(int)ii];
-      // if (PdgId == 22) h_NJet_genPhoPt->Fill(GenParticles[(int)ii].Pt(),NJets2);
+      // if (PdgId == 22) h_NJet_genPhoPt->Fill(GenParticles[(int)ii].Pt(),NHadJets);
       //if (abs(PdgId) == 11 || abs(PdgId) == 13 || abs(PdgId) == 15) Nlep++;
       // if (abs(PdgId)==11) Ch_e++;
       //   if (abs(PdgId)==13) Ch_mu++;
@@ -279,9 +279,9 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
       // h_pho_eta0  ->Fill(bestPhoton.Eta());
       // h_pho_phi0 ->Fill(bestPhoton.Phi());
       
-      // h_NJet_PhoPt->Fill(bestPhoton.Pt(),NJets2);
+      // h_NJet_PhoPt->Fill(bestPhoton.Pt(),NHadJets);
       
-      h_NJets[0]->Fill(NJets2);
+      h_NHadJets[0]->Fill(NHadJets);
       h_MET[0]->Fill(MET);
       h_Pho_pT[0]  ->Fill(bestPhoton.Pt());
       h_Pho_eta[0]  ->Fill(bestPhoton.Eta());
@@ -291,45 +291,46 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
 	h_Pho_pT[1]  ->Fill(bestPhoton.Pt());
 	h_Pho_eta[1]  ->Fill(bestPhoton.Eta());
 	h_Pho_phi[1]  ->Fill(bestPhoton.Phi());
-	h_NJets[1]-> Fill(NJets2);
+	h_NHadJets[1]-> Fill(NHadJets);
 	if (bestPhoton.Pt()<20) continue;
 	h_MET[2] -> Fill(MET);
 	h_Pho_pT[2] -> Fill(bestPhoton.Pt());
 	h_Pho_eta[2] -> Fill(bestPhoton.Eta());
 	h_Pho_phi[2] -> Fill(bestPhoton.Phi());
-	h_NJets[2]-> Fill(NJets2);
-	if (NJets2 < 2) continue;
+	h_NHadJets[2]-> Fill(NHadJets);
+	if (NHadJets < 2) continue;
 	h_MET[3] ->Fill(MET);
 	h_Pho_pT[3] ->Fill(bestPhoton.Pt());
 	h_Pho_eta[3] -> Fill(bestPhoton.Eta());
 	h_Pho_phi[3] -> Fill(bestPhoton.Phi());
-	h_NJets[3]-> Fill(NJets2);
+	h_NHadJets[3]-> Fill(NHadJets);
 	if (ST < 300) continue;
 	h_MET[4] ->Fill(MET);
 	h_Pho_pT[4] ->Fill(bestPhoton.Pt());
 	h_Pho_eta[4] -> Fill(bestPhoton.Eta());
 	h_Pho_phi[4] -> Fill(bestPhoton.Phi());
-	h_NJets[4]-> Fill(NJets2);
+	h_NHadJets[4]-> Fill(NHadJets);
 	if (!(NEMu == 0)) continue;
 	h_MET[5] ->Fill(MET);
 	h_Pho_pT[5] ->Fill(bestPhoton.Pt());
 	h_Pho_eta[5] -> Fill(bestPhoton.Eta());
 	h_Pho_phi[5] -> Fill(bestPhoton.Phi());
-	h_NJets[5]-> Fill(NJets2);
+	h_NHadJets[5]-> Fill(NHadJets);
 	
 	if (!(Iso_Lep_Tracks == 0)) continue;
 	h_MET[6] ->Fill(MET);
 	h_Pho_pT[6] ->Fill(bestPhoton.Pt());
 	h_Pho_eta[6] -> Fill(bestPhoton.Eta());
 	h_Pho_phi[6] -> Fill(bestPhoton.Phi());
-	h_NJets[6] -> Fill(NJets2);
+	h_NHadJets[6] -> Fill(NHadJets);
       }
     
-      h_NJets_pTSum->Fill(NJets2,Jets_pT_Sum);
-      //if (jentry < 100 && IsoTracks==0) cout << NJets2 << endl;
+      // h_NHadJets->Fill(NHadJets,Jets_pT_Sum);
+      //if (jentry < 100 && IsoTracks==0) cout << NHadJets << endl;
       //if (jentry <100) cout << Weight << endl;
+  
   } // end jentry loop 
-  cout << "No. of events with MET>100: " << nEvents << endl;
+  //cout << "No. of events with MET>100: " << nEvents << endl;
   //cout << "nentries: " << nentries << endl;
 }
 

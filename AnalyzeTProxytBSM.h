@@ -34,14 +34,14 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   myLV   getBestPhoton(int);
   //TLorentzVector  getBestPhoton(int);
   int    bestPhotonIndxAmongPhotons=-100;
-  vector<string> selection = {"no_cut", "MET", "Pho_pT", "Njets", "ST", "Lep_veto", "Iso_Lep_Trk_veto"};
+  vector<string> selection = {"no_cut", "MET", "Pho_pT", "NHadjets", "ST", "Lep_veto", "Iso_Lep_Trk_veto"};
   TFile *oFile;
   TH1F *h_MET[100];
-  TH1F *h_NJets[100];  
+  TH1F *h_NHadJets[100];  
   TH1F *h_Jet_pT[100], *h_Jet_eta[100], *h_Jet_phi[100];
   TH1F *h_Pho_pT[100], *h_Pho_eta[100], *h_Pho_phi[100];
  
-  TH2F *h_NJets_pTSum; 
+  TH2F *h_NHadJets_pTSum; 
 };
 #endif
 
@@ -54,11 +54,11 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
 
   oFile = new TFile(outFileName, "recreate");
   oFile->cd();
-  char hname_NJets[100], hname_Jet_Pt[100], hname_Jet_Eta[100], hname_Jet_Phi[100], hname_Met[100], hname_PhoPt[100], hname_PhoEta[100], hname_PhoPhi[100];
+  char hname_NHadJets[100], hname_Jet_Pt[100], hname_Jet_Eta[100], hname_Jet_Phi[100], hname_Met[100], hname_PhoPt[100], hname_PhoEta[100], hname_PhoPhi[100];
   // Book your histograms & summary counters here 
   for (int i=0; i<selection.size();i++)
     {
-      sprintf(hname_NJets,"h_NJets_%s",selection[i].c_str());
+      sprintf(hname_NHadJets,"h_NHadJets_%s",selection[i].c_str());
       sprintf(hname_Jet_Pt,"h_Jet_Pt_%s",selection[i].c_str());
       sprintf(hname_Jet_Eta,"h_Jet_Eta_%s",selection[i].c_str());
       sprintf(hname_Jet_Phi,"h_Jet_Phi_%s",selection[i].c_str());
@@ -66,7 +66,7 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
       sprintf(hname_PhoPt,"h_Pho_Pt_%s",selection[i].c_str());
       sprintf(hname_PhoEta,"h_Pho_Eta_%s",selection[i].c_str());
       sprintf(hname_PhoPhi,"h_Pho_Phi_%s",selection[i].c_str());
-      h_NJets[i]= new TH1F(hname_NJets, hname_NJets, 50,0,50);
+      h_NHadJets[i]= new TH1F(hname_NHadJets, hname_NHadJets, 50,0,50);
       h_Jet_pT[i]  = new TH1F(hname_Jet_Pt,hname_Jet_Pt, 100,0.0, 1000.0);
       h_Jet_eta[i] = new TH1F(hname_Jet_Eta,hname_Jet_Eta, 100, -10.0, 10.0);
       h_Jet_phi[i] = new TH1F(hname_Jet_Phi,hname_Jet_Phi,100, -3.2, 3.2);
@@ -77,7 +77,7 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
     }
      
 
-  h_NJets_pTSum = new TH2F("NJets_pTSum","NJets_pTSum",50,0,50,10000,0,3500);
+  h_NHadJets_pTSum = new TH2F("h_NHadJets_pTSum","h_NHadJets_pTSum",50,0,50,10000,0,3500);
     
 }
 
@@ -157,12 +157,12 @@ AnalyzeTProxytBSM::~AnalyzeTProxytBSM() {
   /* h_Jet_phi5 = new TH1F("h_Jet_phi5", "h_Jet_phi5",100, -3.2, 3.2); */
   
 
-  /* h_NJets0 = new TH1F("h_NJets0", "h_NJets0",50, 0, 50); */
-  /* h_NJets1 = new TH1F("h_NJets1", "h_NJets1",50, 0, 50); */
-  /* h_NJets2 = new TH1F("h_NJets2", "h_NJets2",50, 0, 50); */
-  /* h_NJets3 = new TH1F("h_NJets3", "h_NJets3",50, 0, 50); */
-  /* h_NJets4 = new TH1F("h_NJets4", "h_NJets4",50, 0, 50); */
-  /* h_NJets5 = new TH1F("h_NJets5", "h_NJets5",50, 0, 50); */
+  /* h_NHadJets0 = new TH1F("h_NHadJets0", "h_NHadJets0",50, 0, 50); */
+  /* h_NHadJets1 = new TH1F("h_NHadJets1", "h_NHadJets1",50, 0, 50); */
+  /* h_NHadJets = new TH1F("h_NHadJets", "h_NHadJets",50, 0, 50); */
+  /* h_NHadJets3 = new TH1F("h_NHadJets3", "h_NHadJets3",50, 0, 50); */
+  /* h_NHadJets4 = new TH1F("h_NHadJets4", "h_NHadJets4",50, 0, 50); */
+  /* h_NHadJets5 = new TH1F("h_NHadJets5", "h_NHadJets5",50, 0, 50); */
 
   // h_NHadJets0 = new TH1F("h_NHadJets0", "h_NHadJets0",50, 0, 50);
   // h_NHadJets3 = new TH1F("h_NHadJets3", "h_NHadJets3",50, 0, 50);
@@ -192,9 +192,9 @@ AnalyzeTProxytBSM::~AnalyzeTProxytBSM() {
   /* h_pho_phi4= new TH1F("h_pho_phi4", "h_pho_phi4",100, -3.2, 3.2); */
   /* h_pho_phi5= new TH1F("h_pho_phi5", "h_pho_phi5",100, -3.2, 3.2); */
 
-  // h_NJet_MET = new TH2F("h_NJet_MET", "h_NJet_MET", 100, 0.0, 1000.0, 50, 0, 50);
-  // h_NJet_MET->GetXaxis()->SetTitle("MET");
-  // h_NJet_MET->GetYaxis()->SetTitle("NJet");
+  // h_NHadJet_MET = new TH2F("h_NHadJet_MET", "h_NHadJet_MET", 100, 0.0, 1000.0, 50, 0, 50);
+  // h_NHadJet_MET->GetXaxis()->SetTitle("MET");
+  // h_NHadJet_MET->GetYaxis()->SetTitle("NJet");
 
   // h_NJet_PhoPt = new TH2F("h_NJet_PhoPt", "h_PhoPt", 100, 0.0, 1000.0, 50, 0, 50);
   // h_NJet_PhoPt->GetXaxis()->SetTitle("Pho_Pt");
@@ -239,8 +239,8 @@ AnalyzeTProxytBSM::~AnalyzeTProxytBSM() {
   /* TH1F *h_NHadJets5; */
 
  //jets with no cuts
-  /* TH1F *h_NJets1;   // jets with cut on Pt */
-  /* TH1F *h_NJets2;   // along with eta cut */
-  /* TH1F *h_NJets3;   // along with MET cut */
-  /* TH1F *h_NJets4;   // cut on photon pt */
-  /* TH1F *h_NJets5;   // cut on NJets */
+  /* TH1F *h_NHadJets1;   // jets with cut on Pt */
+  /* TH1F *h_NHadJets;   // along with eta cut */
+  /* TH1F *h_NHadJets3;   // along with MET cut */
+  /* TH1F *h_NHadJets4;   // cut on photon pt */
+  /* TH1F *h_NHadJets5;   // cut on NHadJets */
