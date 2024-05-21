@@ -43,7 +43,7 @@ TH1F* setLastBinAsOverFlow(TH1F* h_hist, int xrange){
   double lastBinCt =h_hist->GetBinContent(h_hist->GetNbinsX()),overflCt =h_hist->GetBinContent(h_hist->GetNbinsX());
   //  cout<<h_hist->GetNbinsX()<<"\t"<<lastBinCt<<"\t"<<overflCt<<endl;
 
-  double lastBinErr=h_hist->GetBinError(h_hist->GetNbinsX()),  overflErr=h_hist->GetBinError(h_hist->GetNbinsX()+1);
+  double lastBinErr=h_hist->GetBinError(h_hist->GetNbinsX()),  overflErr=h_hist->GetBinError(h_hist->GetNbinsX()+1); 
   if(lastBinCt!=0 && overflCt!=0)
     lastBinErr = (lastBinCt+overflCt)* (sqrt( ((lastBinErr/lastBinCt)*(lastBinErr/lastBinCt)) + ((overflErr/overflCt)*(overflErr/overflCt)) ) );
 
@@ -122,23 +122,23 @@ void generate_1Dplot(vector<TH1F*> hist, char const *tag_name="", float energy=-
   double x = 0.15;
   double y = 0.90;
   TLegend *legend; //legend to be drawn on the plot - shift x,ys if you want to move this on the canvas
-  legend = new TLegend(0.4,0.65,0.59,0.9);  
+  legend = new TLegend(0.65,0.65,0.79,0.9);  
   legend->SetTextSize(0.030);
   legend->SetLineColor(kWhite);
   char* lhead = new char[100];
 
-  TLegend *legend1; //legend to be drawn on the plot - shift x,ys if you want to move this on the canvas
-  legend1 = new TLegend(0.65,0.55,0.79,0.8);  
-  legend1->SetTextSize(0.030);
-  legend1->SetLineColor(kWhite);
+  // TLegend *legend1; //legend to be drawn on the plot - shift x,ys if you want to move this on the canvas
+  // legend1 = new TLegend(0.65,0.55,0.79,0.8);  
+  // legend1->SetTextSize(0.030);
+  // legend1->SetLineColor(kWhite);
   //char* lhead = new char[100];
   
   sprintf(lhead,"#bf{%s} ",title); // legend header -- for example you are plotting this for WGJets then title string can be "WGJets"
   legend->SetHeader(lhead);
   legend->SetLineColor(kWhite);
 
-  legend1->SetHeader(lhead);
-  legend1->SetLineColor(kWhite);
+  //legend1->SetHeader(lhead);
+  //legend1->SetLineColor(kWhite);
 
   TLegendEntry* leg_entry[11];
   TLegendEntry* leg_entry1[11];
@@ -157,13 +157,17 @@ void generate_1Dplot(vector<TH1F*> hist, char const *tag_name="", float energy=-
      
 
     // normalize = true;
-    Int_t NEvnts;
-    float Evnt_frac;
-    Int_t no_of_events;
-    no_of_events = hist.at(i)->GetEntries();
-    NEvnts = hist.at(i)->Integral();
-    Evnt_frac = (NEvnts/(hist.at(0)->Integral()))*100;  
-    cout << NEvnts << "    (frac: " << setprecision(3) << Evnt_frac << "%)" << "  " << no_of_events << endl;
+
+    // Int_t NEvnts;
+    // float Evnt_frac;
+    // Int_t no_of_events;
+    
+    // no_of_events = hist.at(i)->GetEntries();
+    // NEvnts = hist.at(i)->Integral();
+    // Evnt_frac = (no_of_events/(hist.at(0)->GetEntries()))*100;
+    // int overflCt= (hist.at(i)->GetBinContent(hist.at(i)->GetNbinsX()+1));
+    
+    // cout << no_of_events << "    (frac: " << setprecision(3) << Evnt_frac << "%)" << overflCt << endl;
     if(normalize) {
       	hist.at(i)->Scale(1.0/hist.at(i)->Integral());
       	hist.at(i)->GetYaxis()->SetTitle("Normalized");
@@ -210,19 +214,19 @@ void generate_1Dplot(vector<TH1F*> hist, char const *tag_name="", float energy=-
        vector <string> Intg;
     char final_label[100];
     //int Entries = hist.at(i)->GetEntries().setprecision(1)
-    int Intigral = hist.at(i)->Integral();
+    int Entries = hist.at(i)->GetEntries();
       //sprintf(final_label,"Integral: %f",setprecision(2) << (hist.at(i)->Integral()));
-    sprintf(final_label,"Integral: %d", Intigral); 
+    sprintf(final_label,"%s (%d)",legend_text[i].Data(), Entries); 
 
     
     //leg_entry[i] = legend->AddEntry(hist.at(i),(hist.at(i)->Integral().c_str()),"xsl");
 
     legName.push_back(hist.at(i)->GetName());
-    leg_entry[i] = legend->AddEntry(hist.at(i),legend_text[i],"l");
-    leg_entry1[i] = legend1->AddEntry(hist.at(i),final_label,"l");
+    leg_entry[i] = legend->AddEntry(hist.at(i), final_label, "l");
+    //leg_entry1[i] = legend1->AddEntry(hist.at(i),final_label,"l");
     //leg_entry[i] = legend->AddEntry(hist.at(i),(hist.at(i)->Integral().c_str()),"xsl");
     leg_entry[i]->SetTextColor(hist.at(i)->GetLineColor());
-    leg_entry1[i]->SetTextColor(hist.at(i)->GetLineColor());
+    //leg_entry1[i]->SetTextColor(hist.at(i)->GetLineColor());
     if(hist.at(i)->GetMaximum() > ymax) ymax = hist.at(i)->GetMaximum();
     if(hist.at(i)->GetMinimum() < ymin) ymin = hist.at(i)->GetMinimum();
     //setLastBinAsOverFlow(hist.at(i),0);
@@ -243,7 +247,7 @@ void generate_1Dplot(vector<TH1F*> hist, char const *tag_name="", float energy=-
   }
   
   legend->Draw();
-  legend1->Draw();
+  //legend1->Draw();
 
 
   if(log_flag) 
@@ -315,11 +319,11 @@ void test(string pathname)
   // f[0] = new TFile("out.root");
   // f[1] = new TFile("out2.root");
   vector<string> f;
-  //f = {"Summer20UL18_TTJets_HT.root", "Summer20UL18_TTGJets_Tune.root", "Summer20UL18_TTJets_Leptons.root", "Summer20UL18_WJetsToLNu_HT.root", "Summer20UL18_WGJets_MonoPhoton.root", "Summer20UL18_ZJetsToNuNu_HT.root", "Summer20UL18_ZNuNuGJets_MonoPhoton.root", "Summer20UL18_QCD_HT.root"};
-  //f = {"Summer20UL18_TTJets_HT.root", "Summer20UL18_TTGJets_Tune.root", "Summer20UL18_WJetsToLNu_HT.root", "Summer20UL18_WGJets_MonoPhoton.root", "Summer20UL18_ZJetsToNuNu_HT.root", "Summer20UL18_ZNuNuGJets_MonoPhoton.root", "Summer20UL18_QCD_HT.root"};
-  f = {"Summer20UL18_QCD_HT.root"};
+  f = {"Summer20UL18_TTJets_HT.root", "Summer20UL18_TTGJets_Tune.root", "Summer20UL18_TTJets_Leptons.root", "Summer20UL18_WJetsToLNu_HT.root", "Summer20UL18_WGJets_MonoPhoton.root", "Summer20UL18_ZJetsToNuNu_HT.root", "Summer20UL18_ZNuNuGJets_MonoPhoton.root", "Summer20UL18_QCD_HT.root"};
+ 
+  //f = {"Summer20UL18_WJetsToLNu_HT.root"};
   //define your histograms to be read from here
-  int n_files=f.size(); //you have two files in this example
+  int n_files=f.size(); //you have n files in this example
  
   string histname1[100], histname2[100], histname3[100];
     char hname_NHadJets[100], hname_Jet_Pt[100], hname_Jet_Eta[100], hname_Jet_Phi[100], hname_Met[100], hname_PhoPt[100], hname_PhoEta[100], hname_PhoPhi[100];
@@ -366,21 +370,20 @@ void test(string pathname)
   for (int bigi=0; bigi<bigbaseline.size(); bigi++)
     {
       vector<string> filetag;
-      //filetag={"TTJets_2018","TTGJets_2018", "WJetsToLNu_2018", "WGJets_2018", "ZJetsToNuNu_2018", "ZNuNuGJets_2018", "QCD_2018"};
-      //filetag={"TTJets_2018","TTGJets_2018", "TTJets_Leptons_2018", "WJetsToLNu_2018", "WGJets_2018", "ZJetsToNuNu_2018", "ZNuNuGJets_2018", "QCD_2018"};
-      filetag={"QCD_2018"};
+      filetag={"TTJets_2018","TTGJets_2018", "TTJets_Leptons_2018", "WJetsToLNu_2018", "WGJets_2018", "ZJetsToNuNu_2018", "ZNuNuGJets_2018", "QCD_2018"};
+      //filetag={"WJetsToLNu_2018"};
       //luminosity for each year - depends if you want to use it or - generate1Dplot uses this number and add it on the top
       vector<float>energyy;
       energyy={59.74,41.529};//,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,19.5,19.5,19.5,19.5,19.5,19.5,19.5,36.0,36.0,36.0,36.0,36.0,36.0,36.0};
 
       //rebin values
-      vector<int >rebin = {2,2}; //keep it 1 if you don't want to change hist bins
+      vector<int >rebin = {2,2,2,2,2,2,2,2,2}; //keep it 1 if you don't want to change hist bins
       
       //x axis title for all plots///
       // vector<string>xtitle = {title[bigi], title[bigi]};
       //x axis range
-      vector<int>xmax = {2000,2000};
-      vector<int>xmin = {0,0};
+      vector<int>xmax = {2000,2000,2000,2000,2000,2000,2000,2000};
+      vector<int>xmin = {0,0,0,0,0,0,0,0};
 
       //looping over each files///  
       for(int i_file=0; i_file < f.size(); i_file++) //looping over each file
@@ -394,20 +397,19 @@ void test(string pathname)
 	      TH1F* resp = (TH1F*)root_file->Get(hist_name); //reading hist from the TFile
 	      hist_list_Njets.push_back(resp);
 	    }
-	  float energy=energyy[i_file];
+	  float energy=energyy[0];
 	  int xrange=0.0;
 
 	   //x axis title for all plots///
 	  vector<string>diff_title;
 	  diff_title = { "Pho_pT" , "Pt_Miss", "NHadJets"};
 	  vector<string>xtitle;
-	  xtitle = {diff_title[bigi],diff_title[bigi]};
+	  xtitle = {diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi]};
 	 
 	  //path to save the files a jpg or pdf
 	  vector<string> folder;
-	  //folder = {"plots/TT/", "plots/TTG/", "plots/TTL/",  "plots/WLNu/", "plots/WG/", "plots/ZNuNu/", "plots/ZGNuNu/", "plots/QCD/"};
-	  //folder = {"plots/TT/", "plots/TTG/",  "plots/WLNu/", "plots/WG/", "plots/ZNuNu/", "plots/ZGNuNu/", "plots/QCD/"};
-	  folder = {"plots/QCD/"};
+	  folder = {"plots/TT/", "plots/TTG/", "plots/TTL/",  "plots/WLNu/", "plots/WG/", "plots/ZNuNu/", "plots/ZGNuNu/", "plots/QCD/"};
+	  //folder = {"plots/WLNu/"};
 	  sprintf(full_path,"%s/%s%s_MET_comparisons_%s",pathname.c_str(),folder[i_file].c_str(),diff_title[bigi].c_str(),filetag[i_file].c_str());
 	 	    
 	  //calling generate_1Dplot which will take this vector of histograms and 
