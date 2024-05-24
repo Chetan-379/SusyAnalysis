@@ -35,11 +35,13 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   //TLorentzVector  getBestPhoton(int);
   int    bestPhotonIndxAmongPhotons=-100;
   vector<string> selection = {"no_cut", "MET", "Pho_pT", "NHadjets", "ST", "Lep_veto", "Iso_Lep_Trk_veto"};
+  vector<string> genparticle = {"Electron", "Muon", "Tau"};
   TFile *oFile;
   TH1F *h_MET[100];
   TH1F *h_NHadJets[100];  
   TH1F *h_Jet_pT[100], *h_Jet_eta[100], *h_Jet_phi[100];
   TH1F *h_Pho_pT[100], *h_Pho_eta[100], *h_Pho_phi[100];
+  TH1F *h_Gen_pT[5][10], *h_Gen_eta[5][10], *h_Gen_phi[5][10];
  
   TH2F *h_NHadJets_pTSum; 
 };
@@ -54,7 +56,9 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
 
   oFile = new TFile(outFileName, "recreate");
   oFile->cd();
-  char hname_NHadJets[100], hname_Jet_Pt[100], hname_Jet_Eta[100], hname_Jet_Phi[100], hname_Met[100], hname_PhoPt[100], hname_PhoEta[100], hname_PhoPhi[100];
+  //char hname_NHadJets[100], hname_Jet_Pt[100], hname_Jet_Eta[100], hname_Jet_Phi[100], hname_Met[100], hname_PhoPt[100], hname_PhoEta[100], hname_PhoPhi[100], hname_ElectronPt[100], hname_Muon_Pt[100], hname_tau_Pt[100], hname_ElectronEta[100], hname_Muon_Eta[100], hname_tau_Eta[100], hname_ElectronPhi[100], hname_Muon_Phi[100], hname_tau_Phi[100];
+  char hname_NHadJets[100], hname_Jet_Pt[100], hname_Jet_Eta[100], hname_Jet_Phi[100], hname_Met[100], hname_PhoPt[100], hname_PhoEta[100], hname_PhoPhi[100], hname_GenPt[100], hname_GenEta[100], hname_GenPhi[100]; 
+  // vector<char> hname_GenPtcl_ID = {hname_ElectronPt[100], hname_Muon_Pt[100], hname_tau_Pt[100], hname_ElectronEta[100], hname_Muon_Eta[100], hname_tau_Eta[100], hname_ElectronPhi[100], hname_Muon_Phi[100], hname_tau_Phi[100]} 
   // Book your histograms & summary counters here 
   for (int i=0; i<selection.size();i++)
     {
@@ -66,6 +70,7 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
       sprintf(hname_PhoPt,"h_Pho_Pt_%s",selection[i].c_str());
       sprintf(hname_PhoEta,"h_Pho_Eta_%s",selection[i].c_str());
       sprintf(hname_PhoPhi,"h_Pho_Phi_%s",selection[i].c_str());
+
       h_NHadJets[i]= new TH1F(hname_NHadJets, hname_NHadJets, 50,0,50);
       h_Jet_pT[i]  = new TH1F(hname_Jet_Pt,hname_Jet_Pt, 100,0.0, 1000.0);
       h_Jet_eta[i] = new TH1F(hname_Jet_Eta,hname_Jet_Eta, 100, -10.0, 10.0);
@@ -74,7 +79,25 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
       h_Pho_pT[i]= new TH1F(hname_PhoPt,hname_PhoPt,100,0,1000);
       h_Pho_eta[i] = new TH1F(hname_PhoEta,hname_PhoEta,100, -3.0, 3.0);
       h_Pho_phi[i] = new TH1F(hname_PhoPhi,hname_PhoPhi,100, -3.2, 3.2);
+
+      //Defing histogram for different gen particles for different cuts
+      for (int j=0; j<genparticle.size(); j++)
+      {
+         // sprintf(hname_GenPt[i][4],"h_Gen%s_Pt_ST",genparticle[i]);
+	 // sprintf(hname_GenEta[i][4],"h_Gen%s_eta_ST",genparticle[i]);
+	 // sprintf(hname_GenParticlePhi[i][4],"h_Gen%s_phi_ST",genparticle[i]);
+	 if (i>3){
+	   sprintf(hname_GenPt,"h_Gen%s_Pt_%s",genparticle[j].c_str(),selection[i].c_str());
+	   sprintf(hname_GenEta,"h_Gen%s_Eta_%s",genparticle[j].c_str(),selection[i].c_str());
+	   sprintf(hname_GenPhi,"h_Gen%s_Phi_%s",genparticle[j].c_str(),selection[i].c_str());
+
+	   h_Gen_pT[j][i] = new TH1F(hname_GenPt, hname_GenPt, 100,0.0,1000.0);
+	   h_Gen_eta[j][i] = new TH1F(hname_GenEta, hname_GenEta, 500,-10,10);
+	   h_Gen_phi[j][i] = new TH1F(hname_GenPhi, hname_GenPhi, 100,-5,5);
+	 }
+      }      
     }
+  
      
 
   h_NHadJets_pTSum = new TH2F("h_NHadJets_pTSum","h_NHadJets_pTSum",50,0,50,10000,0,3500);
