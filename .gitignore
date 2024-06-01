@@ -3,3 +3,6 @@
 
 #ignoring the autosaved files in the repo
 *~
+
+#ignoring the png files
+/plots/*/*.png
