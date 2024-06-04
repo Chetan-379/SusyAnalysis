@@ -326,114 +326,113 @@ void overlayauto(string pathname)
   vector<string> f;
   //f = {"Summer20UL18_TTJets_HT.root", "Summer20UL18_TTGJets_Tune.root", "Summer20UL18_TTJets_Leptons.root", "Summer20UL18_WJetsToLNu_HT.root", "Summer20UL18_WGJets_MonoPhoton.root", "Summer20UL18_ZJetsToNuNu_HT.root", "Summer20UL18_ZNuNuGJets_MonoPhoton.root", "Summer20UL18_QCD_HT.root"};
  
-  //f = {"Summer20UL18_WJetsToLNu_HT.root"};
-  f = {"Summer20UL18_WGJets_MonoPhoton.root"};
+  f = {"Summer20UL18_TTJets_HT.root","Summer20UL18_WJetsToLNu_HT.root","Summer20UL18_WGJets_MonoPhoton.root"};
   //define your histograms to be read from here
   int n_files=f.size(); //you have n files in this example
  
   string histname1[10], histname2[10], histname3[10];
   char hname_Pt[100], hname_Eta[100], hname_Phi[100]; //hname_M[100], hname_T[100];//, hname_Jet_Phi[100], hname_Met[100], hname_PhoPt[100], hname_PhoEta[100], hname_PhoPhi[100];
-  //vector<string> histPhoPt[100]
-  // Book your histograms & summary counters here
-    //vector<string> selection = {"no_cut", "MET", "Pho_pT", "NHadjets", "ST", "Lep_veto", "Iso_Lep_Trk_veto"};
-    // vector<string> Gen = {"Electron", "Muon", "Tau"}
-      //for (int j=0; j<Gen.size(), j++)
-	//{
   vector<string> selection = {"no_cut", "ST", "Lep_veto", "Iso_Lep_Trk_veto"};
   vector<string> level = {"Gen", "Reco"};
   vector<string> ptcl = {"Electron", "Muon", "Tau"};
   for (int k = 0; k<ptcl.size(); k++)
     {
-  for (int j=0; j<2; j++)
-    {
+      for (int j=0; j<2; j++)
+	{
 	  for (int i=0; i<selection.size();i++)
 	    {
-	      // sprintf(hname_NHadJets,"h_NHadJets_%s",selection[i].c_str());
-	      // histname3[i] = hname_NHadJets;
-	      // sprintf(hname_Jet_Pt, "h_Jet_Pt_%s",selection[i].c_str());
-	      // sprintf(hname_Jet_Eta, "h_Jet_Eta_%s",selection[i].c_str());
-	      // sprintf(hname_Jet_Phi, "h_Jet_Phi_%s",selection[i].c_str());
-	      // sprintf(hname_Met, "h_MET_%s",selection[i].c_str());
-	      // histname2[i] = hname_Met; 
-	      // sprintf(hname_PhoPt, "h_Pho_Pt_%s",selection[i].c_str());
-	      // histname1[i] = hname_PhoPt; 
-	      // sprintf(hname_PhoEta, "h_Pho_Eta_%s",selection[i].c_str());
-	      // sprintf(hname_PhoPhi, "h_Pho_Phi_%s",selection[i].c_str());
-
-	      // For Reco:
-	      // sprintf(hname_GenE,"h_RecoElectron_Pt_%s",selection[i].c_str());
-	      // histname1[i] = hname_GenE; 
-	      // sprintf(hname_GenM, "h_RecoMuon_Pt_%s",selection[i].c_str());
-	      // histname2[i] = hname_GenM; 
-	      // sprintf(hname_GenT, "h_RecoTau_Pt_%s",selection[i].c_str());
-	      // histname3[i] = hname_GenT;
-
-	      // sprintf(hname_GenE,"h_RecoElectron_Eta_%s",selection[i].c_str());
-	      // histname1[i] = hname_GenE; 
-	      // sprintf(hname_GenM, "h_RecoMuon_Eta_%s",selection[i].c_str());
-	      // histname2[i] = hname_GenM; 
-	      // sprintf(hname_GenT, "h_RecoTau_Eta_%s",selection[i].c_str());
-	      // histname3[i] = hname_GenT;
-
-	      // sprintf(hname_GenE,"h_RecoElectron_Phi_%s",selection[i].c_str());
-	      // histname1[i] = hname_GenE; 
-	      // sprintf(hname_GenM, "h_RecoMuon_Phi_%s",selection[i].c_str());
-	      // histname2[i] = hname_GenM; 
-	      // sprintf(hname_GenT, "h_RecoTau_Phi_%s",selection[i].c_str());
-	      // histname3[i] = hname_GenT;
-
-
-	      //for Gen:
-	      // sprintf(hname_GenE,"h_GenElectron_Pt_%s",selection[i].c_str()); 
-	      // histname1[j][i] = hname_GenE; 
-	      // sprintf(hname_GenM, "h_GenMuon_Pt_%s",selection[i].c_str());
-	      // histname2[j][i] = hname_GenM; 
-	      // sprintf(hname_GenT, "h_GenTau_Pt_%s",selection[i].c_str());
-	      // histname3[j][i] = hname_GenT;
-
-	      // sprintf(hname_GenE,"h_GenElectron_Eta_%s",selection[i].c_str());
-	      // histname1[i] = hname_GenE; 
-	      // sprintf(hname_GenM, "h_GenMuon_Eta_%s",selection[i].c_str());
-	      // histname2[i] = hname_GenM; 
-	      // sprintf(hname_GenT, "h_GenTau_Eta_%s",selection[i].c_str());
-	      // histname3[i] = hname_GenT;
-
-	      // sprintf(hname_GenE,"h_GenElectron_Phi_%s",selection[i].c_str());
-	      // histname1[i] = hname_GenE; 
-	      // sprintf(hname_GenM, "h_GenMuon_Phi_%s",selection[i].c_str());
-	      // histname2[i] = hname_GenM; 
-	      // sprintf(hname_GenT, "h_GenTau_Phi_%s",selection[i].c_str());
-	      // histname3[i] = hname_GenT;
-
 	      
-	      
-	      // sprintf(hname_PhoEta, "h_Pho_Eta_%s",selection[i].c_str());
-	      // sprintf(hname_PhoPhi, "h_Pho_Phi_%s",selection[i].c_str());
-	      // sprintf(hname_Jet_Eta, "h_Jet_Eta_%s",selection[i].c_str());
-	      // sprintf(hname_Jet_Phi, "h_Jet_Phi_%s",selection[i].c_str());
-	      // sprintf(hname_Met, "h_MET_%s",selection[i].c_str());
-
 	      sprintf(hname_Pt,"h_%s%s_Pt_%s",level[j].c_str(),ptcl[k].c_str(),selection[i].c_str());
 	      histname1[i] = hname_Pt;
 	      sprintf(hname_Eta,"h_%s%s_Eta_%s",level[j].c_str(),ptcl[k].c_str(),selection[i].c_str());
 	      histname2[i] = hname_Eta;
 	      sprintf(hname_Phi,"h_%s%s_Phi_%s",level[j].c_str(),ptcl[k].c_str(),selection[i].c_str());
 	      histname3[i] = hname_Phi; 
-	      // sprintf(hname_M, "h_%sMuon_Pt_%s",level[j].c_str(),ptcl[k].c_str(),selection[i].c_str());
-	      // histname2[i] = hname_M; 
-	      // sprintf(hname_T, "h_%sTau_Pt_%s",level[j].c_str(),selection[i].c_str());
-	      // histname3[i] = hname_T;
 
-      //cout << "HISTOGram: " << histname3[i] << endl;
+	      //cout << "HISTOGram: " << histname3[i] << endl;
+	      if (k==2 && j==1) continue;   //to avoid reco tau
 	    }
-    
-  vector<vector<string>> bigbaseline;
-  vector<string> baseline1, baseline2, baseline3;
+	  
+	  vector<vector<string>> bigbaseline;
+	  vector<string> baseline1, baseline2, baseline3;
+	  
+	  //baseline1 = {"h_pho_pT0","h_pho_pT3","h_pho_pT4", "h_pho_pT5"};
+	  baseline1 = {histname1[0], histname1[1], histname1[2], histname1[3]};
+	  baseline2 = {histname2[0], histname2[1], histname2[2], histname2[3]};
+	  baseline3 = {histname3[0], histname3[1], histname3[2], histname3[3]};
+	  bigbaseline = {baseline1, baseline2, baseline3};
+	  
 
-  //baseline1 = {"h_pho_pT0","h_pho_pT3","h_pho_pT4", "h_pho_pT5"};
-  baseline1 = {histname1[0], histname1[1], histname1[2], histname1[3]};
-  baseline2 = {histname2[0], histname2[1], histname2[2], histname2[3]};
-  baseline3 = {histname3[0], histname3[1], histname3[2], histname3[3]};
+
+	  
+  for (int bigi=0; bigi<bigbaseline.size(); bigi++)
+    {
+      vector<string> filetag;
+      //filetag={"TTJets_2018","TTGJets_2018", "TTJets_Leptons_2018", "WJetsToLNu_2018", "WGJets_2018", "ZJetsToNuNu_2018", "ZNuNuGJets_2018", "QCD_2018"};
+      filetag={"TTJets_2018","WJetsToLNu_2018", "WGJets_2018"};
+      
+      //luminosity for each year - depends if you want to use it or - generate1Dplot uses this number and add it on the top
+      vector<float>energyy;
+      energyy={59.74,41.529};//,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,19.5,19.5,19.5,19.5,19.5,19.5,19.5,36.0,36.0,36.0,36.0,36.0,36.0,36.0};
+      
+      //rebin values
+      vector<int >rebin = {2,2,2,2,2,2,2,2,2}; //keep it 1 if you don't want to change hist bins
+      
+      //x axis title for all plots///
+      //x axis range
+      vector<int>xmax = {2000,2000,2000,2000,2000,2000,2000,2000};
+      vector<int>xmin = {-10,-10,-10,-10,-10,-10,-10,-10};
+      
+      //looping over each files///  
+      for(int i_file=0; i_file < f.size(); i_file++) //looping over each file
+	{ TFile *root_file = new TFile(f[i_file].c_str()); 
+	  vector<TH1F*> hist_list_Njets;
+	  for(int i_cut=0; i_cut<bigbaseline[bigi].size();i_cut++) //looping over different histograms which should be overlayed on the same canvas and these histograms are saved in the same file
+	    {
+	      //sprintf(hist_name,"%s",baseline[i_cut].c_str());
+	      sprintf(hist_name,"%s",bigbaseline[bigi][i_cut].c_str());
+	      cout<<"i_file "<<i_file<<"\t"<<i_cut<<"\t"<<root_file->GetName()<< "\t" << hist_name<<endl;
+	      TH1F* resp = (TH1F*)root_file->Get(hist_name); //reading hist from the TFile
+	      hist_list_Njets.push_back(resp);
+	    }
+	  float energy=energyy[0];
+	  int xrange=0.0;
+	  
+	  //x axis title for all plots///
+	  vector<string>diff_title;
+	  char level_Pt[50], level_Eta[50], level_Phi[50];
+	  sprintf(level_Pt,"%s%s_pT",level[j].c_str(),ptcl[k].c_str());
+	  sprintf(level_Eta,"%s%s_eta",level[j].c_str(),ptcl[k].c_str());
+	  sprintf(level_Phi,"%s%s_phi",level[j].c_str(),ptcl[k].c_str());
+	  diff_title = { level_Pt , level_Eta, level_Phi};
+
+	  vector<string>xtitle;
+	  xtitle = {diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi]};
+	  
+	  //path to save the files a jpg or pdf
+	  vector<string> folder;
+	  //folder = {"plots/TT/", "plots/TTG/", "plots/TTL/",  "plots/WLNu/", "plots/WG/", "plots/ZNuNu/", "plots/ZGNuNu/", "plots/QCD/"};	  
+	  folder = {"plots/TT/","plots/WLNu/","plots/WG/"};
+	 
+	  sprintf(full_path,"%s/%s%s_MET_comparisons_%s",pathname.c_str(),folder[i_file].c_str(),diff_title[bigi].c_str(),filetag[i_file].c_str());
+	  //	  sprintf(full_path,"%s/%s%s_linear_MET_comparisons_%s",pathname.c_str(),folder[i_file].c_str(),diff_title[bigi].c_str(),filetag[i_file].c_str());
+	  //calling generate_1Dplot which will take this vector of histograms and 
+	  generate_1Dplot(hist_list_Njets,full_path,energy,xmax[i_file],xmin[i_file],leg_head,false,true,false,true,filetag[i_file].c_str(),xtitle[i_file].c_str(),rebin[i_file]);
+	  
+	}
+      
+    }
+	}
+    }
+}
+
+
+
+
+
+
+//============================================================================================BACK UP=============================================================================================================
+
   //  baseline1 = {histname1[0], histname1[1], histname1[2], histname1[3], histname1[4], histname1[5], histname1[6]};
   //baseline2 = {"h_pho_eta0","h_pho_eta3"};s
   //baseline3 = {"h_pho_phi0","h_pho_phi3"};
@@ -447,81 +446,33 @@ void overlayauto(string pathname)
     
 
   //string to be added to output file name - useful when you have different files and reading the same histograms from these
-  bigbaseline = {baseline1, baseline2, baseline3};
-    
 
 
+  //vector<string> histPhoPt[100]
+  // Book your histograms & summary counters here
+    //vector<string> selection = {"no_cut", "MET", "Pho_pT", "NHadjets", "ST", "Lep_veto", "Iso_Lep_Trk_veto"};
+    // vector<string> Gen = {"Electron", "Muon", "Tau"}
+      //for (int j=0; j<Gen.size(), j++)
+	//{
 
-  for (int bigi=0; bigi<bigbaseline.size(); bigi++)
-    {
-      vector<string> filetag;
-      //filetag={"TTJets_2018","TTGJets_2018", "TTJets_Leptons_2018", "WJetsToLNu_2018", "WGJets_2018", "ZJetsToNuNu_2018", "ZNuNuGJets_2018", "QCD_2018"};
-      //filetag={"WJetsToLNu_2018"};
-      filetag={"WGJets_2018"};
-      //luminosity for each year - depends if you want to use it or - generate1Dplot uses this number and add it on the top
-      vector<float>energyy;
-      energyy={59.74,41.529};//,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,19.5,19.5,19.5,19.5,19.5,19.5,19.5,36.0,36.0,36.0,36.0,36.0,36.0,36.0};
 
-      //rebin values
-      vector<int >rebin = {2,2,2,2,2,2,2,2,2}; //keep it 1 if you don't want to change hist bins
-      
-      //x axis title for all plots///
       // vector<string>xtitle = {title[bigi], title[bigi]};
-      //x axis range
-      vector<int>xmax = {2000,2000,2000,2000,2000,2000,2000,2000};
-      vector<int>xmin = {-10,-10,-10,-10,-10,-10,-10,-10};
 
-      //looping over each files///  
-      for(int i_file=0; i_file < f.size(); i_file++) //looping over each file
-	{ TFile *root_file = new TFile(f[i_file].c_str()); 
-	  vector<TH1F*> hist_list_Njets;
-	  for(int i_cut=0; i_cut<bigbaseline[bigi].size();i_cut++) //looping over different histograms which should be overlayed on the same canvas and these histograms are saved in the same file
-	    {
-	      //sprintf(hist_name,"%s",baseline[i_cut].c_str());
-	      sprintf(hist_name,"%s",bigbaseline[bigi][i_cut].c_str());
-	       cout<<"i_file "<<i_file<<"\t"<<i_cut<<"\t"<<root_file->GetName()<< "\t" << hist_name<<endl;
-	      TH1F* resp = (TH1F*)root_file->Get(hist_name); //reading hist from the TFile
-	      hist_list_Njets.push_back(resp);
-	    }
-	  float energy=energyy[0];
-	  int xrange=0.0;
 
-	   //x axis title for all plots///
-	  vector<string>diff_title;
-	  //for reco:
+  //for reco:
 	  //	  diff_title = { "RecoElectron_pT" , "RecoMuon_pT", "RecoTau_pT"};
 	  //diff_title = { "RecoElectron_eta" , "RecoMuon_eta", "RecoTau_eta"};
 	  //	   diff_title = { "RecoElectron_phi" , "RecoMuon_phi", "RecoTau_phi"};
-
+	  
 	  // //for gen:
 	  //string title_E, title_M, title_T;
-	  char level_Pt[50], level_Eta[50], level_Phi[50];
-	  sprintf(level_Pt,"%s%s_pT",level[j].c_str(),ptcl[k].c_str());
-	  sprintf(level_Eta,"%s%s_Eta",level[j].c_str(),ptcl[k].c_str());
-	  sprintf(level_Phi,"%s%s_Phi",level[j].c_str(),ptcl[k].c_str());
-	  diff_title = { level_Pt , level_Eta, level_Phi};
+
+
+	      // sprintf(hname_M, "h_%sMuon_Pt_%s",level[j].c_str(),ptcl[k].c_str(),selection[i].c_str());
+	      // histname2[i] = hname_M; 
+	      // sprintf(hname_T, "h_%sTau_Pt_%s",level[j].c_str(),selection[i].c_str());
+	      // histname3[i] = hname_T;
+
+
 	  //diff_title = { "GenElectron_eta" , "GenMuon_eta", "GenTau_eta"};	  
 	  //diff_title = { "GenElectron_phi" , "GenMuon_phi", "GenTau_phi"};
-	  vector<string>xtitle;
-	  xtitle = {diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi]};
-		 
-	  //path to save the files a jpg or pdf
-	  vector<string> folder;
-	  //folder = {"plots/TT/", "plots/TTG/", "plots/TTL/",  "plots/WLNu/", "plots/WG/", "plots/ZNuNu/", "plots/ZGNuNu/", "plots/QCD/"};
-	  
-	  //folder = {"plots/WLNu/"};
-	  folder = {"plots1/WG/"};
-	  sprintf(full_path,"%s/%s%s_MET_comparisons_%s",pathname.c_str(),folder[i_file].c_str(),diff_title[bigi].c_str(),filetag[i_file].c_str());
-	  //	  sprintf(full_path,"%s/%s%s_linear_MET_comparisons_%s",pathname.c_str(),folder[i_file].c_str(),diff_title[bigi].c_str(),filetag[i_file].c_str());
-	  //calling generate_1Dplot which will take this vector of histograms and 
-	  generate_1Dplot(hist_list_Njets,full_path,energy,xmax[i_file],xmin[i_file],leg_head,false,true,false,true,filetag[i_file].c_str(),xtitle[i_file].c_str(),rebin[i_file]);
-      
-	}
-      
-    }
-    }
-    }
-}
-
-
-

@@ -38,13 +38,14 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   vector<string> genparticle = {"Electron", "Muon", "Tau"};
   vector<string> recoparticle = {"Electron", "Muon", "Tau"};
   TFile *oFile;
-  TH1F *h_MET[100];
+  TH1F *h_MET[10];
   TH1F *h_NHadJets[100];  
-  TH1F *h_Jet_pT[100], *h_Jet_eta[100], *h_Jet_phi[100];
-  TH1F *h_Pho_pT[100], *h_Pho_eta[100], *h_Pho_phi[100];
+  TH1F *h_Jet_pT[10], *h_Jet_eta[10], *h_Jet_phi[10];
+  TH1F *h_Pho_pT[10], *h_Pho_eta[10], *h_Pho_phi[10];
   TH1F *h_Gen_pT[5][10], *h_Gen_eta[5][10], *h_Gen_phi[5][10];
   TH1F *h_Reco_pT[5][10], *h_Reco_eta[5][10], *h_Reco_phi[5][10];
-  TH2F *h_NHadJets_pTSum, *h_GenRecoE; 
+  TH2F *h_NHadJets_pTSum, *h_GenRecoE;
+  TH1F *h_EFakePho_eta, *h_LostElectron_eta, *h_LostMuon_eta;
 };
 #endif
 
@@ -115,7 +116,10 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
   h_GenRecoE = new TH2F("h_GenRecoE", "h_GenRecoE",10,0,10,10,0,10);
   h_GenRecoE->SetXTitle("Gen");
   h_GenRecoE->SetYTitle("Reco");
-    
+
+  h_EFakePho_eta = new TH1F("h_EFakePhoEta","hname_EFakePhoEta",100, -5.0, 5.0);
+  h_LostElectron_eta = new TH1F("h_LostElectronEta","hname_LostElectronEta",100, -5.0, 5.0);
+  h_LostMuon_eta = new TH1F("h_LostMuonEta","hname_LostMuonEta",100, -5.0, 5.0); 
 }
 
 AnalyzeTProxytBSM::AnalyzeTProxytBSM(const TString &inputFileList, const char *outFileName,const char *dataset, const char *sample, const char* LostlepFlag, const char* phoID) {

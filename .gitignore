@@ -6,3 +6,5 @@
 
 #ignoring the png files
 /plots/*/*.png
+
+JET_thesis.pdf
