@@ -5,6 +5,6 @@
 *~
 
 #ignoring the png files
-/plots/*/*.png
+/plots
 
 JET_thesis.pdf
