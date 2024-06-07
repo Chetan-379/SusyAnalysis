@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
     // for skimmed tree
     TFile *fin = new TFile(buffer.c_str());
     TTree *chain = (TTree*) fin->FindObjectAny("PreSelection");
-    std::cout << "main(): chain->GetEntries() "<<  chain->GetEntries() <<std::endl;    
+    std::cout << "main(): chain->GetEntries() "<<  chain->GetEntries() <<std::endl;
     ana.Init(chain);
     ana.EventLoop(buffer.c_str());
     delete chain; 
@@ -130,7 +130,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
       //ss//      h_MET[0]->Fill(MET);
       //======================
 
-      //ss// bool passST = (bool)(ST<300);
+      //bool passST = (bool)(ST<300);
 
       
       for(int i=0;i<Jets->size();i++){
@@ -160,6 +160,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
       	      {
 		
       		hadJetID= (*Jets_ID)[i];
+		//if (jentry < 100) cout << "hadjetId: " << hadJetID << endl;
       		if(hadJetID)
       		  {
       		    hadJets.push_back(Jets[i]);
@@ -236,18 +237,21 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
     // int Ch_mu = 0;
     // int Ch_tau = 0;
 	  
-	  //if (jentry < 100 ) cout << "Event: " << jentry << endl;
+          	if (jentry < 1000) cout << "Event: " << jentry << endl;
     // begin genparticle loop
+	//if (GenTaus_had->size() > 1) cout << GenTaus_had->size() << endl;
+	//cout << GenTaus_had << endl;
 	int NGenE=0, NGenM=0, NGenT=0;
 	  for(Long64_t ii=0; ii<GenParticles->size(); ii++) {
 	    ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiE4D<float> > mygen = GenParticles[(int)ii];
 	    //std::cout <<" ii, Pt, Eta, Phi, E " << ii << " " << GenParticles[(int)ii].Pt() << " " << GenParticles[(int)ii].Eta() << " " << GenParticles[(int)ii].Phi() << " " << GenParticles[(int)ii].E() << " pdgid, parentid, status " << GenParticles_PdgId[(int)ii] << " " << GenParticles_ParentId[(int)ii] << " " << GenParticles_Status[(int)ii]  << std::endl;
-      
+	    if (jentry < 1000)     std::cout << "pdgid: " <<GenParticles_PdgId[(int)ii] << ", parentid: " << GenParticles_ParentId[(int)ii] << endl; 
 	    //for filling the the leptons in histogram
 	    int PdgId = GenParticles_PdgId[(int)ii];
 	    double dR=DeltaR(bestPhoton.Eta(),bestPhoton.Phi(),GenParticles[(int)ii].Eta(),GenParticles[(int)ii].Phi());
 	    // if (GenParticles[(int)ii].Pt()>10 && abs(GenParticles[(int)ii].Eta())<2.5){
 	    if (abs(PdgId) == 11) {
+	      //if (jentry<100 &&  GenElectrons->size()>0) cout << GenElectrons[(int)ii].Pt() << endl;
 	      h_Gen_pT[0][0]->Fill(GenParticles[(int)ii].Pt());
 	      NGenE++;
 	    }
@@ -311,26 +315,43 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
 	    if (abs(PdgId) == 13) h_Gen_phi[1][6]->Fill(GenParticles[(int)ii].Phi());
 	    if (abs(PdgId) == 15) h_Gen_phi[2][6]->Fill(GenParticles[(int)ii].Phi());
 
-	    if (abs(PdgId) == 11 && bestPhotonIndxAmongPhotons >= 0 && dR < 0.1 && Electrons->size() == 0)
-	       {
-		NEFakePho++;
-		h_EFakePho_eta->Fill(GenParticles[(int)ii].Eta());
-	       }
-	    if (abs(PdgId) == 11 && bestPhotonIndxAmongPhotons < 0 &&  Electrons->size() == 0)
-	      {
-		NLostElectrons++;
-		h_LostElectron_eta->Fill(GenParticles[(int)ii].Eta());
-	      }
 	    if (abs(PdgId) == 13 && bestPhotonIndxAmongPhotons < 0 &&  Muons->size() == 0)
 	      {
 		NLostMuons++;	    
 		h_LostMuon_eta->Fill(GenParticles[(int)ii].Eta());
 	      }
-	  }
+
+	    else if (abs(PdgId) == 11 && bestPhotonIndxAmongPhotons < 0 &&  Electrons->size() == 0)
+	      {
+		NLostElectrons++;
+		h_LostElectron_eta->Fill(GenParticles[(int)ii].Eta());
+	      }
+	    
+	    // else if (abs(PdgId) == 11 && bestPhotonIndxAmongPhotons >= 0 && dR < 0.1 && Electrons->size() == 0)
+	    //    {
+	    // 	NEFakePho++;
+	    // 	h_EFakePho_eta->Fill(GenParticles[(int)ii].Eta());
+	    //    }
+
+	    // else if 
+	    //   {for (Long64_t jj=0; jj<GenTaus_had->size(); jj++) {
+
+		 
+	    // 	}
+	    //   }
+	    //else if (GenTaus_had[(int)ii]){
+	    // else if (ii<GenTaus_had->size())
+	    //   {
+	    //   if (GenTaus_had[(int)ii])
+	    // 	 h_HadTau_eta->Fill(GenParticles[(int)ii].Eta());
+		
+	    //   }
+	  }   //end genparticle loop
+	  //	  cout << endl;
 	  //h_GenRecoE->Fill(NGenE,Electrons->size());
 	
 	  if (NGenE+NGenM+NGenT == 0) NGenL++;
-	  //end genparticle loop
+	  
 	  //if (jentry < 100) cout << ("\n\n");
 	  // if (jentry < 1000) cout << "Event: " << jentry << endl;
 	  // for(Long64_t ii=0; ii<GenParticles->size(); ii++){
@@ -483,7 +504,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
   vector<int> goodPhoIndx;
   for(int iPho=0;iPho<Photons->size();iPho++){
     //if(((*Photons_hasPixelSeed)[iPho]<0.001) && ( (*Photons_fullID)[iPho]))
-    if(((*Photons_hasPixelSeed)[iPho]<0.001)    && ( (*Photons_fullID)[iPho] && ((*Photons_hasPixelSeed)[iPho]<0.001) &&( pho_ID==0 || (pho_ID==1 &&(((*Photons_cutBasedID)[iPho]==1 || (*Photons_cutBasedID)[iPho]==2))) || (pho_ID==2 && (*Photons_cutBasedID)[iPho]==2) || (pho_ID==3 && (*Photons_mvaValuesID)[iPho]>-0.02) || (pho_ID==4 && (*Photons_mvaValuesID)[iPho]>0.42))) ) 
+    if(((*Photons_hasPixelSeed)[iPho]<0.001)  && ( (*Photons_fullID)[iPho] && ((*Photons_hasPixelSeed)[iPho]<0.001) &&( pho_ID==0 || (pho_ID==1 &&(((*Photons_cutBasedID)[iPho]==1 || (*Photons_cutBasedID)[iPho]==2))) || (pho_ID==2 && (*Photons_cutBasedID)[iPho]==2) || (pho_ID==3 && (*Photons_mvaValuesID)[iPho]>-0.02) || (pho_ID==4 && (*Photons_mvaValuesID)[iPho]>0.42))) ) 
       {
 	goodPho.push_back(Photons[iPho] );
 	goodPhoIndx.push_back(iPho);
@@ -519,7 +540,9 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
 
 
 
-//Some backups
+//===============================================================================================================================================================================================================
+//                                                                                                BACKUP
+//===============================================================================================================================================================================================================
 	  // if (Ch_e == 1 && Ch_mu == 0 && Ch_tau == 0) {
 	  //   int identifier = 1;
 	  //   h_EvtBrk->Fill(identifier);
@@ -621,3 +644,4 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer) {
 	    // 	h_gen_phi ->Fill(GenParticles[(int)ii].Phi());
 	    // 	}
 	  
+	    
