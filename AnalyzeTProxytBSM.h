@@ -45,7 +45,7 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   TH1F *h_Gen_pT[5][10], *h_Gen_eta[5][10], *h_Gen_phi[5][10];
   TH1F *h_Reco_pT[5][10], *h_Reco_eta[5][10], *h_Reco_phi[5][10];
   TH2F *h_NHadJets_pTSum, *h_GenRecoE;
-  TH1F *h_EFakePho_eta, *h_LostElectron_eta, *h_LostMuon_eta, *h_HadTau_eta;
+  TH1F *h_EFakePho_eta, *h_LostElectron_eta, *h_LostMuon_eta, *h_HadTau_eta, *h_Rest_eta;
 };
 #endif
 
@@ -120,9 +120,9 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
   h_EFakePho_eta = new TH1F("h_EFakePho_Eta","hname_EFakePho_Eta",500, -10.0, 10.0);
   h_LostElectron_eta = new TH1F("h_LostElectron_Eta","hname_LostElectron_Eta",500, -10.0, 10.0);
   h_LostMuon_eta = new TH1F("h_LostMuon_Eta","hname_LostMuon_Eta",500, -10.0, 10.0);
-
   h_HadTau_eta = new TH1F("h_HadTau_Eta", "h_HadTau_Eta",500,-10.0,10.0);
-
+  h_Rest_eta = new TH1F ("h_Rest_Eta", "h_Rest_Eta", 500,-10.0,10.0);
+  
 }
 
 AnalyzeTProxytBSM::AnalyzeTProxytBSM(const TString &inputFileList, const char *outFileName,const char *dataset, const char *sample, const char* LostlepFlag, const char* phoID) {
