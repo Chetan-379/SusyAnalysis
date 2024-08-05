@@ -28,7 +28,8 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   AnalyzeTProxytBSM(const TString &inputFileList="foo.txt", const char *outFileName="histo.root",const char *dataset="data", const char *sample="sample", const char* LostlepFlag ="Flag", const char* phoID="phoID");
   ~AnalyzeTProxytBSM();
   //void     EventLoop(const char *,const char *,const char *,const char *, const char*, const char*);
-  void   EventLoop(std::string buffer);
+  //void   EventLoop(std::string buffer);
+  void   EventLoop(std::string buffer,const char *,const char *);
   void   BookHistogram(const char *);//, const char *);
   Bool_t Process(Long64_t entry);
   myLV   getBestPhoton(int);
@@ -37,6 +38,7 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   vector<string> selection = {"no_cut", "MET", "Pho_pT", "NHadjets", "ST", "Lep_veto", "Iso_Lep_Trk_veto"};
   vector<string> genparticle = {"Electron", "Muon", "Tau"};
   vector<string> recoparticle = {"Electron", "Muon", "Tau"};
+  void CrossSection_Map_Init();
   TFile *oFile;
   TH1F *h_MET[10];
   TH1F *h_NHadJets[100];  
@@ -45,7 +47,7 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   TH1F *h_Gen_pT[5][10], *h_Gen_eta[5][10], *h_Gen_phi[5][10];
   TH1F *h_Reco_pT[5][10], *h_Reco_eta[5][10], *h_Reco_phi[5][10];
   TH2F *h_NHadJets_pTSum, *h_GenRecoE;
-  TH1F *h_EFakePho_eta, *h_LostElectron_eta, *h_LostMuon_eta, *h_HadTau_eta, *h_Rest_eta;
+  TH1F *h_Gen_MET, *h_EFakePho_MET, *h_LostElectron_MET, *h_LostMuon_MET, *h_HadTau_MET, *h_Rest_MET, *h_EFakePho_eta, *h_LostElectron_eta, *h_LostMuon_eta, *h_HadTau_eta, *h_Rest_eta;
 };
 #endif
 
@@ -88,7 +90,8 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
          // sprintf(hname_GenPt[i][4],"h_Gen%s_Pt_ST",genparticle[i]);
 	 // sprintf(hname_GenEta[i][4],"h_Gen%s_eta_ST",genparticle[i]);
 	 // sprintf(hname_GenParticlePhi[i][4],"h_Gen%s_phi_ST",genparticle[i]);
-	 if (i==0 || i>3){
+	if (i==0 || i>3){      //i>3 conditon is to take histograms after sT cut                              
+	   
 	   sprintf(hname_GenPt,"h_Gen%s_Pt_%s",genparticle[j].c_str(),selection[i].c_str());
 	   sprintf(hname_GenEta,"h_Gen%s_Eta_%s",genparticle[j].c_str(),selection[i].c_str());
 	   sprintf(hname_GenPhi,"h_Gen%s_Phi_%s",genparticle[j].c_str(),selection[i].c_str());
@@ -99,14 +102,17 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
 
 	   
 	   h_Gen_pT[j][i] = new TH1F(hname_GenPt, hname_GenPt, 100,0.0,1000.0);
-	   h_Gen_eta[j][i] = new TH1F(hname_GenEta, hname_GenEta, 500,-10,10);
+	   //h_Gen_eta[j][i] = new TH1F(hname_GenEta, hname_GenEta, 500,-10,10);
+	   h_Gen_eta[j][i] = new TH1F(hname_GenEta, hname_GenEta, 50,-10,10);
 	   h_Gen_phi[j][i] = new TH1F(hname_GenPhi, hname_GenPhi, 100,-5.0,5.0);
+       
 
+	   if (j==2) continue;
 	   h_Reco_pT[j][i] = new TH1F(hname_RecoPt, hname_RecoPt, 100,0.0,1000.0);
 	   h_Reco_eta[j][i] = new TH1F(hname_RecoEta, hname_RecoEta, 500,-10.0,10.0);
 	   h_Reco_phi[j][i] = new TH1F(hname_RecoPhi, hname_RecoPhi, 100,-5.0,5.0);
 	   
-	 }
+	}
       }      
     }
   
@@ -117,12 +123,20 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
   h_GenRecoE->SetXTitle("Gen");
   h_GenRecoE->SetYTitle("Reco");
 
-  h_EFakePho_eta = new TH1F("h_EFakePho_Eta","hname_EFakePho_Eta",500, -10.0, 10.0);
-  h_LostElectron_eta = new TH1F("h_LostElectron_Eta","hname_LostElectron_Eta",500, -10.0, 10.0);
-  h_LostMuon_eta = new TH1F("h_LostMuon_Eta","hname_LostMuon_Eta",500, -10.0, 10.0);
-  h_HadTau_eta = new TH1F("h_HadTau_Eta", "h_HadTau_Eta",500,-10.0,10.0);
-  h_Rest_eta = new TH1F ("h_Rest_Eta", "h_Rest_Eta", 500,-10.0,10.0);
   
+  h_EFakePho_eta = new TH1F("h_EFakePho_Eta","hname_EFakePho_Eta",50, -10.0, 10.0);
+  h_LostElectron_eta = new TH1F("h_LostElectron_Eta","hname_LostElectron_Eta",50, -10.0, 10.0);
+  h_LostMuon_eta = new TH1F("h_LostMuon_Eta","hname_LostMuon_Eta",50, -10.0, 10.0);
+  h_HadTau_eta = new TH1F("h_HadTau_Eta", "h_HadTau_Eta",50,-10.0,10.0);
+  h_Rest_eta = new TH1F ("h_Rest_Eta", "h_Rest_Eta", 50,-10.0,10.0);
+
+  h_Gen_MET = new TH1F("h_Gen_MET", "h_Gen_MET", 100,0,5000);
+  h_EFakePho_MET = new TH1F("h_EFakePho_MET","hname_EFakePho_MET",100, 0.0, 5000.0);
+  h_LostElectron_MET = new TH1F("h_LostElectron_MET","hname_LostElectron_MET",100, 0.0, 5000.0);
+  h_LostMuon_MET = new TH1F("h_LostMuon_MET","hname_LostMuon_MET",100, 0.0, 5000.0);
+  h_HadTau_MET = new TH1F("h_HadTau_MET", "h_HadTau_MET",100, 0.0, 5000.0);
+  h_Rest_MET = new TH1F ("h_Rest_MET", "h_Rest_MET", 100, 0.0, 5000.0);
+
 }
 
 AnalyzeTProxytBSM::AnalyzeTProxytBSM(const TString &inputFileList, const char *outFileName,const char *dataset, const char *sample, const char* LostlepFlag, const char* phoID) {
@@ -135,7 +149,29 @@ AnalyzeTProxytBSM::AnalyzeTProxytBSM(const TString &inputFileList, const char *o
   if(nameData=="signalH") nameData="signal";
   cout<<"Treating the input files as "<<nameData<<" for setting tree branches"<<endl;
   BookHistogram(outFileName); //, N2_mass);
-  //CrossSection_Map_Init();
+  CrossSection_Map_Init();
+}
+
+void AnalyzeTProxytBSM::CrossSection_Map_Init()
+{
+  char *f_name_EH = new char[2000];
+  sprintf(f_name_EH,"./map_crosssection_SMprocess_v1.txt");//,chi2_method);
+  std::ifstream in_EH(f_name_EH);
+  if(!in_EH) {
+    cout<<"ERROR => "<<f_name_EH<<" Not found"<<endl;
+    //return;                                                                                                                                
+    exit(0);
+  }
+  string process_name;
+  float value, entries;
+  cout<<"File name = "<<f_name_EH<<endl;
+  while(in_EH>>process_name>>value>>entries){
+    std::pair<std::string, float> temp_pair;    
+    float weight =value/entries;
+    cout << "values: " << value << " entries: " << entries << endl;
+    temp_pair = std::make_pair(process_name,weight);
+    cross_sectionValues.insert(temp_pair);
+  }
 }
 
 AnalyzeTProxytBSM::~AnalyzeTProxytBSM() { 
