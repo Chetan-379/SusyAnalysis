@@ -34,6 +34,7 @@ double NtupleVarsTProxy::MinDr(TLorentzVector v1,vector<TLorentzVector> v2)
     }
   return dr;
 }
+
 double NtupleVarsTProxy::MinDr2(vector<TLorentzVector> v1,TLorentzVector v2)
 {
   double dr = 60;
@@ -43,16 +44,20 @@ double NtupleVarsTProxy::MinDr2(vector<TLorentzVector> v1,TLorentzVector v2)
     }
   return dr;
 }
+
 double NtupleVarsTProxy::getCrossSection(std::string process_name)
 {
-//  std::map<std::string, float>::iterator it = cross_sectionValues.find(process_name);
-//  if(it !=cross_sectionValues.end()){
-//    return it->second;
-//  }
-//  else {
+  std::map<std::string, float>::iterator it = cross_sectionValues.find(process_name);
+  //std::map<std::string, float>::iterator it = cross_sectionValues.begin();
+  //cout << it << endl;
+  if(it !=cross_sectionValues.end()){
+    return it->second;
+  }
+  else {
     return 0;
-//  }
+  }
 }
+
 
 
 
