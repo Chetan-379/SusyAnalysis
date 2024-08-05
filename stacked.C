@@ -1,10 +1,10 @@
 const int n_pl = 4;
 bool logx = false;
 //defining the legends for each plots
-TString legend_text[10] = {"skimmed","ST>300","e/mu_veto", "Iso_lep_trk_veto", "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
+TString legend_text[10] = {"total","e_fake_pho","lost_e","lost_mu", "tau_had", "rest", "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
 int line_width[12] = {2,2,2,2,2,2,2,2,2,2,2,2};
 int line_style[12] = {1,1,1,1,1,1,1,1,1,1,1,1};
-int line_color[9] = {kBlack, kBlue, kGreen+2, kMagenta, kRed - 3, kAzure + 7 , kCyan + 1 , kGreen + 3 };
+int line_color[9] = {kBlack, kBlue, kGreen+2, kMagenta, kRed - 3, kSpring , kCyan + 1 , kGreen + 3 };
 TH1F* setLastBinAsOverFlow(TH1F*, int);
 TH1F* setMyRange(TH1F*,double,double);
 TH1F* DrawOverflow(TH1F*);
@@ -179,6 +179,7 @@ void generate_1Dplot(vector<TH1F*> hist, char const *tag_name="", float energy=-
     hist.at(i)->SetLineWidth(line_width[i]); //these are defined on top of this script    
     hist.at(i)->SetLineStyle(line_style[i]);
     hist.at(i)->SetLineColor(line_color[i]);
+    if (i!=0) hist.at(i)->SetFillColor(line_color[i]);
     hist.at(i)->SetTitle(" "); //you can change it if you want
     //setLastBinAsOverFlow(hist.at(i),0);
     //
@@ -239,6 +240,7 @@ void generate_1Dplot(vector<TH1F*> hist, char const *tag_name="", float energy=-
   //ymin = 1;
   //if(ymin<0.0) ymin = 1.0;
   //  if(ymax<=10) ymax=10;
+  //gStyle->SetPalette(kOcean);
   for(int i = 0; i < (int)hist.size(); i++) {
     if(!normalize) hist.at(i)->GetYaxis()->SetRangeUser(1.0,ymax*10.0);
     else
@@ -355,38 +357,37 @@ void stacked(string pathname)
   //define your histograms to be read from here
   int n_files=f.size(); //you have n files in this example
  
-  string histname1[10], histname2[10], histname3[10];
-  char hname_Pt[100], hname_Eta[100], hname_Phi[100]; //hname_M[100], hname_T[100];//, hname_Jet_Phi[100], hname_Met[100], hname_PhoPt[100], hname_PhoEta[100], hname_PhoPhi[100];
-  vector<string> selection = {"no_cut", "ST", "Lep_veto", "Iso_Lep_Trk_veto"};
-  vector<string> level = {"Gen", "Reco"};
-  vector<string> ptcl = {"Electron", "Muon", "Tau"};
-  for (int k = 0; k<ptcl.size(); k++)
-    {
-      for (int j=0; j<2; j++)
-	{
-	  for (int i=0; i<selection.size();i++)
-	    {
+  // string histname1[10], histname2[10], histname3[10];
+  // char hname_Pt[100], hname_Eta[100], hname_Phi[100]; //hname_M[100], hname_T[100];//, hname_Jet_Phi[100], hname_Met[100], hname_PhoPt[100], hname_PhoEta[100], hname_PhoPhi[100];
+  // vector<string> selection = {"no_cut", "ST", "Lep_veto", "Iso_Lep_Trk_veto"};
+  // vector<string> level = {"Gen", "Reco"};
+  // vector<string> ptcl = {"Electron", "Muon", "Tau"};
+  // for (int k = 0; k<ptcl.size(); k++)
+  //   {
+  //     for (int j=0; j<2; j++)
+  // 	{
+  // 	  for (int i=0; i<selection.size();i++)
+  // 	    {
 	      
-	      sprintf(hname_Pt,"h_%s%s_Pt_%s",level[j].c_str(),ptcl[k].c_str(),selection[i].c_str());
-	      histname1[i] = hname_Pt;
-	      sprintf(hname_Eta,"h_%s%s_Eta_%s",level[j].c_str(),ptcl[k].c_str(),selection[i].c_str());
-	      histname2[i] = hname_Eta;
-	      sprintf(hname_Phi,"h_%s%s_Phi_%s",level[j].c_str(),ptcl[k].c_str(),selection[i].c_str());
-	      histname3[i] = hname_Phi; 
+  // 	      sprintf(hname_Pt,"h_%s%s_Pt_%s",level[j].c_str(),ptcl[k].c_str(),selection[i].c_str());
+  // 	      histname1[i] = hname_Pt;
+  // 	      sprintf(hname_Eta,"h_%s%s_Eta_%s",level[j].c_str(),ptcl[k].c_str(),selection[i].c_str());
+  // 	      histname2[i] = hname_Eta;
+  // 	      sprintf(hname_Phi,"h_%s%s_Phi_%s",level[j].c_str(),ptcl[k].c_str(),selection[i].c_str());
+  // 	      histname3[i] = hname_Phi; 
 
-	      //cout << "HISTOGram: " << histname3[i] << endl;
-	      if (k==2 && j==1) continue;   //to avoid reco tau
-	    }
+  // 	      //cout << "HISTOGram: " << histname3[i] << endl;
+  // 	      if (k==2 && j==1) continue;   //to avoid reco tau
+  // 	    }
 	  
 	  vector<vector<string>> bigbaseline;
-	  vector<string> baseline1, baseline2, baseline3;
+	  vector<string> baseline1, baseline2, baseline3;	  
 	  
-	  //baseline1 = {"h_pho_pT0","h_pho_pT3","h_pho_pT4", "h_pho_pT5"};
-	  baseline1 = {histname1[0], histname1[1], histname1[2], histname1[3]};
-	  baseline2 = {histname2[0], histname2[1], histname2[2], histname2[3]};
-	  baseline3 = {histname3[0], histname3[1], histname3[2], histname3[3]};
-	  bigbaseline = {baseline1, baseline2, baseline3};
-	  
+	  //baseline1 = {"h_GenElectron_Eta_Iso_Lep_Trk_veto","h_EFakePho_Eta","h_LostElectron_Eta", "h_LostMuon_Eta", "h_HadTau_Eta", "h_Rest_Eta"};
+	  baseline1 = {"h_Gen_MET","h_EFakePho_MET","h_LostElectron_MET", "h_LostMuon_MET", "h_HadTau_MET", "h_Rest_MET"};
+	  //baseline1 = {"h_GenElectron_Eta_Iso_Lep_Trk_veto","h_EFakePho_Eta","h_LostElectron_Eta", "h_RecoElectron_Eta_Iso_Lep_Trk_veto"};
+	 
+	  bigbaseline = {baseline1};
 
 
 	  
@@ -427,10 +428,11 @@ void stacked(string pathname)
 	  //x axis title for all plots///
 	  vector<string>diff_title;
 	  char level_Pt[50], level_Eta[50], level_Phi[50];
-	  sprintf(level_Pt,"%s%s_pT",level[j].c_str(),ptcl[k].c_str());
-	  sprintf(level_Eta,"%s%s_eta",level[j].c_str(),ptcl[k].c_str());
-	  sprintf(level_Phi,"%s%s_phi",level[j].c_str(),ptcl[k].c_str());
-	  diff_title = { level_Pt , level_Eta, level_Phi};
+	  // sprintf(level_Pt,"%s%s_pT",level[j].c_str(),ptcl[k].c_str());
+	  // sprintf(level_Eta,"%s%s_eta",level[j].c_str(),ptcl[k].c_str());
+	  //sprintf(level_Phi,"%s%s_phi",level[j].c_str(),ptcl[k].c_str());
+	  //diff_title = { level_Pt , level_Eta, level_Phi};
+	  diff_title = {"Eta"};
 
 	  vector<string>xtitle;
 	  xtitle = {diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi]};
@@ -438,9 +440,9 @@ void stacked(string pathname)
 	  //path to save the files a jpg or pdf
 	  vector<string> folder;
 	  //folder = {"plots/TT/", "plots/TTG/", "plots/TTL/",  "plots/WLNu/", "plots/WG/", "plots/ZNuNu/", "plots/ZGNuNu/", "plots/QCD/"};	  
-	  folder = {"plots/WG/"};
+	  folder = {"plots/stacked/WG/"};
 	 
-	  sprintf(full_path,"%s/%s%s_MET_comparisons_%s",pathname.c_str(),folder[i_file].c_str(),diff_title[bigi].c_str(),filetag[i_file].c_str());
+	  sprintf(full_path,"%s/%s%s_stacked_%s",pathname.c_str(),folder[i_file].c_str(),diff_title[bigi].c_str(),filetag[i_file].c_str());
 	  //	  sprintf(full_path,"%s/%s%s_linear_MET_comparisons_%s",pathname.c_str(),folder[i_file].c_str(),diff_title[bigi].c_str(),filetag[i_file].c_str());
 	  //calling generate_1Dplot which will take this vector of histograms and 
 	  generate_1Dplot(hist_list_Njets,full_path,energy,xmax[i_file],xmin[i_file],leg_head,false,true,false,true,filetag[i_file].c_str(),xtitle[i_file].c_str(),rebin[i_file]);
@@ -449,8 +451,8 @@ void stacked(string pathname)
       
     }
 	}
-    }
-}
+//  }
+//}
 
 
 
