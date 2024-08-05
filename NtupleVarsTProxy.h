@@ -36,10 +36,11 @@ class NtupleVarsTProxy : public TSelector {
 public :
    TTree          *fChain;         //!pointer to the analyzed TTree or TChain
    TBranchProxyDirector fDirector; //!Manages the proxys
-
+  double getCrossSection(std::string process_name);
+  std::map<std::string,float> cross_sectionValues;
+  
    // Optional User methods
    TClass         *fClass;    // Pointer to this class's description
-
    // Wrapper class for each unwounded class
    struct TStlPx_ROOT__Math__PtEtaPhiE4D_float_
    {
@@ -939,7 +940,9 @@ public :
    double TransMass(double phi1, double phi2, double pt1, double pt2);
    double MinDr(TLorentzVector v1,vector<TLorentzVector> v2);
    double MinDr2(vector<TLorentzVector> v1,TLorentzVector v2);
-   double getCrossSection(std::string process_name);
+   // double getCrossSection(std::string process_name);
+  // std::map<std::string,float> cross_sectionValues;
+
    //ClassDef(NtupleVarsTProxy,0)
 
    //ClassDef(NtupleVarsTProxy,0);
