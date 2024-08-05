@@ -1,5 +1,5 @@
 #ignoring the root files in the repo
-*.root
+*/*.root
 
 #ignoring the autosaved files in the repo
 *~
@@ -7,4 +7,4 @@
 #ignoring the png files
 /plots
 
-JET_thesis.pdf
+*/*.pdf
