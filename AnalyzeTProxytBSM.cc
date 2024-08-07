@@ -164,7 +164,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	if( (Jets[i].Pt() > 30.0) && (abs(Jets[i].Eta()) <= 2.4) ){
 	  if (Photons->size()!=0) {
 	    double dR=DeltaR(bestPhoton.Eta(),bestPhoton.Phi(),Jets[i].Eta(),Jets[i].Phi());
-	    if(dR<minDR) minDR=dR;minDRindx=i;
+	    if(dR<minDR) {minDR=dR;minDRindx=i;}
 	  }
 	} 
       }
@@ -177,41 +177,50 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
       NEMu = NElectrons + NMuons;
 
       for(int i=0;i<Jets->size();i++){
-      	//if(Debug)
-      	  //cout<<"  = Jets.Pt()  ==  "<<Jets_v1[i].Pt()<<"\t"<< " = Jets.Eta() == "<<Jets_v1[i].Eta()<<endl;
+	//if(Debug)
+	  //cout<<"  = Jets.Pt()  ==  "<<Jets_v1[i].Pt()<<"\t"<< " = Jets.Eta() == "<<Jets_v1[i].Eta()<<endl;
 	
-      	  if( (Jets[i].Pt() > 30.0) && (abs(Jets[i].Eta()) <= 2.4) ){
-      	    //if(Debug)
-      	    //cout<< "==== loadjets ==="<<"\t"<<i<<"\t"<<minDR<<endl;
+	  if( (Jets[i].Pt() > 30.0) && (abs(Jets[i].Eta()) <= 2.4) ){
+	    //if(Debug)
+	    //cout<< "==== loadjets ==="<<"\t"<<i<<"\t"<<minDR<<endl;
 	    
-      	    if( !(minDR < 0.3 && i==minDRindx) )
-      	      {		
-      		hadJetID= (*Jets_ID)[i];
+	    if( !(minDR < 0.3 && i==minDRindx) )
+	      {		
+		hadJetID= (*Jets_ID)[i];
 		if(hadJetID)
-      		  {
-      		    hadJets.push_back(Jets[i]);
-		    
-		    
-		    
-	      
-      		    // hadJets_hadronFlavor.push_back((*Jets_hadronFlavor)[i]);
-      		    // hadJets_HTMask.push_back((*Jets_HTMask)[i]);
-      		    // hadJets_bJetTagDeepCSVBvsAll.push_back((*Jets_bJetTagDeepCSVBvsAll)[i]);
-      		    // if(q==1) leadjet_qmulti=(*Jets_chargedMultiplicity)[q];
-      		    // if(q==1) leadjet_Pt=(*Jets)[q].Pt();
+		  {
+		    hadJets.push_back(Jets[i]);
 		      if((*Jets_bJetTagDeepCSVBvsAll)[i] > deepCSVvalue){
 			bjets.push_back(Jets[i]); bJet1Idx = i;}
 		      //hadJets.push_back((*Jets)[i]);
 		      jetMatchindx.push_back(i);
-		      
 		  }
 	      }
-	  }	  
+	  }
       }
+      
+      for(int i=0;i<hadJets.size();i++){
+	
+	if( (abs(hadJets[i].Eta()) < 2.4) ){NHadJets++;}
+      }
+      
+		    
+	      
+      // 		    // hadJets_hadronFlavor.push_back((*Jets_hadronFlavor)[i]);
+      // 		    // hadJets_HTMask.push_back((*Jets_HTMask)[i]);
+      // 		    // hadJets_bJetTagDeepCSVBvsAll.push_back((*Jets_bJetTagDeepCSVBvsAll)[i]);
+      // 		    // if(q==1) leadjet_qmulti=(*Jets_chargedMultiplicity)[q];
+      // 		    // if(q==1) leadjet_Pt=(*Jets)[q].Pt();
+      // 		      if((*Jets_bJetTagDeepCSVBvsAll)[i] > deepCSVvalue){
+      // 			bjets.push_back(Jets[i]); bJet1Idx = i;}
+      // 		      //hadJets.push_back((*Jets)[i]);
+      // 		      jetMatchindx.push_back(i);
+		      
+      // 		  }
+      // 	      }
+      // 	  }	  
+      // }
 
-      for(int i=0; i < hadJets.size(); i++){
-	if (abs(hadJets[i].Eta()) < 2.4) NHadJets++;
-      }
 
       //defining flags for applying baseline selections
 	bool Pass_EMu_veto=false, Pass_Iso_trk_veto=false, Pass_Pho_pT=false, Pass_MET=false, Pass_NHadJets=false, Pass_ST=false;
