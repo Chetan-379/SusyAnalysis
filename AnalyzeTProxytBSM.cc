@@ -137,7 +137,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
       int NHadJets = 0;
       float Jets_pT_Sum=0;
       float ST=0;
-      double dPhi_METjet;
+      double dPhi_METjet1, dPhi_METjet2;
       // bool Iso_Lep_Tracks;
       int NEMu;
       // double mT;
@@ -223,8 +223,11 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
       // 	dPhi_METjet1 = abs(Met.DeltaPhi(hadJets[0]));
       //if(nHadJets>=2)
 
-      if(hadJets.size()>0) dPhi_METjet = abs(DeltaPhi(METPhi,hadJets[0].Phi()));
-		    
+      //if(hadJets.size()>0) dPhi_METjet = abs(DeltaPhi(METPhi,hadJets[0].Phi()));
+      if(NHadJets>=1)
+	dPhi_METjet1 = abs(DeltaPhi(METPhi,hadJets[0].Phi()));
+      if(NHadJets>=2)
+	dPhi_METjet2 = abs(DeltaPhi(METPhi,hadJets[1].Phi()));	    
 	      
       // 		    // hadJets_hadronFlavor.push_back((*Jets_hadronFlavor)[i]);
       // 		    // hadJets_HTMask.push_back((*Jets_HTMask)[i]);
@@ -311,8 +314,9 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 		    if(PrimaryVertexFilter==1 && globalSuperTightHalo2016Filter==1 && HBHENoiseFilter==1 &&HBHEIsoNoiseFilter==1 && EcalDeadCellTriggerPrimitiveFilter == 1 && BadPFMuonFilter==1 && BadPFMuonDzFilter==1 && eeBadScFilter==1 && ecalBadCalibFilter==1 && NVtx>0 && PFCaloMETRatio < 5){
 		      if((!(phoMatchingJetIndx>=0 && (Jets[phoMatchingJetIndx].Pt())/(bestPhoton.Pt()) < 1.0)) && phoMatchingJetIndx >= 0){
 			EvtCln = true;
-			if(dPhi_METjet > 0.3){
-			  JetMetPhi = true;
+			// if(dPhi_METjet > 0.3){
+			if(dPhi_METjet1 > 0.3 && dPhi_METjet2 > 0.3){
+			   JetMetPhi = true;
 			}
 		      }
 		    }
