@@ -35,19 +35,21 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   myLV   getBestPhoton(int);
   //TLorentzVector  getBestPhoton(int);
   int    bestPhotonIndxAmongPhotons=-100;
-  vector<string> selection = {"no_cut", "MET", "Pho_pT", "NHadjets", "ST", "Lep_veto", "Iso_Lep_Trk_veto","TrigEff","EvtCln","JetMetPhi"};
+  vector<string> selection = {"no_cut", "MET", "Pho_pT", "NHadjets", "ST", "Lep_veto", "Iso_Lep_Trk_veto","TrigEff","EvtCln","JetMetPhi","rmOvrlp"};
   vector<string> genparticle = {"Electron", "Muon", "Tau"};
   vector<string> recoparticle = {"Electron", "Muon", "Tau"};
   void CrossSection_Map_Init();
+  double getGenLep(myLV);
   TFile *oFile;
   TH1F *h_MET[15];
   TH1F *h_NHadJets[15];  
-  TH1F *h_Jet_pT[10], *h_Jet_eta[10], *h_Jet_phi[10];
+  TH1F *h_Jet_pT[15], *h_Jet_eta[15], *h_Jet_phi[15];
   TH1F *h_Pho_pT[15], *h_Pho_eta[15], *h_Pho_phi[15];
-  TH1F *h_Gen_pT[5][10], *h_Gen_eta[5][10], *h_Gen_phi[5][10];
-  TH1F *h_Reco_pT[5][10], *h_Reco_eta[5][10], *h_Reco_phi[5][10];
+  TH1F *h_Gen_pT[5][15], *h_Gen_eta[5][15], *h_Gen_phi[5][15];
+  TH1F *h_Reco_pT[5][15], *h_Reco_eta[5][15], *h_Reco_phi[5][15];
   TH2F *h_NHadJets_pTSum, *h_GenRecoE;
   TH1F *h_Gen_MET, *h_EFakePho_MET, *h_LostElectron_MET, *h_LostMuon_MET, *h_HadTau_MET, *h_Rest_MET, *h_EFakePho_eta, *h_LostElectron_eta, *h_LostMuon_eta, *h_HadTau_eta, *h_Rest_eta;
+  
 };
 #endif
 

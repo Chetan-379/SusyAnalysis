@@ -4,6 +4,8 @@
 #include <TH2.h>
 #include <TStyle.h>
 
+typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiE4D<float> > myLV;
+
 //#pragma link C++ class NtupleVarsTProxy+;
 double NtupleVarsTProxy::DeltaPhi(double phi1, double phi2) {
   double result = phi1 - phi2;
@@ -25,12 +27,14 @@ double NtupleVarsTProxy::TransMass(double phi1, double phi2, double pt1, double 
   double Cos= 1-cos(dphi);
   return std::sqrt(2*pt1*pt2*Cos);
 }
-double NtupleVarsTProxy::MinDr(TLorentzVector v1,vector<TLorentzVector> v2)
+//double NtupleVarsTProxy::MinDr(TLorentzVector v1,vector<TLorentzVector> v2)
+double NtupleVarsTProxy::MinDr(myLV v1,vector<myLV> v2)
 {
   double dr = 60;
   for(int j=0;j<v2.size();j++)
-    { if(dr>=v1.DeltaR(v2[j]))
-	{ dr = v1.DeltaR(v2[j]);}
+    { //if(dr>=v1.DeltaR(v2[j]))
+      if(dr>=DeltaR(v1.Eta(),v1.Phi(),v2[j].Eta(),v2[j].Phi()))
+	{ dr = DeltaR(v1.Eta(),v1.Phi(),v2[j].Eta(),v2[j].Phi());}
     }
   return dr;
 }
