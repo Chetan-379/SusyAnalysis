@@ -402,10 +402,10 @@ void randomoverlay(string pathname)
 	   //x axis title for all plots///
 	  vector<string>diff_title;
 	  //diff_title = { "Pho_pT" , "Pt_Miss", "NHadJets"};
-	  diff_title = { "LostFake"};
+	  diff_title = { "eta"};
 	  vector<string>xtitle;
 	  //xtitle = {diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi]};
-	  xtitle = {"GenElectron_eta", "GenElectron_eta"};
+	  xtitle = {diff_title[0], diff_title[0]};
 	  //path to save the files a jpg or pdf
 	  vector<string> folder;
 	  //folder = {"plots/TT/", "plots/TTG/", "plots/TTL/",  "plots/WLNu/", "plots/WG/", "plots/ZNuNu/", "plots/ZGNuNu/", "plots/QCD/"};

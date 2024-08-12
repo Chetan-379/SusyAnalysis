@@ -71,41 +71,66 @@ int main(int argc, char* argv[])
   cout << "dataset " << data << " " << endl;
   cout<<"If analyzing the lost electron estimation ? "<<"  "<<elec<<endl;
   cout<<"Which pho_ID: "<<"\t"<<phoID<<endl;
-  //ana.EventLoop(inputFileList,data,sample);
   Tools::Instance();
 
   return 0;
 }
 
- 
-     
-//void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, const char *sample , const char *outFileName, const char *elec, const char* phoID) {
+
 void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const char *sample) {
   
   std::cout << "AnalyzeTProxytBSM::EventLoop() " << std::endl;
-
+  
   if (fChain == 0) return;
-
+  
   Long64_t nentries = fChain->GetEntriesFast();
-
+  
   cout << "Analyzing " << buffer.c_str() << " nentries " << nentries << std::endl;  
   char* s_cross = new char[100];
   sprintf(s_cross,"%s.%s",data,sample);
-  //sprintf(s_cross,"%s%s",sample,data);
+
   std::string s_process = s_cross;
   TString s_Process = s_process;
   double cross_section = getCrossSection(s_process);
   float wt,wt2;
-  //bool applyTrgEff = false;
   TString s_sample = sample;  
   std::cout << cross_section << "\t" <<"analyzed process"<<"\t"<<s_cross<<endl;
-  //std::cout << "value: " << cross_sectionValues << endl;
   
   Long64_t nbytes = 0, nb = 0;
   int decade = 0;
 
   
-  int nEvents=0, NGenL=0, NLostElectrons=0, NLostMuons=0, NEFakePho=0;;
+  int nEvents=0, NGenL=0, NLostElectrons=0, NLostMuons=0, NEFakePho=0;
+  vector<myLV> hadJets, bjets;
+  int BTags = bjets.size();
+  bool Debug=false;
+  vector<int> jetMatchindx;
+  int bJet1Idx=-100;
+  double deepCSVvalue = 0.4168,p0=1.787e+02,p1=6.657e+01,p2=9.47e-01;
+  double minDR=99999; 
+  int minDRindx = -100, phoMatchingJetIndx = -100;
+  int pho_ID=0;  //for simplicity taking only soft one
+  myLV bestPhoton=getBestPhoton(pho_ID);
+  int hadJetID=-999;
+  int NJets0=Jets->size();
+  int NHadJets = 0;
+  float Jets_pT_Sum=0;
+  float ST=0;
+  double dPhi_METjet1, dPhi_METjet2;
+  int NEMu;
+
+
+  if(s_Process.Contains("2018.WGJets_MonoPhoton_PtG-40to130UL")|| s_Process.Contains("2018.WGJets_MonoPhoton_PtG-130UL")|| s_Process.Contains("2016preVFP.WGJets_MonoPhoton_PtG-40to130UL") ||s_Process.Contains("2016preVFP.WGJets_MonoPhoton_PtG-130UL") || s_Process.Contains("2017.WGJets_MonoPhoton_PtG-40to130UL")||s_Process.Contains("2017.WGJets_MonoPhoton_PtG-130UL")|| s_Process.Contains("2016postVFP.WGJets_MonoPhoton_PtG-130UL")||s_Process.Contains("2016postVFP.WGJets_MonoPhoton_PtG-40to130UL")) //(s_data.Contains("2016") || s_data.Contains("2017") || s_data.Contains("2018") || s_sample.Contains("WGJets"))
+    {	  
+      wt = cross_section*59.83*1000.0;
+    }
+  else
+    {
+      wt = Weight*59.83*1000.0;
+    }
+
+
+  
   for (Long64_t jentry=0; jentry<fChain->GetEntries(); jentry++){
   //for (Long64_t jentry=0; jentry<10000; jentry++){
     
@@ -118,51 +143,8 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	cout << 10 * k << " %" << endl;
       decade = k;
       
-      //std::cout << jentry << " " << MET << std::endl;
       
       
-   
-      vector<myLV> hadJets, bjets;
-      int BTags = bjets.size();
-      bool Debug=false;
-      vector<int> jetMatchindx;
-      int bJet1Idx=-100;
-      double deepCSVvalue = 0.4168,p0=1.787e+02,p1=6.657e+01,p2=9.47e-01;
-      double minDR=99999; 
-      int minDRindx = -100, phoMatchingJetIndx = -100;
-      int pho_ID=0;  //for simplicity taking only soft one
-      myLV bestPhoton=getBestPhoton(pho_ID);
-      int hadJetID=-999;
-      int NJets0=Jets->size();
-      int NHadJets = 0;
-      float Jets_pT_Sum=0;
-      float ST=0;
-      double dPhi_METjet1, dPhi_METjet2;
-      // bool Iso_Lep_Tracks;
-      int NEMu;
-      // double mT;
-      //bool passST = (bool)(ST<300);
-
-     
-
-      //wt = Weight*59.83*1000.0;
-      //wt = 1;
-      //cout << Weight << endl;
-      if(s_Process.Contains("2018.WGJets_MonoPhoton_PtG-40to130UL")|| s_Process.Contains("2018.WGJets_MonoPhoton_PtG-130UL")|| s_Process.Contains("2016preVFP.WGJets_MonoPhoton_PtG-40to130UL") ||s_Process.Contains("2016preVFP.WGJets_MonoPhoton_PtG-130UL") || s_Process.Contains("2017.WGJets_MonoPhoton_PtG-40to130UL")||s_Process.Contains("2017.WGJets_MonoPhoton_PtG-130UL")|| s_Process.Contains("2016postVFP.WGJets_MonoPhoton_PtG-130UL")||s_Process.Contains("2016postVFP.WGJets_MonoPhoton_PtG-40to130UL")) //(s_data.Contains("2016") || s_data.Contains("2017") || s_data.Contains("2018") || s_sample.Contains("WGJets"))
-      	{	  
-	  // if(jentry==0)
-      	  //   //cout<<cross_section<<"\t"<<"analyzed process"<<"\t"<<s_process<<endl;
-	 
-      	  wt = cross_section*59.83*1000.0;//)/nentries; // Weight*lumiInfb*1000.0; //(cross_section*lumiInfb*1000.0)/nentries;
-      	}
-      else// if (s_data.Contains("2016") || s_data.Contains("2017") || s_data.Contains("2018"))// || s_sample.Contains("WGJets"))
-      	{
-      	  wt = Weight*59.83*1000.0;
-	}
-
-      if (jentry<10 && wt<0) cout << "wt: " << wt << endl;
-      
-
       for(int i=0;i<Jets->size();i++){
 	if( (Jets[i].Pt() > 30.0) && (abs(Jets[i].Eta()) <= 2.4) ){
 	  if (Photons->size()!=0) {
@@ -176,8 +158,6 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 
       if(Debug)
 	cout<<"===load tree entry  ==="<<"\t"<<jentry<<"\t"<<"Jets check == "<<minDR<<endl;
-      // Iso_Lep_Tracks =bool(isoElectronTracks && isoMuonTracks && isoPionTracks);
-      NEMu = NElectrons + NMuons;
 
       for(int i=0;i<Jets->size();i++){
 	//if(Debug)
@@ -209,21 +189,13 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	  ST=ST+(hadJets[i].Pt());
 	}
       }
+
       if( minDR<0.3) {
 	ST=ST+bestPhoton.Pt();
 	phoMatchingJetIndx = minDRindx;
       }
 
       
-      //TLorentzVector Met;
-      // Met.SetPtEtaPhiE(MET,0,METPhi,0);
-      // Double_t deta_jet_pho= 0.0,deta_jet_met=0.0,deta_met_pho=0.0;
-      // double mT= 0.0, dPhi_METjet1=5, dPhi_METjet2=5, dPhi_phojet1=5, dPhi_phojet2=5, dPhi_phoMET=5;
-      // if(nHadJets>=1)
-      // 	dPhi_METjet1 = abs(Met.DeltaPhi(hadJets[0]));
-      //if(nHadJets>=2)
-
-      //if(hadJets.size()>0) dPhi_METjet = abs(DeltaPhi(METPhi,hadJets[0].Phi()));
       if(NHadJets>=1)
 	dPhi_METjet1 = abs(DeltaPhi(METPhi,hadJets[0].Phi()));
       if(NHadJets>=2)
@@ -247,6 +219,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 
 
 	
+      NEMu = NElectrons + NMuons;
       
 	for(int i=0;i<Jets->size();i++){
 	  if( (Jets[i].Pt() > 30.0) && (abs(Jets[i].Eta()) <= 2.4) ){
@@ -974,3 +947,15 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
   // int NEvtlep2 = 0;
   // int NEvtlep3 = 0;
   // int NEvtlep4 = 0;
+
+
+ //TLorentzVector Met;
+      // Met.SetPtEtaPhiE(MET,0,METPhi,0);
+      // Double_t deta_jet_pho= 0.0,deta_jet_met=0.0,deta_met_pho=0.0;
+      // double mT= 0.0, dPhi_METjet1=5, dPhi_METjet2=5, dPhi_phojet1=5, dPhi_phojet2=5, dPhi_phoMET=5;
+      // if(nHadJets>=1)
+      // 	dPhi_METjet1 = abs(Met.DeltaPhi(hadJets[0]));
+      //if(nHadJets>=2)
+
+      //if(hadJets.size()>0) dPhi_METjet = abs(DeltaPhi(METPhi,hadJets[0].Phi()));
+     
