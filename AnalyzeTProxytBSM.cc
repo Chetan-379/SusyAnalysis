@@ -94,7 +94,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
   std::string s_process = s_cross;
   TString s_Process = s_process;
   double cross_section = getCrossSection(s_process);
-  float wt,wt2;
+  float wt;
   //bool applyTrgEff = false;
   TString s_sample = sample;  
   std::cout << cross_section << "\t" <<"analyzed process"<<"\t"<<s_cross<<endl;
@@ -102,7 +102,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
   
   Long64_t nbytes = 0, nb = 0;
   int decade = 0;
-
+  double wt2=0;
   
   int nEvents=0, NGenL=0, NLostElectrons=0, NLostMuons=0, NEFakePho=0;;
   for (Long64_t jentry=0; jentry<fChain->GetEntries(); jentry++){
@@ -115,8 +115,8 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
       int k = int (progress);
       if (k > decade)
 	cout << 10 * k << " %" << endl;
-      decade = k;
-      
+      //decade = k;   //commenting this out to debug the integral of different variable histo
+       
       //std::cout << jentry << " " << MET << std::endl;
       
       
@@ -139,6 +139,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
       double dPhi_METjet1, dPhi_METjet2;
       // bool Iso_Lep_Tracks;
       int NEMu;
+      
       // double mT;
       //bool passST = (bool)(ST<300);
 
@@ -158,7 +159,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
       	{
       	  wt = Weight*59.83*1000.0;
 	}
-
+      wt2+=wt;
       // if (jentry<10 && wt<0) cout << "wt: " << wt << endl;
 
        	
@@ -214,6 +215,17 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	phoMatchingJetIndx = minDRindx;
       }
 
+      h_NHadjets[0]->Fill(NHadJets,wt);
+      if (k > decade) cout << "NHadjets Integral: " << h_NHadjets[0]->Integral() << endl;
+      h_MET[0]->Fill(MET,wt);
+      if (k > decade) cout << "MET Integral: " << h_MET[0]->Integral() << endl;
+      h_Pho_pT[0] -> Fill(bestPhoton.Pt(),wt);
+      if (k > decade) cout << "PhotonPt Integral: " << h_Pho_pT[0]->Integral() << endl;
+      h_Pho_eta[0] -> Fill(bestPhoton.Eta(),wt);
+      h_Pho_phi[0] -> Fill(bestPhoton.Phi(),wt);
+      h_selectBaselineYields->Fill("no_cut",wt);
+
+      decade=k;
      
 
       
@@ -226,10 +238,10 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
       //if(nHadJets>=2)
 
       //if(hadJets.size()>0) dPhi_METjet = abs(DeltaPhi(METPhi,hadJets[0].Phi()));
-      if(NHadJets>=1)
-	dPhi_METjet1 = abs(DeltaPhi(METPhi,hadJets[0].Phi()));
-      if(NHadJets>=2)
-	dPhi_METjet2 = abs(DeltaPhi(METPhi,hadJets[1].Phi()));	    
+      // if(NHadJets>=1)
+      // 	dPhi_METjet1 = abs(DeltaPhi(METPhi,hadJets[0].Phi()));
+      // if(NHadJets>=2)
+      // 	dPhi_METjet2 = abs(DeltaPhi(METPhi,hadJets[1].Phi()));	    
 	      
       // 		    // hadJets_hadronFlavor.push_back((*Jets_hadronFlavor)[i]);
       // 		    // hadJets_HTMask.push_back((*Jets_HTMask)[i]);
@@ -248,131 +260,139 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 
 
       
-      //defining flags for applying baseline selections
-	 bool Pass_EMu_veto=false, Pass_Iso_trk_veto=false, Pass_Pho_pT=false, Pass_MET=false, Pass_NHadJets=false, Pass_ST=false, EvtCln=false, JetMetPhi=false, applyTrgEff = false;
-	if (NEMu == 0) {
-	  Pass_EMu_veto = true;
-	  if (!(isoElectronTracks || isoMuonTracks || isoPionTracks)){
-	    Pass_Iso_trk_veto = true;
-	    if (bestPhoton.Pt() >40){
-	      Pass_Pho_pT = true;
-	      if (MET > 100){
-		Pass_MET = true;
-		if (NHadJets >=2){
-		  Pass_NHadJets = true;
-		  if (ST > 300){
-		    Pass_ST = true;
-		    applyTrgEff = true;
-		    if(PrimaryVertexFilter==1 && globalSuperTightHalo2016Filter==1 && HBHENoiseFilter==1 &&HBHEIsoNoiseFilter==1 && EcalDeadCellTriggerPrimitiveFilter == 1 && BadPFMuonFilter==1 && BadPFMuonDzFilter==1 && eeBadScFilter==1 && ecalBadCalibFilter==1 && NVtx>0 && PFCaloMETRatio < 5){
-		      if((!(phoMatchingJetIndx>=0 && (Jets[phoMatchingJetIndx].Pt())/(bestPhoton.Pt()) < 1.0)) && phoMatchingJetIndx >= 0){
-			EvtCln = true;
-			// if(dPhi_METjet > 0.3){
-			if(dPhi_METjet1 > 0.3 && dPhi_METjet2 > 0.3){
-			   JetMetPhi = true;
-			}
-		      }
-		    }
-		  }
-		}
-	      }
-	    }
-	  }
-	}
+      // //defining flags for applying baseline selections
+      // 	 bool Pass_EMu_veto=false, Pass_Iso_trk_veto=false, Pass_Pho_pT=false, Pass_MET=false, Pass_NHadJets=false, Pass_ST=false, EvtCln=false, JetMetPhi=false, applyTrgEff = false;
+      // 	if (NEMu == 0) {
+      // 	  Pass_EMu_veto = true;
+      // 	  if (!(isoElectronTracks || isoMuonTracks || isoPionTracks)){
+      // 	    Pass_Iso_trk_veto = true;
+      // 	    if (bestPhoton.Pt() >40){
+      // 	      Pass_Pho_pT = true;
+      // 	      if (MET > 100){
+      // 		Pass_MET = true;
+      // 		if (NHadJets >=2){
+      // 		  Pass_NHadJets = true;
+      // 		  if (ST > 300){
+      // 		    Pass_ST = true;
+      // 		    applyTrgEff = true;
+      // 		    if(PrimaryVertexFilter==1 && globalSuperTightHalo2016Filter==1 && HBHENoiseFilter==1 &&HBHEIsoNoiseFilter==1 && EcalDeadCellTriggerPrimitiveFilter == 1 && BadPFMuonFilter==1 && BadPFMuonDzFilter==1 && eeBadScFilter==1 && ecalBadCalibFilter==1 && NVtx>0 && PFCaloMETRatio < 5){
+      // 		      if((!(phoMatchingJetIndx>=0 && (Jets[phoMatchingJetIndx].Pt())/(bestPhoton.Pt()) < 1.0)) && phoMatchingJetIndx >= 0){
+      // 			EvtCln = true;
+      // 			// if(dPhi_METjet > 0.3){
+      // 			if(dPhi_METjet1 > 0.3 && dPhi_METjet2 > 0.3){
+      // 			   JetMetPhi = true;
+      // 			}
+      // 		      }
+      // 		    }
+      // 		  }
+      // 		}
+      // 	      }
+      // 	    }
+      // 	  }
+      // 	}
 	
 
 	///cout << NHadJets << endl;			    
 	
     	
 	
-	h_Gen_MET->Fill(NHadJets,wt);
-	h_MET[0]->Fill(MET,wt);
-	h_Pho_pT[0] -> Fill(bestPhoton.Pt(),wt);
-	h_Pho_eta[0] -> Fill(bestPhoton.Eta(),wt);
-	h_Pho_phi[0] -> Fill(bestPhoton.Phi(),wt);
-	
+	// h_Gen_MET->Fill(NHadJets,wt);
+	// h_MET[0]->Fill(MET,wt);
+	// h_Rest_MET -> Fill(bestPhoton.Pt(),wt);
+	// h_Pho_eta[0] -> Fill(bestPhoton.Eta(),wt);
+	// h_Pho_phi[0] -> Fill(bestPhoton.Phi(),wt);
+	// h_selectBaselineYields->Fill("no_cut",wt);
 	
 
-	if (Pass_EMu_veto) {
-	  h_MET[5] ->Fill(MET,wt);
-	  
-	  h_Pho_pT[5] ->Fill(bestPhoton.Pt(),wt);
-	  h_Pho_eta[5] -> Fill(bestPhoton.Eta(),wt);
-	  h_Pho_phi[5] -> Fill(bestPhoton.Phi(),wt);
-	  h_NHadJets[5]-> Fill(NHadJets,wt);
-	}
+	// if (Pass_EMu_veto) {
+	//   h_MET[5] ->Fill(MET,wt);	  
+	//   h_Pho_pT[5] ->Fill(bestPhoton.Pt(),wt);
+	//   h_Pho_eta[5] -> Fill(bestPhoton.Eta(),wt);
+	//   h_Pho_phi[5] -> Fill(bestPhoton.Phi(),wt);
+	//   h_NHadJets[5]-> Fill(NHadJets,wt);
+	//   h_selectBaselineYields->Fill("e_mu_veto",wt);
+	// }
 	
-	if (Pass_Iso_trk_veto){
-	  h_MET[6] ->Fill(MET,wt);
-	  h_Pho_pT[6] ->Fill(bestPhoton.Pt(),wt);
-	  h_Pho_eta[6] -> Fill(bestPhoton.Eta(),wt);
-	  h_Pho_phi[6] -> Fill(bestPhoton.Phi(),wt);
-	  h_NHadJets[6] -> Fill(NHadJets,wt);
-	    }
+	// if (Pass_Iso_trk_veto){
+	//   h_MET[6] ->Fill(MET,wt);
+	//   h_Pho_pT[6] ->Fill(bestPhoton.Pt(),wt);
+	//   h_Pho_eta[6] -> Fill(bestPhoton.Eta(),wt);
+	//   h_Pho_phi[6] -> Fill(bestPhoton.Phi(),wt);
+	//   h_NHadJets[6] -> Fill(NHadJets,wt);
+	//   h_selectBaselineYields->Fill("Iso_charge_Trk_veto",wt);
+	// }
 	
-	if (Pass_Pho_pT){
-	  h_MET[2] -> Fill(MET,wt);
-	  h_Pho_pT[2] -> Fill(bestPhoton.Pt(),wt);
-	  h_Pho_eta[2] -> Fill(bestPhoton.Eta(),wt);
-	  h_Pho_phi[2] -> Fill(bestPhoton.Phi(),wt);
-	  h_NHadJets[2]-> Fill(NHadJets,wt);
-	}
+	// if (Pass_Pho_pT){
+	//   h_MET[2] -> Fill(MET,wt);
+	//   h_Pho_pT[2] -> Fill(bestPhoton.Pt(),wt);
+	//   h_Pho_eta[2] -> Fill(bestPhoton.Eta(),wt);
+	//   h_Pho_phi[2] -> Fill(bestPhoton.Phi(),wt);
+	//   h_NHadJets[2]-> Fill(NHadJets,wt);
+	//   h_selectBaselineYields->Fill("Pho_pT>40",wt);
+	// }
 	
-	if (Pass_MET){ 
-	  //nEvents++;
-	  h_MET[1]-> Fill(MET,wt);
-	  h_Pho_pT[1]  ->Fill(bestPhoton.Pt(),wt);
-	  h_Pho_eta[1]  ->Fill(bestPhoton.Eta(),wt);
-	  h_Pho_phi[1]  ->Fill(bestPhoton.Phi(),wt);
-	  h_NHadJets[1]-> Fill(NHadJets,wt);
+	// if (Pass_MET){ 
+	//   //nEvents++;
+	//   h_MET[1]-> Fill(MET,wt);
+	//   h_Pho_pT[1]  ->Fill(bestPhoton.Pt(),wt);
+	//   h_Pho_eta[1]  ->Fill(bestPhoton.Eta(),wt);
+	//   h_Pho_phi[1]  ->Fill(bestPhoton.Phi(),wt);
+	//   h_NHadJets[1]-> Fill(NHadJets,wt);
+	//   h_selectBaselineYields->Fill("MET>100",wt);
 
-	}
+	// }
 	
-	if (Pass_NHadJets){
-	  h_MET[3] ->Fill(MET,wt);
-	  h_Pho_pT[3] ->Fill(bestPhoton.Pt(),wt);
-	  h_Pho_eta[3] -> Fill(bestPhoton.Eta(),wt);
-	  h_Pho_phi[3] -> Fill(bestPhoton.Phi(),wt);
-	  h_NHadJets[3]-> Fill(NHadJets,wt);
-	}
-	//if (Pass_ST!=applyTrgEff) cout << 8 << endl;	
-	if (Pass_ST){
-	  h_MET[4] ->Fill(MET,wt);
-	  h_Pho_pT[4] ->Fill(bestPhoton.Pt(),wt);
-	  h_Pho_eta[4] -> Fill(bestPhoton.Eta(),wt);
-	  h_Pho_phi[4] -> Fill(bestPhoton.Phi(),wt);
-	  h_NHadJets[4]-> Fill(NHadJets,wt);
-	}
+	// if (Pass_NHadJets){
+	//   h_MET[3] ->Fill(MET,wt);
+	//   h_Pho_pT[3] ->Fill(bestPhoton.Pt(),wt);
+	//   h_Pho_eta[3] -> Fill(bestPhoton.Eta(),wt);
+	//   h_Pho_phi[3] -> Fill(bestPhoton.Phi(),wt);
+	//   h_NHadJets[3]-> Fill(NHadJets,wt);
+	//   h_selectBaselineYields->Fill("NHadJets>=2",wt);
+	// }
+	// //if (Pass_ST!=applyTrgEff) cout << 8 << endl;	
+	// if (Pass_ST){
+	//   h_MET[4] ->Fill(MET,wt);
+	//   h_Pho_pT[4] ->Fill(bestPhoton.Pt(),wt);
+	//   h_Pho_eta[4] -> Fill(bestPhoton.Eta(),wt);
+	//   h_Pho_phi[4] -> Fill(bestPhoton.Phi(),wt);
+	//   h_NHadJets[4]-> Fill(NHadJets,wt);
+	//   h_selectBaselineYields->Fill("ST>300",wt);
+	// }
 
-	if (applyTrgEff)
-	  {
-	    wt = wt * (((TMath::Erf((MET - p0)/p1)+1)/2.0)*p2);
-	    //if (jentry<100) cout << (((TMath::Erf((MET - p0)/p1)+1)/2.0)*p2) << "," << MET << endl; 
-	    //if((((TMath::Erf((MET - p0)/p1)+1)/2.0)*p2)>=1) cout << 8;
-	    //if(wt2>=wt) cout << wt2 << "," << wt << endl;
-	    h_MET[7] ->Fill(MET,wt);
-	    h_Pho_pT[7] ->Fill(bestPhoton.Pt(),wt);
-	    h_Pho_eta[7] -> Fill(bestPhoton.Eta(),wt);
-	    h_Pho_phi[7] -> Fill(bestPhoton.Phi(),wt);
-	    h_NHadJets[7]-> Fill(NHadJets,wt);
-	  }
+	// if (applyTrgEff)
+	//   {
+	//     wt = wt * (((TMath::Erf((MET - p0)/p1)+1)/2.0)*p2);
+	//     //if (jentry<100) cout << (((TMath::Erf((MET - p0)/p1)+1)/2.0)*p2) << "," << MET << endl; 
+	//     //if((((TMath::Erf((MET - p0)/p1)+1)/2.0)*p2)>=1) cout << 8;
+	//     //if(wt2>=wt) cout << wt2 << "," << wt << endl;
+	//     h_MET[7] ->Fill(MET,wt);
+	//     h_Pho_pT[7] ->Fill(bestPhoton.Pt(),wt);
+	//     h_Pho_eta[7] -> Fill(bestPhoton.Eta(),wt);
+	//     h_Pho_phi[7] -> Fill(bestPhoton.Phi(),wt);
+	//     h_NHadJets[7]-> Fill(NHadJets,wt);
+	//     h_selectBaselineYields->Fill("Trg_Eff",wt);
+	//   }
 
-	if (EvtCln)
-	  {
-	    h_MET[8] ->Fill(MET,wt);
-	    h_Pho_pT[8] ->Fill(bestPhoton.Pt(),wt);
-	    h_Pho_eta[8] -> Fill(bestPhoton.Eta(),wt);
-	    h_Pho_phi[8] -> Fill(bestPhoton.Phi(),wt);
-	    h_NHadJets[8]-> Fill(NHadJets,wt);   
-	  }
+	// if (EvtCln)
+	//   {
+	//     h_MET[8] ->Fill(MET,wt);
+	//     h_Pho_pT[8] ->Fill(bestPhoton.Pt(),wt);
+	//     h_Pho_eta[8] -> Fill(bestPhoton.Eta(),wt);
+	//     h_Pho_phi[8] -> Fill(bestPhoton.Phi(),wt);
+	//     h_NHadJets[8]-> Fill(NHadJets,wt);
+	//     h_selectBaselineYields->Fill("Evt_cln",wt);
+	//   }
 
-	if (JetMetPhi)
-	  {
-	    h_MET[9] ->Fill(MET,wt);
-	    h_Pho_pT[9] ->Fill(bestPhoton.Pt(),wt);
-	    h_Pho_eta[9] -> Fill(bestPhoton.Eta(),wt);
-	    h_Pho_phi[9] -> Fill(bestPhoton.Phi(),wt);
-	    h_NHadJets[9]-> Fill(NHadJets,wt);
-	  }
+	// if (JetMetPhi)
+	//   {
+	//     h_MET[9] ->Fill(MET,wt);
+	//     h_Pho_pT[9] ->Fill(bestPhoton.Pt(),wt);
+	//     h_Pho_eta[9] -> Fill(bestPhoton.Eta(),wt);
+	//     h_Pho_phi[9] -> Fill(bestPhoton.Phi(),wt);
+	//     h_NHadJets[9]-> Fill(NHadJets,wt);
+	//     h_selectBaselineYields->Fill("dPhi_JetMet",wt);
+	//   }
 	  
 
       
@@ -632,9 +652,10 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	//h_pho_phi ->Fill(Photons[(int)ii].Phi(),wt);
       } //end photon loop
   } // end jentry loop
-
-  // cout << "Weight is: " << wt << endl;
-      // std::cout << "no_cut: " << h_NHadJets[0]->Integral() << endl;
+  cout << "sum of wt is: " << wt2<< endl;
+  cout << "Integral of NHadJets: " << h_NHadjets[0]->Integral() << ", Overflow: "<< h_NHadjets[0]->GetBinContent(h_NHadjets[0]->GetNbinsX()) << endl;
+  cout << "Integral of MET: " << h_MET[0]->Integral() << ", Overflow: "<< h_MET[0]->GetBinContent(h_NHadjets[0]->GetNbinsX()) << endl;
+  cout << "Integral of PhotonPt: " << h_Pho_pT[0]->Integral() << ", Overflow: "<< h_Pho_pT[0]->GetBinContent(h_NHadjets[0]->GetNbinsX()) << endl;
       // std::cout << "lep veto: " << h_NHadJets[5]->Integral() << endl;
       // std::cout << "iso track veto: " << h_NHadJets[6]->Integral() << endl;
       // std::cout << "Pho_Pt>40: " << h_NHadJets[2]->Integral() << endl;
@@ -652,8 +673,8 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
   vector<myLV> goodPho;
   vector<int> goodPhoIndx;
   for(int iPho=0;iPho<Photons->size();iPho++){
-    if(((*Photons_hasPixelSeed)[iPho]<0.001) && ( (*Photons_fullID)[iPho]))
-    //if(((*Photons_hasPixelSeed)[iPho]<0.001)  && ( (*Photons_fullID)[iPho] && ((*Photons_hasPixelSeed)[iPho]<0.001) &&( pho_ID==0 || (pho_ID==1 &&(((*Photons_cutBasedID)[iPho]==1 || (*Photons_cutBasedID)[iPho]==2))) || (pho_ID==2 && (*Photons_cutBasedID)[iPho]==2) || (pho_ID==3 && (*Photons_mvaValuesID)[iPho]>-0.02) || (pho_ID==4 && (*Photons_mvaValuesID)[iPho]>0.42))) ) 
+    //if(((*Photons_hasPixelSeed)[iPho]<0.001) && ( (*Photons_fullID)[iPho]))
+    if(((*Photons_hasPixelSeed)[iPho]<0.001)  && ( (*Photons_fullID)[iPho] && ((*Photons_hasPixelSeed)[iPho]<0.001) &&( pho_ID==0 || (pho_ID==1 &&(((*Photons_cutBasedID)[iPho]==1 || (*Photons_cutBasedID)[iPho]==2))) || (pho_ID==2 && (*Photons_cutBasedID)[iPho]==2) || (pho_ID==3 && (*Photons_mvaValuesID)[iPho]>-0.02) || (pho_ID==4 && (*Photons_mvaValuesID)[iPho]>0.42))) ) 
       {
 	goodPho.push_back(Photons[iPho] );
 	goodPhoIndx.push_back(iPho);
