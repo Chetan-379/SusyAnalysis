@@ -32,8 +32,6 @@ using ROOT::Detail::TBranchProxy;
 #include "TMath.h"
 
 using namespace std;
-typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiE4D<float> > myLV;
-
 class NtupleVarsTProxy : public TSelector {
 public :
    TTree          *fChain;         //!pointer to the analyzed TTree or TChain
@@ -940,8 +938,7 @@ public :
    double DeltaR(double eta1, double phi1, double eta2, double phi2);
    void   sortTLorVec(vector<TLorentzVector> *);
    double TransMass(double phi1, double phi2, double pt1, double pt2);
-  //double MinDr(TLorentzVector v1,vector<TLorentzVector> v2);
-  double MinDr(myLV v1,vector<myLV> v2);
+   double MinDr(TLorentzVector v1,vector<TLorentzVector> v2);
    double MinDr2(vector<TLorentzVector> v1,TLorentzVector v2);
    // double getCrossSection(std::string process_name);
   // std::map<std::string,float> cross_sectionValues;

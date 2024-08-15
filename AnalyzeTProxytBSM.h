@@ -35,21 +35,26 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   myLV   getBestPhoton(int);
   //TLorentzVector  getBestPhoton(int);
   int    bestPhotonIndxAmongPhotons=-100;
-  vector<string> selection = {"no_cut", "MET", "Pho_pT", "NHadjets", "ST", "Lep_veto", "Iso_Lep_Trk_veto","TrigEff","EvtCln","JetMetPhi","rmOvrlp"};
+  vector<string> selection = {"no_cut", "MET", "Pho_pT", "NHadjets", "ST", "Lep_veto", "Iso_Lep_Trk_veto","TrigEff","EvtCln","JetMetPhi"};
   vector<string> genparticle = {"Electron", "Muon", "Tau"};
   vector<string> recoparticle = {"Electron", "Muon", "Tau"};
   void CrossSection_Map_Init();
-  double getGenLep(myLV);
   TFile *oFile;
-  TH1F *h_MET[15];
-  TH1F *h_NHadJets[15];  
-  TH1F *h_Jet_pT[15], *h_Jet_eta[15], *h_Jet_phi[15];
-  TH1F *h_Pho_pT[15], *h_Pho_eta[15], *h_Pho_phi[15];
-  TH1F *h_Gen_pT[5][15], *h_Gen_eta[5][15], *h_Gen_phi[5][15];
-  TH1F *h_Reco_pT[5][15], *h_Reco_eta[5][15], *h_Reco_phi[5][15];
+  // TH1D *h_MET[10];
+  // TH1D *h_NHadJets[10];  
+  // TH1D *h_Pho_pT[10];
+
+  TH1F *h_MET[10];
+  TH1F *h_NHadJets[10];
+  //TH1D *h_NHadJets[10];  
+  TH1F *h_Pho_pT[10];
+  
+  TH1F *h_Jet_pT[10], *h_Jet_eta[10], *h_Jet_phi[10];
+  TH1F *h_Pho_eta[10], *h_Pho_phi[10];
+  TH1F *h_Gen_pT[5][10], *h_Gen_eta[5][10], *h_Gen_phi[5][10];
+  TH1F *h_Reco_pT[5][10], *h_Reco_eta[5][10], *h_Reco_phi[5][10];
   TH2F *h_NHadJets_pTSum, *h_GenRecoE;
   TH1F *h_Gen_MET, *h_EFakePho_MET, *h_LostElectron_MET, *h_LostMuon_MET, *h_HadTau_MET, *h_Rest_MET, *h_EFakePho_eta, *h_LostElectron_eta, *h_LostMuon_eta, *h_HadTau_eta, *h_Rest_eta;
-  
 };
 #endif
 
@@ -77,12 +82,19 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
       sprintf(hname_PhoEta,"h_Pho_Eta_%s",selection[i].c_str());
       sprintf(hname_PhoPhi,"h_Pho_Phi_%s",selection[i].c_str());
 
+      // h_NHadJets[i]= new TH1D(hname_NHadJets, hname_NHadJets, 50,0,50);
+      // h_MET[i] = new TH1D(hname_Met,hname_Met,100,0,5000);
+      // h_Pho_pT[i]= new TH1D(hname_PhoPt,hname_PhoPt,100,0,1000);
+
       h_NHadJets[i]= new TH1F(hname_NHadJets, hname_NHadJets, 50,0,50);
-      h_Jet_pT[i]  = new TH1F(hname_Jet_Pt,hname_Jet_Pt, 100,0.0, 1000.0);
-      h_Jet_eta[i] = new TH1F(hname_Jet_Eta,hname_Jet_Eta, 100, -10.0, 10.0);
-      h_Jet_phi[i] = new TH1F(hname_Jet_Phi,hname_Jet_Phi,100, -3.2, 3.2);
+      h_NHadJets[i]->Sumw2();
+      //h_NHadJets[i]= new TH1D(hname_NHadJets, hname_NHadJets, 50,0,50);
       h_MET[i] = new TH1F(hname_Met,hname_Met,100,0,5000);
       h_Pho_pT[i]= new TH1F(hname_PhoPt,hname_PhoPt,100,0,1000);
+      
+      h_Jet_pT[i]  = new TH1F(hname_Jet_Pt,hname_Jet_Pt, 100,0.0, 1000.0);
+      h_Jet_eta[i] = new TH1F(hname_Jet_Eta,hname_Jet_Eta, 100, -10.0, 10.0);
+      h_Jet_phi[i] = new TH1F(hname_Jet_Phi,hname_Jet_Phi,100, -3.2, 3.2);      
       h_Pho_eta[i] = new TH1F(hname_PhoEta,hname_PhoEta,100, -3.0, 3.0);
       h_Pho_phi[i] = new TH1F(hname_PhoPhi,hname_PhoPhi,100, -3.2, 3.2);
 
@@ -170,10 +182,12 @@ void AnalyzeTProxytBSM::CrossSection_Map_Init()
   while(in_EH>>process_name>>value>>entries){
     std::pair<std::string, float> temp_pair;    
     float weight =value/entries;
+    cout << "values: " << value << " entries: " << entries << endl;
     temp_pair = std::make_pair(process_name,weight);
     cross_sectionValues.insert(temp_pair);
   }
 }
+
 
 AnalyzeTProxytBSM::~AnalyzeTProxytBSM() { 
   if (!fChain) return;
@@ -325,6 +339,3 @@ AnalyzeTProxytBSM::~AnalyzeTProxytBSM() {
   /* TH1F *h_NHadJets3;   // along with MET cut */
   /* TH1F *h_NHadJets4;   // cut on photon pt */
   /* TH1F *h_NHadJets5;   // cut on NHadJets */
-
- //cout << "values: " << value << " entries: " << entries << endl;
-   
