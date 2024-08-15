@@ -34,7 +34,6 @@ int main(int argc, char* argv[])
   const char *phoID = argv[6];
 
   //TString pho_ID = phoID;
-
   AnalyzeTProxytBSM ana(inputFileList, outFileName, data,sample, elec,phoID);
 
   //=== === Loop over input files === ====
@@ -129,8 +128,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
       myLV bestPhoton=getBestPhoton(pho_ID);
       int hadJetID=-999;
       int NJets0=Jets->size();
-      //int NHadJets = 0;
-      double NHadJets = 0;
+      int NHadJets = 0;
       float Jets_pT_Sum=0;
       float ST=0;
       // bool Iso_Lep_Tracks;
@@ -155,35 +153,30 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	{
 	  wt = Weight*59.83*1000.0;
 	}
-
-       h_NHadJets[0]->Fill(NHadJets,wt);
-       //h_NHadJets[0]->Fill(5.0,wt);
-       //h_NHadJets[0]->Fill(NJets,wt);
+       
+       //       h_NHadJets[0]->Fill(NJets,wt);
        sumwt += wt;
-       if (k > decade) {
-	 cout << "sum weight " << sumwt << endl;
-	 cout << "NHadJets " << NHadJets << " " << wt << endl;
-	 cout << "NHadjets Integral: " << h_NHadJets[0]->Integral() << endl;
-	 cout << "overflow NhadJets: " << h_NHadJets[0]->GetBinContent(h_NHadJets[0]->GetNbinsX() + 1) << endl;
-	 cout << "underflow NhadJets: " << h_NHadJets[0]->GetBinContent(0) << "\n\n";
-       }
+       // if (k > decade) {
+       // 	 cout << "sum weight" << sumwt << endl;
+       // 	 cout << "NHadjets Integral: " << h_NHadJets[0]->Integral() << endl;
+       // 	 cout << "overflow NhadJets: " << h_NHadJets[0]->GetBinContent(h_NHadJets[0]->GetNbinsX() + 1) << endl;
+       // }
 
-       h_MET[0]->Fill(MET,wt);
-       if (k > decade) {
-	 cout << "MET Integral: " << h_MET[0]->Integral() << endl;
-	 cout << "overflow MET: " << h_MET[0]->GetBinContent(h_MET[0]->GetNbinsX() + 1) << endl;
-	 cout << "underflow MET: " << h_MET[0]->GetBinContent(0) << "\n\n";
-       }
+       // //       float wt1= wt;
+       // h_MET[0]->Fill(MET,wt);
+       // if (k > decade) {
+       // 	 cout << "MET Integral: " << h_MET[0]->Integral() << endl;
+       // 	 cout << "overflow MET: " << h_MET[0]->GetBinContent(h_MET[0]->GetNbinsX() + 1) << endl;
+       // }
 
-       h_Pho_pT[0] -> Fill(bestPhoton.Pt(),wt);
-       if (k > decade) {
-	 cout << "Photon pt Integral: " << h_Pho_pT[0]->Integral() << endl;
-	 cout << "overflow Pho Pt: " << h_Pho_pT[0]->GetBinContent(h_Pho_pT[0]->GetNbinsX() + 1) << endl;
-	 cout << "underflow Pho Pt: " << h_Pho_pT[0]->GetBinContent(0) << "\n\n\n";
-       }
+       // h_Pho_pT[0] -> Fill(Photons[0].Pt(),wt);
+       // if (k > decade) {
+       // 	 cout << "Photon pt Integral: " << h_Pho_pT[0]->Integral() << endl;
+       // 	 cout << "overflow Pho Pt: " << h_Pho_pT[0]->GetBinContent(h_Pho_pT[0]->GetNbinsX() + 1) << endl;
+       // }
 
-       h_Pho_eta[0] -> Fill(bestPhoton.Eta(),wt);
-       h_Pho_phi[0] -> Fill(bestPhoton.Phi(),wt);
+       // h_Pho_eta[0] -> Fill(bestPhoton.Eta(),wt);
+       // h_Pho_phi[0] -> Fill(bestPhoton.Phi(),wt);
 
        decade=k;
 
@@ -225,8 +218,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 			bjets.push_back(Jets[i]); bJet1Idx = i;}
 		      //hadJets.push_back((*Jets)[i]);
 		      jetMatchindx.push_back(i);
-		  }
-	      }
+		  }	      }
 	  }
       }
       
@@ -274,6 +266,42 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	  }
 	}
 
+	// h_NHadJets[0]->Fill(0.0000,wt);
+       // 	//h_NHadJets[0]->Fill(NHadJets,wt);
+       // sumwt += wt;
+       // if (k > decade) {
+       // 	 cout << "sum weight" << sumwt << endl;
+       // 	 cout << "NHadjets Integral: " << h_NHadJets[0]->Integral() << endl;
+       // 	 cout << "overflow NhadJets: " << h_NHadJets[0]->GetBinContent(h_NHadJets[0]->GetNbinsX() + 1) << endl;
+       // 	 cout << "underflow NHadJets: " << h_NHadJets[0]->GetBinContent(-1) << "\n\n";
+       // }
+
+       // //h_MET[0]->Fill(0.0000,wt);
+       // h_MET[0]->Fill(MET,wt);
+       // if (k > decade) {
+       // 	 cout << "MET Integral: " << h_MET[0]->Integral() << endl;
+       // 	 cout << "overflow MET: " << h_MET[0]->GetBinContent(h_MET[0]->GetNbinsX() + 1) << endl;
+       // 	 cout << "underflow MET: " << h_MET[0]->GetBinContent(-1) << "\n\n";  
+       // }
+
+       // //h_Pho_pT[0] -> Fill(0.0000,wt);
+       // h_Pho_pT[0] -> Fill(bestPhoton.Pt(),wt);
+       // if (k > decade) {
+       // 	 cout << "Photon pt Integral: " << h_Pho_pT[0]->Integral() << endl;
+       // 	 cout << "overflow Pho Pt: " << h_Pho_pT[0]->GetBinContent(h_Pho_pT[0]->GetNbinsX() + 1) << endl;
+       // 	 cout << "underflow Photon pt: " << h_Pho_pT[0]->GetBinContent(-1) << "\n\n";
+       // }
+
+       h_Pho_eta[0] -> Fill(bestPhoton.Eta(),wt);
+       h_Pho_phi[0] -> Fill(bestPhoton.Phi(),wt);
+
+       // decade=k;
+	
+       //h_NHadJets[0]->Fill(NHadJets,wt);
+       h_NHadJets[0]->Fill(0.0,wt);       
+       h_MET[0]->Fill(MET,wt);
+       h_Pho_pT[0] -> Fill(bestPhoton.Pt(),wt);
+	
 		
 
 	if (Pass_EMu_veto) {
@@ -637,9 +665,11 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 
 	
       	
-
+      if (MET<0) cout << "MET neg" << endl;
+      if (bestPhoton.Pt()<0) cout << "phopt neg" << endl;
   } // end jentry loop 
-  cout << "sum_wt: " << sumwt << endl;
+
+  cout << "sumwt: " << sumwt << endl;
   cout << "NHadjets Integral: " << h_NHadJets[0]->Integral() << endl;
   cout << "overflow NhadJets: " << h_NHadJets[0]->GetBinContent(h_NHadJets[0]->GetNbinsX() + 1) << endl;
   cout << "underflow NhadJets: " << h_NHadJets[0]->GetBinContent(0) << "\n\n";
@@ -647,9 +677,10 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
   cout << "overflow MET: " << h_MET[0]->GetBinContent(h_MET[0]->GetNbinsX() + 1) << endl;
   cout << "underflow MET: " << h_MET[0]->GetBinContent(0) << "\n\n";
   cout << "Photon pt Integral: " << h_Pho_pT[0]->Integral() << endl;
-  cout << "overflow Pho Pt: " << h_Pho_pT[0]->GetBinContent(h_Pho_pT[0]->GetNbinsX() + 1) << endl;
-  cout << "underflow Pho Pt: " << h_Pho_pT[0]->GetBinContent(0) << endl;
+  cout << "overflow Photon pt: " << h_Pho_pT[0]->GetBinContent(h_Pho_pT[0]->GetNbinsX() + 1) << endl;
+  cout << "underflow Photon pt: " << h_Pho_pT[0]->GetBinContent(0) << endl;
 } // End Eventloop
+
   myLV AnalyzeTProxytBSM::getBestPhoton(int pho_ID){
   //TLorentzVector AnalyzeTProxytBSM::getBestPhoton(int pho_ID){
   //vector<TLorentzVector> goodPho;

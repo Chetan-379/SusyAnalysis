@@ -44,9 +44,9 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   // TH1D *h_NHadJets[10];  
   // TH1D *h_Pho_pT[10];
 
-  TH1D *h_MET[10];
-  TH1D *h_NHadJets[10];  
-  TH1D *h_Pho_pT[10];
+  TH1F *h_MET[10];
+  TH1F *h_NHadJets[10];  
+  TH1F *h_Pho_pT[10];
   
   TH1F *h_Jet_pT[10], *h_Jet_eta[10], *h_Jet_phi[10];
   TH1F *h_Pho_eta[10], *h_Pho_phi[10];
@@ -85,9 +85,9 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
       // h_MET[i] = new TH1D(hname_Met,hname_Met,100,0,5000);
       // h_Pho_pT[i]= new TH1D(hname_PhoPt,hname_PhoPt,100,0,1000);
 
-      h_NHadJets[i]= new TH1D(hname_NHadJets, hname_NHadJets, 50,0,50);
-      h_MET[i] = new TH1D(hname_Met,hname_Met,100,0,5000);
-      h_Pho_pT[i]= new TH1D(hname_PhoPt,hname_PhoPt,100,0,1000);
+      h_NHadJets[i]= new TH1F(hname_NHadJets, hname_NHadJets, 50,0,50);
+      h_MET[i] = new TH1F(hname_Met,hname_Met,100,0,5000);
+      h_Pho_pT[i]= new TH1F(hname_PhoPt,hname_PhoPt,100,0,1000);
       
       h_Jet_pT[i]  = new TH1F(hname_Jet_Pt,hname_Jet_Pt, 100,0.0, 1000.0);
       h_Jet_eta[i] = new TH1F(hname_Jet_Eta,hname_Jet_Eta, 100, -10.0, 10.0);
