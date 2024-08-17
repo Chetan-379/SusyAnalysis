@@ -11,6 +11,8 @@ do
     ls ${path}/skimmed_Summer20UL${year}_ZNuNuGJets_MonoPhoton*.root > runList_ZNuNuGJets_MonoPhoton_Summer20UL${year}.txt
     ls ${path}/skimmed_Summer20UL${year}_TTGJets_TuneC*.root > runList_TTGJets_Tune_Summer20UL${year}.txt
     ls ${path}/skimmed_Summer20UL${year}_QCD_HT*.root > runList_QCD_HT_Summer20UL${year}.txt
+    ls ${path}/skimmed_Summer20UL${year}_GJets_DR-0p4_HT-*.root > runList_GJets_DR-0p4_HT_Summer20UL${year}.txt
+	
 done
 
  #ls ${path}/skimmed_${year}_TTJets_HT-800to1200_TuneCP5_13TeV-madgraphMLM-pythia8.root > runList_TTJets_${year}.txt
