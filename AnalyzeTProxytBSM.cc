@@ -21,7 +21,6 @@
 using namespace TMVA;
 int main(int argc, char* argv[])
 { 
-
   if (argc < 6) {
     cerr << "Please give 6 arguments " << "runList " << " " << "outputFileName" << " " << "which year dataset" <<" "<<"which Process"<< " "<<"which Lostlep bkg"<< " "<<"Which pho_ID"<<endl;
     return -1;
@@ -214,7 +213,41 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 		  }
 	      }
 	  }
-	if(s_sample.Contains("WGJets_MonoPhoton_PtG-40to130UL"||"WGJets_MonoPhoton_PtG-130UL"))
+	//===============================================================================================================
+
+	// if(s_sample.Contains(""))
+	//   {            if(!hasGenPromptPhoton){                  		//h_selectBaselineYields_v1->Fill("No gen prompt #gamma",wt);
+	//       if(jentry==0)cout<<"**********processing "<<s_sample<<" with non-prompt Gen photon"<<endl;              }
+	//     else if(hasGenPromptPhoton)              {	      //h_selectBaselineYields_v1->Fill("Gen prompt #gamma",wt);
+	//       if(!(madMinPhotonDeltaR >= 0.5 && mindr_Pho_genlep >=0.5 )){//h_phoPt_promptPho_rejected->Fill(bestPhoton.Pt(),wt); 
+	// 	//if(madMinPhotonDeltaR<0.5)                    h_selectBaselineYields_v1->Fill("madMinPhotonDeltaR <0.5",wt);
+	// 	//if(mindr_Pho_genlep<0.5)                    h_selectBaselineYields_v1->Fill("mindr_Pho_genlep<0.5",wt);
+	// 	cont4=false;}
+	//       else
+	// 	{        //   if(madMinPhotonDeltaR >= 0.5)                     h_selectBaselineYields_v1->Fill("mindR(q/g, #gamma)",wt);
+	// 	  //if(mindr_Pho_genlep >=0.5)    		      h_selectBaselineYields_v1->Fill("mindR(l, #gamma)",wt);
+	// 	}}}
+
+
+
+	// if(s_sample.Contains("WGJets_MonoPhoton_PtG-130UL") || s_sample.Contains("WGJets_MonoPhoton_PtG-40to130UL"))
+	//    {            if(!hasGenPromptPhoton){      //            		h_selectBaselineYields_v1->Fill("No gen prompt #gamma",wt);
+        //         if(jentry==0)cout<<"**********processing "<<s_sample<<" with non-prompt Gen photon"<<endl;              }
+	//      else if(hasGenPromptPhoton)              {	   //   h_selectBaselineYields_v1->Fill("Gen prompt #gamma",wt);
+	//       if(!(madMinPhotonDeltaR >= 0.5 && mindr_Pho_genlep >=0.5 )){//h_phoPt_promptPho_rejected->Fill(bestPhoton.Pt(),wt); 
+	// 	//if(madMinPhotonDeltaR<0.5)                    h_selectBaselineYields_v1->Fill("madMinPhotonDeltaR <0.5",wt);
+	// 	//if(mindr_Pho_genlep<0.5)                    h_selectBaselineYields_v1->Fill("mindr_Pho_genlep<0.5",wt);
+    	// 	  cont4=false;}
+    	// 	else
+        //           {          // if(madMinPhotonDeltaR >= 0.5)                     h_selectBaselineYields_v1->Fill("mindR(q/g, #gamma)",wt);
+        //             //if(mindr_Pho_genlep >=0.5)    		      h_selectBaselineYields_v1->Fill("mindR(l, #gamma)",wt);
+        //           }}}
+
+
+
+
+ 
+	if(s_sample.Contains("WGJets_MonoPhoton_PtG-40to130UL") || s_sample.Contains("WGJets_MonoPhoton_PtG-130UL"))
 	  {
 	    if(!hasGenPromptPhoton)
 	      {
@@ -238,7 +271,8 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 		  }
 	      }
 	  }
-	
+      // 	//=========================================	
+
 	if(s_sample.Contains("WJets"))
 	  {
 	    if(!hasGenPromptPhoton)
@@ -261,7 +295,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	      }
 	  }
 	
-	if(s_sample.Contains("TTJets_HT") || s_sample.Contains("TTJets-HT")||s_sample.Contains("TTJets-inc")|| s_sample.Contains("TTJets_inc") || s_sample.Contains("TTJets2_v17")||s_sample.Contains("TTJets") || s_sample.Contains("TTJets_SingleLept") || s_sample.Contains("TTJets_DiLept"))
+	if(s_sample.Contains("TTJets_HT") || s_sample.Contains("TTJets-HT")||s_sample.Contains("TTJets-inc")|| s_sample.Contains("TTJets_inc") || s_sample.Contains("TTJets2_v17")||s_sample.Contains("TTJets")  ||s_sample.Contains("TTJets_Leptons"))
 	  {
 	    if(hasGenPromptPhoton)
 	      {	
@@ -293,16 +327,21 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	  }
 	genphomatch_after++;
       }
-      //==========================================================================================================================================================================================================      
+
+
+
+
+//==========================================================================================================================================================================================================      
       
 
 
       //defining flags for applying baseline selections
       bool Pass_EMu_veto=false, Pass_Iso_trk_veto=false, Pass_Pho_pT=false, Pass_MET=false, Pass_NHadJets=false, Pass_ST=false, applyTrgEff = false, EvtCln=false,JetMetPhi=false,rmOvrlp=false, Pass_MET2=false;
       if (NEMu == 0) {
-	Pass_EMu_veto = true;
+	Pass_EMu_veto = true;	
 	if (!(isoElectronTracks || isoMuonTracks || isoPionTracks)){
-	  Pass_Iso_trk_veto = true;
+	  Pass_Iso_trk_veto = true;			  	    
+	  
 	  if (bestPhoton.Pt() >40){
 	    Pass_Pho_pT = true;
 	    if (MET > 100){
@@ -317,9 +356,11 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 		      EvtCln = true;			  
 		      if(dPhi_METjet1 > 0.3 && dPhi_METjet2 > 0.3){
 			JetMetPhi = true;						  
-			if (cont1 && cont2 && cont3 && cont4 && cont5 && cont6 && cont7 && cont8 && cont9 && cont10){ rmOvrlp=true;
+			if (cont1 && cont2 && cont3 && cont4 && cont5 && cont6 && cont7 && cont8 && cont9 && cont10){
+			  rmOvrlp=true;
 			  if(MET>200) {
 			    Pass_MET2=true;
+			    
 			  }
 			}
 		      }
@@ -331,15 +372,15 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	  }
 	}
       }
+  
       
-      
-      h_NHadJets[0]->Fill(NHadJets,wt);
-      //h_NHadJets[0]->Fill(0.0,wt);       
+      //h_NHadJets[0]->Fill(0.0,wt);      
+      h_NHadJets[0]->Fill(NHadJets,wt);      
       h_MET[0]->Fill(MET,wt);
       h_Pho_pT[0] -> Fill(bestPhoton.Pt(),wt);
       h_Pho_eta[0] -> Fill(bestPhoton.Eta(),wt);
       h_Pho_phi[0] -> Fill(bestPhoton.Phi(),wt);
-      
+
       if (Pass_EMu_veto) {
 	h_MET[5] ->Fill(MET,wt);
 	h_Pho_pT[5] ->Fill(bestPhoton.Pt(),wt);
@@ -355,7 +396,8 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	h_Pho_phi[6] -> Fill(bestPhoton.Phi(),wt);
 	h_NHadJets[6] -> Fill(NHadJets,wt);
       }
-      
+
+                  
       if (Pass_Pho_pT){
 	h_MET[2] -> Fill(MET,wt);
 	h_Pho_pT[2] -> Fill(bestPhoton.Pt(),wt);
@@ -433,6 +475,8 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	  h_Pho_phi[11] -> Fill(bestPhoton.Phi(),wt);
 	  h_NHadJets[11]-> Fill(NHadJets,wt);
 	}
+
+
 	                       
       
       for(int i=0;i<Jets->size();i++){
@@ -474,8 +518,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	    }
 	  }
 	}
-	ST = Jets_pT_Sum + bestPhoton.Pt();
-	
+      
 	//if(hadJets.size()==0) continue;
 
 	if(Debug)
@@ -657,7 +700,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
   cout << h_NHadJets[9]->Integral()<< endl;
   cout << h_NHadJets[10]->Integral()<< endl;
   cout << h_NHadJets[11]->Integral()<< endl;
-
+  
   
 } // End Eventloop
 
