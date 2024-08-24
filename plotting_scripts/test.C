@@ -1,10 +1,11 @@
 const int n_pl = 4;
 bool logx = false;
 //defining the legends for each plots
-TString legend_text[15] = {"skimmed","e/mu_veto","charge_trk_veto","Pho_Pt>40", "MET>100","NHadJet>=2","ST>300","Trig_Eff","Event_clean","dPhi(MET,leadingJet)", "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
-int line_width[12] = {2,2,2,2,2,2,2,2,2,2,2,2};
-int line_style[12] = {1,1,1,1,1,1,1,1,1,1,1,1};
-int line_color[11] = {kBlack, kBlue, kGreen, kMagenta+2, kRed - 3, kAzure + 7 , kCyan + 4 , kSpring +9, kPink+10 , kGreen + 3,kMagenta +3 };
+TString legend_text[15] = {"skimmed","Pho_Pt>40", "MET>100","NHadJet>=2","ST>300","Trig_Eff","Event_clean","dPhi(MET,leadingJet)","remove overlap","MET>200","e/mu_veto","charge_trk_veto", "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
+int line_width[15] = {2,2,2,2,2,2,2,2,2,2,2,2,2,2};
+int line_style[15] = {1,1,1,1,1,1,1,1,1,1,1,1,2,2};
+int line_color[15] = {kBlack, kBlue, kOrange-3, kMagenta+2, kGreen+1, kCyan+4, kAzure+7, kSpring+8, kPink+10, kGreen + 3,kRed,kGray, kViolet -7 };
+//int line_color[15] = {kBlack, kRed+1, kGreen, kMagenta+2, kOrange+1, kAzure+7, kCyan+4, kSpring+9, kPink+10, kGreen+3, kBlue, kGray+1, kViolet-7};
 TH1F* setLastBinAsOverFlow(TH1F*, int);
 TH1F* setMyRange(TH1F*,double,double);
 TH1F* DrawOverflow(TH1F*);
@@ -315,7 +316,7 @@ void test(string pathname)
   string histname1[100], histname2[100], histname3[100];
   char hname_NHadJets[100], hname_Jet_Pt[100], hname_Jet_Eta[100], hname_Jet_Phi[100], hname_Met[100], hname_PhoPt[100], hname_PhoEta[100], hname_PhoPhi[100];
   // Book your histograms & summary counters here
-    vector<string> selection = {"no_cut", "Lep_veto", "Iso_Lep_Trk_veto", "Pho_pT", "MET", "NHadjets", "ST","TrigEff","EvtCln","JetMetPhi"};
+  vector<string> selection = {"no_cut", "Pho_pT", "MET100", "NHadjets", "ST","TrigEff","EvtCln","JetMetPhi","rmOvrlp","MET200","Lep_veto", "Iso_Lep_Trk_veto"};
 
   for (int i=0; i<selection.size();i++)
     {
@@ -328,20 +329,24 @@ void test(string pathname)
       histname2[i] = hname_Met; 
       sprintf(hname_PhoPt, "h_Pho_Pt_%s",selection[i].c_str());
       histname1[i] = hname_PhoPt; 
+
+
       sprintf(hname_PhoEta, "h_Pho_Eta_%s",selection[i].c_str());
       sprintf(hname_PhoPhi, "h_Pho_Phi_%s",selection[i].c_str());
    }
 
-  vector<vector<string>> bigbaseline;
+  
   vector<string> baseline1, baseline2, baseline3;
-
-  baseline1 = {histname1[0], histname1[1], histname1[2], histname1[3], histname1[4], histname1[5], histname1[6], histname1[7], histname1[8], histname1[9]};
-  baseline2 = {histname2[0], histname2[1], histname2[2], histname2[3], histname2[4], histname2[5], histname2[6], histname2[7], histname2[8], histname2[9]}; 
-  baseline3 = {histname3[0], histname3[1], histname3[2], histname3[3], histname3[4], histname3[5], histname3[6], histname3[7], histname3[8], histname3[9]};
-
+  for (int i=0; i < selection.size(); i++){
+  baseline1.push_back(histname1[i]);
+  baseline2.push_back(histname2[i]);
+  baseline3.push_back(histname3[i]);
+  }
+ 
   //string to be added to output file name - useful when you have different files and reading the same histograms from these
+  vector<vector<string>> bigbaseline;
   bigbaseline = {baseline1, baseline2, baseline3};
-
+ 
   for (int bigi=0; bigi<bigbaseline.size(); bigi++)
     {
       vector<string> filetag;
@@ -384,9 +389,8 @@ void test(string pathname)
 	 
 	  //path to save the files a jpg or pdf
 	  vector<string> folder;
-	  folder = {"plots/TT/", "plots/TTG/", "plots/WLNu/", "plots/WG/", "plots/ZNuNu/", "plots/ZGNuNu/", "plots/QCD/","plots/GJets/"};
-	  //folder = {"plots/TTG/", "plots/WG/", "plots/ZGNuNu/"};
-	  sprintf(full_path,"%s/%s%s_MET_comparisons_%s",pathname.c_str(),folder[i_file].c_str(),diff_title[bigi].c_str(),filetag[i_file].c_str());
+	  folder = {"plots/TT_/", "plots/TTG_/", "plots/WLNu_/", "plots/WG_/", "plots/ZNuNu_/", "plots/ZGNuNu_/", "plots/QCD_/","plots/GJets_/"};
+	  sprintf(full_path,"%s/%s%s_comparisons_%s",pathname.c_str(),folder[i_file].c_str(),diff_title[bigi].c_str(),filetag[i_file].c_str());
 	 	    
 	  //calling generate_1Dplot which will take this vector of histograms and 
 	  generate_1Dplot(hist_list_Njets,full_path,energy,xmax[i_file],xmin[i_file],leg_head,false,true,false,true,filetag[i_file].c_str(),xtitle[i_file].c_str(),rebin[i_file]);
@@ -395,6 +399,52 @@ void test(string pathname)
 
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
