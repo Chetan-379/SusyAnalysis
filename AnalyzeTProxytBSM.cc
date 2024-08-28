@@ -127,15 +127,10 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
       
 
       NEMu = NElectrons + NMuons;
-	    
-      if(s_Process.Contains("2018.WGJets_MonoPhoton_PtG-40to130UL")|| s_Process.Contains("2018.WGJets_MonoPhoton_PtG-130UL")|| s_Process.Contains("2016preVFP.WGJets_MonoPhoton_PtG-40to130UL") ||s_Process.Contains("2016preVFP.WGJets_MonoPhoton_PtG-130UL") || s_Process.Contains("2017.WGJets_MonoPhoton_PtG-40to130UL")||s_Process.Contains("2017.WGJets_MonoPhoton_PtG-130UL")|| s_Process.Contains("2016postVFP.WGJets_MonoPhoton_PtG-130UL")||s_Process.Contains("2016postVFP.WGJets_MonoPhoton_PtG-40to130UL")) 
-	{	  	  
-	  wt = cross_section*59.83*1000.0;
-	}
+      	    
+      if(s_Process.Contains("2018.WGJets_MonoPhoton_PtG-40to130UL")|| s_Process.Contains("2018.WGJets_MonoPhoton_PtG-130UL")|| s_Process.Contains("2016preVFP.WGJets_MonoPhoton_PtG-40to130UL") ||s_Process.Contains("2016preVFP.WGJets_MonoPhoton_PtG-130UL") || s_Process.Contains("2017.WGJets_MonoPhoton_PtG-40to130UL")||s_Process.Contains("2017.WGJets_MonoPhoton_PtG-130UL")|| s_Process.Contains("2016postVFP.WGJets_MonoPhoton_PtG-130UL")||s_Process.Contains("2016postVFP.WGJets_MonoPhoton_PtG-40to130UL")) wt = cross_section*59.83*1000.0;
+
       else wt = Weight*59.83*1000.0;
-	
-      
-      
       for(int i=0;i<Jets->size();i++){
 	if( (Jets[i].Pt() > 30.0) && (abs(Jets[i].Eta()) <= 2.4) ){
 	  if (Photons->size()!=0) {
@@ -188,116 +183,75 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
       bool cont1=true, cont2=true, cont3=true, cont4=true, cont5=true, cont6=true, cont7=true, cont8=true, cont9=true, cont10=true; 
       if((s_sample.Contains("TTJets_HT")||s_sample.Contains("TTJets-HT")) && madHT<600) cont1=false;
       if((s_sample.Contains("TTJets_inc")|| s_sample.Contains("TTJets_SingleLept") || s_sample.Contains("TTJets_DiLept") || s_sample.Contains("TTJets_Leptons") || s_sample.Contains("TTJets_Leptons")) && madHT>600) cont2=false;
-      if(!genphocheck)      {        genphomatch_before++;
+      if(!genphocheck)      {        //genphomatch_before++;
 	double mindr_Pho_genlep=getGenLep(bestPhoton);
 	if( s_sample.Contains("TTG") )
 	  {
 	    if(!hasGenPromptPhoton)
-	      {
-		//h_selectBaselineYields_v1->Fill("No gen prompt #gamma",wt);                                                                                                                                          
-		//if(jentry==0)cout<<"**********processing "<<s_sample<<" with non-prompt Gen photon"<<endl;                                                                                                           
+	      {//h_selectBaselineYields_v1->Fill("No gen prompt #gamma",wt);
+	       //if(jentry==0)cout<<"**********processing "<<s_sample<<" with non-prompt Gen photon"<<endl;
 	      }
 	    else if(hasGenPromptPhoton)
-	      {
-		//h_selectBaselineYields_v1->Fill("Gen prompt #gamma",wt);                                                                                                                                             
+	      {//h_selectBaselineYields_v1->Fill("Gen prompt #gamma",wt);                                                                                                                                         
 		if(!(madMinPhotonDeltaR >= 0.5 && mindr_Pho_genlep >=0.5 ))
-		  {//h_phoPt_promptPho_rejected->Fill(bestPhoton.Pt(),wt);                                                                                                                                             
-		    //if(madMinPhotonDeltaR<0.5)                h_selectBaselineYields_v1->Fill("madMinPhotonDeltaR <0.5",wt);                                                                                         
-		    //if(mindr_Pho_genlep<0.5)                  h_selectBaselineYields_v1->Fill("mindr_Pho_genlep<0.5",wt);                                                                                            
+		  {//h_phoPt_promptPho_rejected->Fill(bestPhoton.Pt(),wt);
+		    //if(madMinPhotonDeltaR<0.5)                h_selectBaselineYields_v1->Fill("madMinPhotonDeltaR <0.5",wt);
+		    //if(mindr_Pho_genlep<0.5)                  h_selectBaselineYields_v1->Fill("mindr_Pho_genlep<0.5",wt);   
 		    cont3=false;
 		  }
 		else
-		  {
-		    //if(madMinPhotonDeltaR >= 0.5)                       h_selectBaselineYields_v1->Fill("mindR(q/g, #gamma)",wt);                                                                                    
-		    //if(mindr_Pho_genlep >=0.5)                          h_selectBaselineYields_v1->Fill("mindR(l, #gamma)",wt);                                                                                      
+		  {//if(madMinPhotonDeltaR >= 0.5)                       h_selectBaselineYields_v1->Fill("mindR(q/g, #gamma)",wt);
+		    //if(mindr_Pho_genlep >=0.5)                          h_selectBaselineYields_v1->Fill("mindR(l, #gamma)",wt);
 		  }
 	      }
 	  }
-
-
+	
 	if(s_sample.Contains("WGJets_MonoPhoton_PtG-40to130UL") || s_sample.Contains("WGJets_MonoPhoton_PtG-130UL"))
-	//if(s_sample.Contains("WGJets_MonoPhoton_PtG-40to130UL"||"WGJets_MonoPhoton_PtG-130UL"))
-	  {
+	  {//if(s_sample.Contains("WGJets_MonoPhoton_PtG-40to130UL"||"WGJets_MonoPhoton_PtG-130UL")) 
 	    if(!hasGenPromptPhoton)
-	      {
-		//h_selectBaselineYields_v1->Fill("No gen prompt #gamma",wt);                                                                                                                                          
-		//if(jentry==0)cout<<"**********processing "<<s_sample<<" with non-prompt Gen photon"<<endl;                                                                                                           
+	      {//h_selectBaselineYields_v1->Fill("No gen prompt #gamma",wt);
+		//if(jentry==0)cout<<"**********processing "<<s_sample<<" with non-prompt Gen photon"<<endl;
 	      }
 	    else if(hasGenPromptPhoton)
-	      {
-		//h_selectBaselineYields_v1->Fill("Gen prompt #gamma",wt);                                                                                                                                             
+	      {//h_selectBaselineYields_v1->Fill("Gen prompt #gamma",wt);
 		if(!(madMinPhotonDeltaR >= 0.5 && mindr_Pho_genlep >=0.5 ))
-		  {//h_phoPt_promptPho_rejected->Fill(bestPhoton.Pt(),wt);                                                                                                                                             
-		    //if(madMinPhotonDeltaR<0.5)                    h_selectBaselineYields_v1->Fill("madMinPhotonDeltaR <0.5",wt);                                                                                     
-		    //if(mindr_Pho_genlep<0.5)                    h_selectBaselineYields_v1->Fill("mindr_Pho_genlep<0.5",wt);                                                                                          
+		  {//h_phoPt_promptPho_rejected->Fill(bestPhoton.Pt(),wt);
+		    //if(madMinPhotonDeltaR<0.5)                    h_selectBaselineYields_v1->Fill("madMinPhotonDeltaR <0.5",wt);
+		    //if(mindr_Pho_genlep<0.5)                    h_selectBaselineYields_v1->Fill("mindr_Pho_genlep<0.5",wt);
 		    cont4=false;
 		  }
-		
 		else
-		  {
-		    // if(madMinPhotonDeltaR >= 0.5)                     h_selectBaselineYields_v1->Fill("mindR(q/g, #gamma)",wt);                                                                                     
-		    //if(mindr_Pho_genlep >=0.5)                          h_selectBaselineYields_v1->Fill("mindR(l, #gamma)",wt);                                                                                      
+		  {// if(madMinPhotonDeltaR >= 0.5)                     h_selectBaselineYields_v1->Fill("mindR(q/g, #gamma)",wt);
+		    //if(mindr_Pho_genlep >=0.5)                          h_selectBaselineYields_v1->Fill("mindR(l, #gamma)",wt); 
 		  }
 	      }
 	  }
-
 	if(s_sample.Contains("WJets"))
-	  {
-	    if(!hasGenPromptPhoton)
-	      {
-		//h_selectBaselineYields_v1->Fill("No gen prompt #gamma",wt);                                                                                                                                          
-		//if(jentry==0)cout<<"**********processing "<<s_sample<<" with non-prompt Gen photon"<<endl;                                                                                                           
+	  {if(!hasGenPromptPhoton)
+	      {//h_selectBaselineYields_v1->Fill("No gen prompt #gamma",wt);
+		//if(jentry==0)cout<<"**********processing "<<s_sample<<" with non-prompt Gen photon"<<endl;
 	      }
 	    else if(hasGenPromptPhoton)
-	      {
-		//h_selectBaselineYields_v1->Fill("Gen prompt #gamma",wt);                                                                                                                                             
+	      {//h_selectBaselineYields_v1->Fill("Gen prompt #gamma",wt);
 		if(!(madMinPhotonDeltaR < 0.5 || mindr_Pho_genlep < 0.5))
-		  {//h_phoPt_promptPho_rejected->Fill(bestPhoton.Pt(),wt);                                                                                                                                             
+		  {//h_phoPt_promptPho_rejected->Fill(bestPhoton.Pt(),wt);
 		    cont5=false;
 		  }
 		else
-		  {
-		    // if(madMinPhotonDeltaR >= 0.5)                      h_selectBaselineYields_v1->Fill("pass_mindR(q/g, #gamma)",wt);                                                                               
-		    //if(mindr_Pho_genlep >=0.5)                          h_selectBaselineYields_v1->Fill("pass_mindR(l, #gamma)",wt);                                                                                 
+		  {// if(madMinPhotonDeltaR >= 0.5)                      h_selectBaselineYields_v1->Fill("pass_mindR(q/g, #gamma)",wt);
+		    //if(mindr_Pho_genlep >=0.5)                          h_selectBaselineYields_v1->Fill("pass_mindR(l, #gamma)",wt);
 		  }
 	      }
-	  }
-	
+	  }	
 	if(s_sample.Contains("TTJets_HT") || s_sample.Contains("TTJets-HT")||s_sample.Contains("TTJets-inc")|| s_sample.Contains("TTJets_inc") || s_sample.Contains("TTJets2_v17")||s_sample.Contains("TTJets")  ||s_sample.Contains("TTJets_Leptons"))
-	  {
-	    if(hasGenPromptPhoton)
-	      {	
-		if(!(madMinPhotonDeltaR < 0.5 || mindr_Pho_genlep < 0.5))
-		  { cont6=false;
-		  }
-        
-	      }
+	  {if(hasGenPromptPhoton && !(madMinPhotonDeltaR < 0.5 || mindr_Pho_genlep < 0.5) && !(madMinPhotonDeltaR < 0.5 || mindr_Pho_genlep < 0.5)) cont6=false;
+	    //	      {if(!(madMinPhotonDeltaR < 0.5 || mindr_Pho_genlep < 0.5)) cont6=false;}
 	  }
-	
-	if(hasGenPromptPhoton && (s_sample.Contains("GJets")))
-	  {
-	    if(!(madMinPhotonDeltaR>0.4)) cont7=false;
-	  }
-	
-	if(hasGenPromptPhoton && (s_sample.Contains("QCD")))
-	  {
-	    if((madMinPhotonDeltaR>0.4 && hasGenPromptPhoton)) cont8=false;
-	  }
-	
-	if(hasGenPromptPhoton && ((s_sample.Contains("ZG"))|| (s_sample.Contains("ZNuNuG")) || s_sample.Contains("ZNuNuGJets")))
-	  {
-	    if(!(madMinPhotonDeltaR>0.5)) cont9=false;
-	  }
-	
-	if(hasGenPromptPhoton && ((s_sample.Contains("ZJets"))|| (s_sample.Contains("ZNuNuJets"))))
-	  {
-	    if(!(madMinPhotonDeltaR<=0.5)) cont10=false;
-	  }
-	genphomatch_after++;
+	if(hasGenPromptPhoton && (s_sample.Contains("GJets")) && !(madMinPhotonDeltaR>0.4)) cont7=false;
+	if(hasGenPromptPhoton && (s_sample.Contains("QCD")) && (madMinPhotonDeltaR>0.4 && hasGenPromptPhoton)) cont8=false;
+	if(hasGenPromptPhoton && ((s_sample.Contains("ZG"))|| (s_sample.Contains("ZNuNuG")) || s_sample.Contains("ZNuNuGJets")) && !(madMinPhotonDeltaR>0.5)) cont9=false;
+	if(hasGenPromptPhoton && ((s_sample.Contains("ZJets"))|| (s_sample.Contains("ZNuNuJets"))) && !(madMinPhotonDeltaR<=0.5)) cont10=false;
       }
-
-
-
 
 //==========================================================================================================================================================================================================      
       
@@ -446,7 +400,35 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	h_NHadJets[6] -> Fill(NHadJets,wt);
       }
 
-
+      if (Pass_Iso_trk_veto && bestPhoton.Pt()>100 && GenElectrons->size()>0 && ((GenElectrons[0].Pt()/bestPhoton.Pt())<=0.8 || (GenElectrons[0].Pt()/bestPhoton.Pt())>=1.2)){        
+	double dR_gen_e_gamma = DeltaR(GenElectrons[0].Eta(),GenElectrons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
+	if (dR_gen_e_gamma > 0.2) h_LL_SR_Pho_Pt->Fill(bestPhoton.Pt(),wt);
+      }
+            
+      if (Pass_MET2 && bestPhoton.Pt()>100 && NElectrons==1 && NMuons==0 && isoElectronTracks){
+	double dR_reco_e_gamma = DeltaR(Electrons[0].Eta(),Electrons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
+	float m_T=sqrt(2*((Electrons[0].Pt()*MET)-(Electrons[0].Pt()*MET*cos(DeltaPhi(Electrons[0].Phi(),METPhi)))));
+	if (dR_reco_e_gamma > 0.2 && m_T<100) h_LL_CR_Pho_Pt ->Fill(bestPhoton.Pt(),wt);
+      }
+      
+      //for stitching part
+      if(GenElectrons->size()>0){
+	if (JetMetPhi){
+	  double minDR_pho_gen_lep_Ovrlp = getGenLep(bestPhoton);
+	  double minDR_pho_qg_Ovrlp = madMinPhotonDeltaR;
+	  h_mindR_pho_gen_lep_Ovrlp->Fill(minDR_pho_gen_lep_Ovrlp,wt);
+	  h_mindR_pho_qg_Ovrlp->Fill(minDR_pho_qg_Ovrlp,wt);	  
+	}
+	
+	if (rmOvrlp){
+	  double minDR_pho_gen_lep_rmOvrlp = getGenLep(bestPhoton);
+	  double minDR_pho_qg_rmOvrlp = madMinPhotonDeltaR;
+	  h_mindR_pho_gen_lep_rmOvrlp->Fill(minDR_pho_gen_lep_rmOvrlp,wt);
+	  h_mindR_pho_qg_rmOvrlp->Fill(minDR_pho_qg_rmOvrlp,wt);
+	}
+      }
+      
+      
 	                       
       
       for(int i=0;i<Jets->size();i++){
@@ -732,7 +714,7 @@ double AnalyzeTProxytBSM::getGenLep(myLV bestPhoton){
             }
         }
       //  }
-      return MinDr_myLV(bestPhoton,v_genLep2);
+  return MinDr_myLV(bestPhoton,v_genLep2);
 }
 
 //SS//== not using this functions == 
