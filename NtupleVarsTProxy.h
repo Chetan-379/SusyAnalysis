@@ -941,8 +941,9 @@ public :
    void   sortTLorVec(vector<TLorentzVector> *);
    double TransMass(double phi1, double phi2, double pt1, double pt2);
    double MinDr(TLorentzVector v1,vector<TLorentzVector> v2);
-   double MinDr_myLV(myLV v1,vector<myLV> v2);
+   double MinDr_myLV(myLV v1,vector<myLV> v2);  
    double MinDr2(vector<TLorentzVector> v1,TLorentzVector v2);
+  double MinDr2_myLV(vector<myLV> v1, myLV v2);
    // double getCrossSection(std::string process_name);
   // std::map<std::string,float> cross_sectionValues;
 
