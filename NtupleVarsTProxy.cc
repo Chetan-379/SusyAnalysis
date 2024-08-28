@@ -58,6 +58,15 @@ double NtupleVarsTProxy::MinDr2(vector<TLorentzVector> v1,TLorentzVector v2)
   return dr;
 }
 
+double NtupleVarsTProxy::MinDr2_myLV(vector<myLV> v1,myLV v2)
+{
+  double dr = 60;
+  for(int j=0;j<v1.size();j++)
+    {if(dr>=DeltaR(v1[j].Eta(),v1[j].Phi(),v2.Eta(),v2.Phi())) dr=DeltaR(v1[j].Eta(),v1[j].Phi(),v2.Eta(),v2.Phi());
+    }
+  return dr;
+}
+
 double NtupleVarsTProxy::getCrossSection(std::string process_name)
 {
   std::map<std::string, float>::iterator it = cross_sectionValues.find(process_name);
