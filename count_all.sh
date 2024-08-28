@@ -1,6 +1,7 @@
 #!/bin/bash
 ./analyzeTProxytBSM runFiles/runList_TTGJets_Tune_Summer20UL18.txt Summer20UL18_TTGJets_Tune.root 2018 TTG LL MVA
 ./analyzeTProxytBSM runFiles/runList_ZNuNuGJets_MonoPhoton_Summer20UL18.txt Summer20UL18_ZNuNuGJets_MonoPhoton.root 2018 ZG LL MVA
+./analyzeTProxytBSM runFiles/runList_ZJetsToNuNu_HT_Summer20UL18.txt Summer20UL18_ZJetsToNuNu.root 2018 ZNuNuJets LL MVA
 ./analyzeTProxytBSM runFiles/runList_WJetsToLNu_HT_Summer20UL18.txt Summer20UL18_WJetsToLNu_HT.root 2018 WJets LL MVA
 ./analyzeTProxytBSM runFiles/runList_QCD_HT_Summer20UL18.txt Summer20UL18_QCD_HT.root 2018 QCD LL MVA
 ./analyzeTProxytBSM runFiles/runList_GJets_DR-0p4_HT_Summer20UL18.txt Summer20UL18_GJets_DR-0p4_HT.root 2018 GJets LL MVA
