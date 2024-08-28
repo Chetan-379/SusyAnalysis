@@ -1,10 +1,10 @@
 const int n_pl = 4;
 bool logx = false;
 //defining the legends for each plots
-TString legend_text[10] = {"Iso_lep_trk_veto","e_faking_pho","lost_e", "lost_mu", "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
-int line_width[12] = {1,1,1,1,1,2,2,2,2,2,2,2};
+TString legend_text[10] = {"CR","SR","lost_e", "lost_mu", "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
+int line_width[12] = {2,2,2,2,2,2,2,2,2,2,2,2};
 int line_style[12] = {1,1,1,1,1,1,1,1,1,1,1,1};
-int line_color[9] = {kBlack, kBlue, kGreen+2, kMagenta, kRed - 3, kAzure + 7 , kCyan + 1 , kGreen + 3 };
+int line_color[9] = {kBlack, kRed - 3, kGreen+2, kMagenta, kBlue, kAzure + 7 , kCyan + 1 , kGreen + 3 };
 TH1F* setLastBinAsOverFlow(TH1F*, int);
 TH1F* setMyRange(TH1F*,double,double);
 TH1F* DrawOverflow(TH1F*);
@@ -202,7 +202,8 @@ void generate_1Dplot(vector<TH1F*> hist, char const *tag_name="", float energy=-
     TLatex* textOnTop = new TLatex();
   textOnTop->SetTextSize(0.04);
 
-  textOnTop->DrawLatexNDC(0.13,0.96,"CMS it{#bf{Simulation Preliminary}}");
+  //textOnTop->DrawLatexNDC(0.13,0.96,"CMS it{#bf{Simulation Preliminary}}");
+  textOnTop->DrawLatexNDC(0.13,0.96,"it{#bf{Work in Progress}}");
   sprintf(lhead,"%s ",title);
   textOnTop->DrawLatexNDC(0.79,0.96,lhead);
   char* en_lat = new char[500];
@@ -236,9 +237,9 @@ void generate_1Dplot(vector<TH1F*> hist, char const *tag_name="", float energy=-
   if(ymin<0.0) ymin = 1e-4;
   //  if(ymax<=10) ymax=10;
   for(int i = 0; i < (int)hist.size(); i++) {
-    if(!normalize) hist.at(i)->GetYaxis()->SetRangeUser(1.0,ymax*10);
+    if(!normalize) hist.at(i)->GetYaxis()->SetRangeUser(0.0001,ymax*5);
     else
-      hist.at(i)->GetYaxis()->SetRangeUser(0.00001,ymax*60.0);
+      hist.at(i)->GetYaxis()->SetRangeUser(0.00001,ymax*5.0);
     //    p1->SetGrid();
     
     if(!i) hist.at(i)->Draw("hist");
@@ -320,46 +321,24 @@ void randomoverlay(string pathname)
   // f[0] = new TFile("out.root");
   // f[1] = new TFile("out2.root");
   vector<string> f;
-  //f = {"Summer20UL18_TTJets_HT.root", "Summer20UL18_TTGJets_Tune.root", "Summer20UL18_TTJets_Leptons.root", "Summer20UL18_WJetsToLNu_HT.root", "Summer20UL18_WGJets_MonoPhoton.root", "Summer20UL18_ZJetsToNuNu_HT.root", "Summer20UL18_ZNuNuGJets_MonoPhoton.root", "Summer20UL18_QCD_HT.root"};
+  f = {"Summer20UL18_TTJets_HT.root", "Summer20UL18_TTGJets_Tune.root", "Summer20UL18_WJetsToLNu_HT.root", "Summer20UL18_WGJets_MonoPhoton.root", "Summer20UL18_ZJetsToNuNu_HT.root", "Summer20UL18_ZNuNuGJets_MonoPhoton.root", "Summer20UL18_QCD_HT.root", "Summer20UL18_GJets_DR-0p4_HT.root"};
   
-  f = {"Summer20UL18_WJetsToLNu_HT.root", "Summer20UL18_WGJets_MonoPhoton.root"};
+  //f = {"Summer20UL18_TTGJets_Tune.root"};
   //define your histograms to be read from here
   int n_files=f.size(); //you have n files in this example
  
   //string histname1[100], histname2[100], histname3[100];
-  vector<string> histname1;
-    char hname_NHadJets[100], hname_Jet_Pt[100], hname_Jet_Eta[100], hname_Jet_Phi[100], hname_Met[100], hname_PhoPt[100], hname_Eta[100], hname_PhoPhi[100];
-  //vector<string> histPhoPt[100]
-  // Book your histograms & summary counters here
-    //vector<string> selection = {"no_cut", "MET", "Pho_pT", "NHadjets", "ST", "Lep_veto", "Iso_Lep_Trk_veto"};
-  //   vector<string> selection = {"Iso_Lep_Trk_veto","EFakePho", "LostElectron", "LostMuon"};
-  // for (int i=0; i<selection.size();i++)
-  //   {
-  //     // sprintf(hname_NHadJets,"h_NHadJets_%s",selection[i].c_str());
-  //     // histname3[i] = hname_NHadJets;
-  //     // sprintf(hname_Jet_Pt, "h_Jet_Pt_%s",selection[i].c_str());
-  //     // sprintf(hname_Jet_Eta, "h_Jet_Eta_%s",selection[i].c_str());
-  //     // sprintf(hname_Jet_Phi, "h_Jet_Phi_%s",selection[i].c_str());
-  //     // sprintf(hname_Met, "h_MET_%s",selection[i].c_str());
-  //     // histname2[i] = hname_Met; 
-  //     sprintf(hname_Eta, "h_GenElectronEta_%s",selection[i].c_str());
-  //     histname1[i] = hname_PhoPt; 
-  //     sprintf(hname_PhoEta, "h_Pho_Eta_%s",selection[i].c_str());
-  //     sprintf(hname_PhoPhi, "h_Pho_Phi_%s",selection[i].c_str());
-
-  //     //cout << "HISTOGram: " << histname3[i] << endl;
-  //   }
-    histname1 = {"h_LostMuon_eta", "h_LostElectron_eta", "h_EFakePho_eta","h_HadTau_eta", "h_Rest_eta"};  //put the histogram names you want to overlay
+  vector<string> histnames;
+  histnames = {"h_LL_CR_Pho_Pt", "h_LL_SR_Pho_Pt"};  //put the histogram names you want to overlay
 
   vector<vector<string>> bigbaseline;
   vector<string> baseline1; // , baseline2, baseline3;
 
   //baseline1 = {"h_pho_pT0","h_pho_pT3","h_pho_pT4", "h_pho_pT5"};
-  baseline1 = {histname1[0], histname1[1], histname1[2], histname1[3]};
-  
-  // baseline2 = {histname2[0], histname2[1], histname2[2], histname2[3], histname2[4], histname2[5], histname2[6]}; 
-  // baseline3 = {histname3[0], histname3[1], histname3[2], histname3[3], histname3[4], histname3[5], histname3[6]};
-
+  for (int i=0; i<histnames.size();i++){
+    baseline1.push_back(histnames[i]);
+  }
+    //baseline1 = {histnames[0], histname1[1], histname1[2], histname1[3]};
   
 
 
@@ -369,8 +348,8 @@ void randomoverlay(string pathname)
   for (int bigi=0; bigi<bigbaseline.size(); bigi++)
     {
       vector<string> filetag;
-      //filetag={"TTJets_2018","TTGJets_2018", "TTJets_Leptons_2018", "WJetsToLNu_2018", "WGJets_2018", "ZJetsToNuNu_2018", "ZNuNuGJets_2018", "QCD_2018"};
-      filetag={"WJetsToLNu_2018", "WGJets_2018"};
+      filetag={"TTJets_2018","TTGJets_2018", "WJetsToLNu_2018", "WGJets_2018", "ZJetsToNuNu_2018", "ZNuNuGJets_2018", "QCD_2018", "GJets_2018"};
+      //filetag={"TTGJets_2018"};
       //luminosity for each year - depends if you want to use it or - generate1Dplot uses this number and add it on the top
       vector<float>energyy;
       energyy={59.74,41.529};//,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,19.5,19.5,19.5,19.5,19.5,19.5,19.5,36.0,36.0,36.0,36.0,36.0,36.0,36.0};
@@ -402,15 +381,15 @@ void randomoverlay(string pathname)
 	   //x axis title for all plots///
 	  vector<string>diff_title;
 	  //diff_title = { "Pho_pT" , "Pt_Miss", "NHadJets"};
-	  diff_title = { "eta"};
+	  diff_title = {"Pho_pt"};
 	  vector<string>xtitle;
 	  //xtitle = {diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi]};
 	  xtitle = {diff_title[0], diff_title[0]};
 	  //path to save the files a jpg or pdf
 	  vector<string> folder;
-	  //folder = {"plots/TT/", "plots/TTG/", "plots/TTL/",  "plots/WLNu/", "plots/WG/", "plots/ZNuNu/", "plots/ZGNuNu/", "plots/QCD/"};
-	  folder = {"plots/WLNu/", "plots/WG/"};
-	  sprintf(full_path,"%s/%s%s_MET_comparisons_%s",pathname.c_str(),folder[i_file].c_str(),diff_title[bigi].c_str(),filetag[i_file].c_str());
+	  folder = {"plots/TT_/", "plots/TTG_/",  "plots/WLNu_/", "plots/WG_/", "plots/ZNuNu_/", "plots/ZGNuNu_/", "plots/QCD_/","plots/GJets_"};
+	  //folder = {"plots/TTG_/"};
+	  sprintf(full_path,"%s/%s%s_SR_CR_overlay_%s",pathname.c_str(),folder[i_file].c_str(),diff_title[bigi].c_str(),filetag[i_file].c_str());
 	 	    
 	  //calling generate_1Dplot which will take this vector of histograms and 
 	  generate_1Dplot(hist_list_Njets,full_path,energy,xmax[i_file],xmin[i_file],leg_head,false,true,false,true,filetag[i_file].c_str(),xtitle[i_file].c_str(),rebin[i_file]);
