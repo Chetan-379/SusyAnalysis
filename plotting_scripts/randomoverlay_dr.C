@@ -1,7 +1,7 @@
 const int n_pl = 4;
 bool logx = false;
 //defining the legends for each plots
-TString legend_text[10] = {"TTJets","TTGJets","lost_e", "lost_mu", "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
+TString legend_text[10] = {"TTJets","TTGJets","hist3", "hist4", "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
 int line_width[12] = {2,2,2,2,2,2,2,2,2,2,2,2};
 int line_style[12] = {1,1,1,1,1,1,1,1,1,1,1,1};
 int line_color[9] = {kBlack, kGreen, kBlue, kMagenta, kRed - 3, kAzure + 7 , kCyan + 1 , kGreen + 3 };
@@ -215,9 +215,10 @@ void generate_1Dplot(vector<TH1F*> hist, char const *tag_name="", float energy=-
        vector <string> Intg;
     char final_label[100];
     //int Entries = hist.at(i)->GetEntries().setprecision(1)
-    int Entries = hist.at(i)->GetEntries();
-      //sprintf(final_label,"Integral: %f",setprecision(2) << (hist.at(i)->Integral()));
-    sprintf(final_label,"%s (%d)",legend_text[i].Data(), Entries); 
+    //int Entries = hist.at(i)->GetEntries();
+    float Integral = hist.at(i)->Integral();      
+    sprintf(final_label,"%s (%0.2f)",legend_text[i].Data(), Integral);
+    //sprintf(final_label,"%s",legend_text[i].Data()); 
 
     
     //    //leg_entry[i] = legend->AddEntry(hist.at(i),(hist.at(i)->Integral().c_str()),"xsl");
@@ -237,9 +238,9 @@ void generate_1Dplot(vector<TH1F*> hist, char const *tag_name="", float energy=-
   if(ymin<0.0) ymin = 1e-4;
   //  if(ymax<=10) ymax=10;
   for(int i = 0; i < (int)hist.size(); i++) {
-    if(!normalize) hist.at(i)->GetYaxis()->SetRangeUser(0.0001,ymax*5);
+    if(!normalize) hist.at(i)->GetYaxis()->SetRangeUser(1e-1,ymax*5);
     else
-      hist.at(i)->GetYaxis()->SetRangeUser(0.00001,ymax*5.0);
+      hist.at(i)->GetYaxis()->SetRangeUser(0.0001,1);
     //    p1->SetGrid();
     
     if(!i) hist.at(i)->Draw("hist");
@@ -334,13 +335,15 @@ void randomoverlay_dr(string pathname)
  
   //vector<vector<string>> bigbaseline;
   //vector<string> baseline1; // , baseline2, baseline3;
-  vector<string> histnames1,histnames2;
+  vector<string> histnames1,histnames2,histnames3,histnames4;
   //histnames = {"h_mindR_pho_gen_lep_Ovrlp"};  //put the histogram names you want to overlay
   //histnames = {"h_mindR_pho_gen_lep_rmOvrlp"};
   //histnames = {"h_mindR_pho_qg_Ovrlp"};  //put the histogram names you want to overlay
   
   histnames1 = {"h_mindR_pho_gen_lep_Ovrlp","h_mindR_pho_qg_Ovrlp"};
   histnames2 = {"h_mindR_pho_gen_lep_rmOvrlp","h_mindR_pho_qg_rmOvrlp"};
+  histnames3 = {"h_mindR_pho_gen_lep_Ovrlp_genPromptPho","h_mindR_pho_qg_Ovrlp_genPromptPho"};
+  histnames4 = {"h_mindR_pho_gen_lep_rmOvrlp_genPromptPho","h_mindR_pho_qg_rmOvrlp_genPromptPho"};
   //baseline1 = {"h_pho_pT0","h_pho_pT3","h_pho_pT4", "h_pho_pT5"};
   // for (int i=0; i<histnames.size();i++){
   //   baseline1.push_back(histnames[i]);
@@ -349,12 +352,12 @@ void randomoverlay_dr(string pathname)
   
   //string to be added to output file name - useful when you have different files and reading the same histograms from these
   vector<vector<string>> category;
-  category = {histnames1,histnames2};
+  category = {histnames1,histnames2,histnames3,histnames4};
   for(int icat =0; icat < category.size(); icat++)
     {
       vector<string> filetag;
       //filetag={"TTJets_2018","TTGJets_2018", "WJetsToLNu_2018", "WGJets_2018", "ZJetsToNuNu_2018", "ZNuNuGJets_2018", "QCD_2018", "GJets_2018"};
-      filetag={"overlap","rm_overlap"};
+      filetag={"overlap","rm_overlap","overlap_genPromptPhoton","rmOvrlp_genPromptPhoton"};
       //luminosity for each year - depends if you want to use it or - generate1Dplot uses this number and add it on the top
       vector<float>energyy;
       energyy={59.74,41.529};//,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,19.5,19.5,19.5,19.5,19.5,19.5,19.5,36.0,36.0,36.0,36.0,36.0,36.0,36.0};
@@ -401,7 +404,7 @@ void randomoverlay_dr(string pathname)
   	  //folder = {"plots/TT_/", "plots/TTG_/",  "plots/WLNu_/", "plots/WG_/", "plots/ZNuNu_/", "plots/ZGNuNu_/", "plots/QCD_/","plots/GJets_"};
   	  folder = {"plots/","plots/"};
   	  //sprintf(full_path,"%s/%s%s_mindR_overlay_%s",pathname.c_str(),folder[i_file].c_str(),diff_title[i_file].c_str(),filetag[i_file].c_str());
-	  sprintf(full_path,"%s/%s%s_mindR_Overlap_%s",pathname.c_str(),folder[i_cut].c_str(),diff_title[i_cut].c_str(),filetag[icat].c_str());
+	  sprintf(full_path,"%s/%s%s_mindR_%s",pathname.c_str(),folder[i_cut].c_str(),diff_title[i_cut].c_str(),filetag[icat].c_str());
 	 	    
   	  //calling generate_1Dplot which will take this vector of OPOPhistograms and 
   	  //generate_1Dplot(hist_list_Njets,full_path,energy,xmax[i_file],xmin[i_file],leg_head,false,true,false,true,filetag[i_file].c_str(),xtitle[i_file].c_str(),rebin[i_file]);
