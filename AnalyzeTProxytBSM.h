@@ -37,6 +37,8 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   vector<string> recoparticle = {"Electron", "Muon", "Tau"};
   void CrossSection_Map_Init();
   double getGenLep(myLV);
+  bool RemoveSampleOverlap(TString s_sample, myLV bestPhoton);
+
   TFile *oFile;
 
   TH1D *h_MET[15];
@@ -55,6 +57,7 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   TH1F *h_Gen_MET, *h_EFakePho_MET, *h_LostElectron_MET, *h_LostMuon_MET, *h_HadTau_MET, *h_Rest_MET, *h_EFakePho_eta, *h_LostElectron_eta, *h_LostMuon_eta, *h_HadTau_eta, *h_Rest_eta;
   TH1F *h_LL_SR_Pho_Pt, *h_LL_CR_Pho_Pt;
   TH1F *h_mindR_pho_gen_lep_Ovrlp,*h_mindR_pho_qg_Ovrlp,*h_mindR_pho_gen_lep_rmOvrlp,*h_mindR_pho_qg_rmOvrlp;
+  TH1F *h_mindR_pho_gen_lep_Ovrlp_genPromptPho,*h_mindR_pho_qg_Ovrlp_genPromptPho,*h_mindR_pho_gen_lep_rmOvrlp_genPromptPho,*h_mindR_pho_qg_rmOvrlp_genPromptPho;
 };
 #endif
 
@@ -150,6 +153,11 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
   h_mindR_pho_qg_Ovrlp=new TH1F("h_mindR_pho_qg_Ovrlp","h_mindR_pho_qg_Ovrlp",100,0.0,5.0);
   h_mindR_pho_gen_lep_rmOvrlp=new TH1F("h_mindR_pho_gen_lep_rmOvrlp","h_mindR_pho_gen_lep_rmOvrlp",100,0.0,5.0);
   h_mindR_pho_qg_rmOvrlp=new TH1F("h_mindR_pho_qg_rmOvrlp","h_mindR_pho_qg_rmOvrlp",100,0.0,5.0);
+
+  h_mindR_pho_gen_lep_Ovrlp_genPromptPho=new TH1F("h_mindR_pho_gen_lep_Ovrlp_genPromptPho","h_mindR_pho_gen_lep_Ovrlp_genPromptPho",100,0.0,5.0);
+  h_mindR_pho_qg_Ovrlp_genPromptPho=new TH1F("h_mindR_pho_qg_Ovrlp_genPromptPho","h_mindR_pho_qg_Ovrlp_genPromptPho",100,0.0,5.0);
+  h_mindR_pho_gen_lep_rmOvrlp_genPromptPho=new TH1F("h_mindR_pho_gen_lep_rmOvrlp_genPromptPho","h_mindR_pho_gen_lep_rmOvrlp_genPromptPho",100,0.0,5.0);
+  h_mindR_pho_qg_rmOvrlp_genPromptPho=new TH1F("h_mindR_pho_qg_rmOvrlp_genPromptPho","h_mindR_pho_qg_rmOvrlp_genPromptPho",100,0.0,5.0);
 }
 
 AnalyzeTProxytBSM::AnalyzeTProxytBSM(const TString &inputFileList, const char *outFileName,const char *dataset, const char *sample, const char* LostlepFlag, const char* phoID) {
