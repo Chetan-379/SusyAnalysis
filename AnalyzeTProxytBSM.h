@@ -58,6 +58,7 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   TH1F *h_LL_SR_Pho_Pt, *h_LL_CR_Pho_Pt;
   TH1F *h_mindR_pho_gen_lep_Ovrlp,*h_mindR_pho_qg_Ovrlp,*h_mindR_pho_gen_lep_rmOvrlp,*h_mindR_pho_qg_rmOvrlp;
   TH1F *h_mindR_pho_gen_lep_Ovrlp_genPromptPho,*h_mindR_pho_qg_Ovrlp_genPromptPho,*h_mindR_pho_gen_lep_rmOvrlp_genPromptPho,*h_mindR_pho_qg_rmOvrlp_genPromptPho;
+  TH1F *h_ratio;
 };
 #endif
 
@@ -158,6 +159,8 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
   h_mindR_pho_qg_Ovrlp_genPromptPho=new TH1F("h_mindR_pho_qg_Ovrlp_genPromptPho","h_mindR_pho_qg_Ovrlp_genPromptPho",100,0.0,5.0);
   h_mindR_pho_gen_lep_rmOvrlp_genPromptPho=new TH1F("h_mindR_pho_gen_lep_rmOvrlp_genPromptPho","h_mindR_pho_gen_lep_rmOvrlp_genPromptPho",100,0.0,5.0);
   h_mindR_pho_qg_rmOvrlp_genPromptPho=new TH1F("h_mindR_pho_qg_rmOvrlp_genPromptPho","h_mindR_pho_qg_rmOvrlp_genPromptPho",100,0.0,5.0);
+
+  h_ratio = new TH1F("ratio","ratio",10,0,1);
 }
 
 AnalyzeTProxytBSM::AnalyzeTProxytBSM(const TString &inputFileList, const char *outFileName,const char *dataset, const char *sample, const char* LostlepFlag, const char* phoID) {

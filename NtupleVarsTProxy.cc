@@ -80,8 +80,24 @@ double NtupleVarsTProxy::getCrossSection(std::string process_name)
   }
 }
 
-
-
+double NtupleVarsTProxy::getEventWeight(TString s_Process, double xsec)
+{
+  //double xsec = getCrossSection(process_name);
+  //double xsec = constXsec;
+  //if(xsec>0)
+  if(s_Process.Contains("2018.WGJets_MonoPhoton_PtG-40to130UL") ||
+     s_Process.Contains("2018.WGJets_MonoPhoton_PtG-130UL")||
+     s_Process.Contains("2016preVFP.WGJets_MonoPhoton_PtG-40to130UL") ||
+     s_Process.Contains("2016preVFP.WGJets_MonoPhoton_PtG-130UL") ||
+     s_Process.Contains("2017.WGJets_MonoPhoton_PtG-40to130UL")||
+     s_Process.Contains("2017.WGJets_MonoPhoton_PtG-130UL")||
+     s_Process.Contains("2016postVFP.WGJets_MonoPhoton_PtG-130UL")||
+     s_Process.Contains("2016postVFP.WGJets_MonoPhoton_PtG-40to130UL")) {
+    //std::cout << "getEventWeight " << xsec*59.83*1000.0 << std::endl;
+    return xsec * 59.83 * 1000.0;}
+  else
+    return Weight * 59.83 * 1000.0;
+}
 
 void NtupleVarsTProxy::sortTLorVec(vector<TLorentzVector> *vec){
   TLorentzVector temp;

@@ -85,7 +85,10 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
   TString s_Process = s_process;
   TString s_sample= sample;
   double cross_section = getCrossSection(s_process);
-  double wt;
+  //double wt = getEventWeight(s_process, cross_section);
+  double wt = 0;
+  //cout << "weight is: "<< wt << endl;
+  double wt1 = 0;
   //bool genphocheck=false;
   //int genphomatch_before=0, genphomatch_after=0;
 
@@ -95,17 +98,18 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
   int decade = 0;
   double sumwt = 0;
   
-  int nEvents=0, NGenL=0, NLostElectrons=0, NLostMuons=0, NEFakePho=0;;
+  int nEvents=0, NGenL=0, NLostElectrons=0, NLostMuons=0, NEFakePho=0;
+
   for (Long64_t jentry=0; jentry<fChain->GetEntries(); jentry++){
     fDirector.SetReadEntry(jentry);
       
       // == == print number of events done == == == == == == == =
-      double progress = 10.0 * jentry / (1.0 * nentries);
+      double progress = 10.0 * jentry / (1.0 * nentries);      
       int k = int (progress);
       if (k > decade)
 	cout << 10 * k << " %" << endl;
       decade = k;
-
+     
       vector<myLV> hadJets, bjets;
       int BTags = bjets.size();
       bool Debug=false;
@@ -127,10 +131,15 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
       
 
       NEMu = NElectrons + NMuons;
-      	    
-      if(s_Process.Contains("2018.WGJets_MonoPhoton_PtG-40to130UL")|| s_Process.Contains("2018.WGJets_MonoPhoton_PtG-130UL")|| s_Process.Contains("2016preVFP.WGJets_MonoPhoton_PtG-40to130UL") ||s_Process.Contains("2016preVFP.WGJets_MonoPhoton_PtG-130UL") || s_Process.Contains("2017.WGJets_MonoPhoton_PtG-40to130UL")||s_Process.Contains("2017.WGJets_MonoPhoton_PtG-130UL")|| s_Process.Contains("2016postVFP.WGJets_MonoPhoton_PtG-130UL")||s_Process.Contains("2016postVFP.WGJets_MonoPhoton_PtG-40to130UL")) wt = cross_section*59.83*1000.0;
 
-      else wt = Weight*59.83*1000.0;
+      
+      //if (jentry < 20) cout << wt << endl; 	    
+      // if(s_Process.Contains("2018.WGJets_MonoPhoton_PtG-40to130UL")|| s_Process.Contains("2018.WGJets_MonoPhoton_PtG-130UL")|| s_Process.Contains("2016preVFP.WGJets_MonoPhoton_PtG-40to130UL") ||s_Process.Contains("2016preVFP.WGJets_MonoPhoton_PtG-130UL") || s_Process.Contains("2017.WGJets_MonoPhoton_PtG-40to130UL")||s_Process.Contains("2017.WGJets_MonoPhoton_PtG-130UL")|| s_Process.Contains("2016postVFP.WGJets_MonoPhoton_PtG-130UL")||s_Process.Contains("2016postVFP.WGJets_MonoPhoton_PtG-40to130UL")) wt = cross_section*59.83*1000.0;
+      // else wt = Weight*59.83*1000.0;
+      wt = getEventWeight(s_process, cross_section);
+
+      if (wt<0) cout << "aae! aae! aae!" << endl;
+      //selecting Hadronic and b jets
       for(int i=0;i<Jets->size();i++){
 	if( (Jets[i].Pt() > 30.0) && (abs(Jets[i].Eta()) <= 2.4) ){
 	  if (Photons->size()!=0) {
@@ -178,81 +187,6 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	dPhi_METjet2 = abs(DeltaPhi(METPhi,hadJets[1].Phi()));
 
 
-      //script to define conditions to remove ovrlap
-      //==========================================================================================================================================================================================================
-      // bool cont1=true, cont2=true, cont3=true, cont4=true, cont5=true, cont6=true, cont7=true, cont8=true, cont9=true, cont10=true; 
-      // if((s_sample.Contains("TTJets_HT")||s_sample.Contains("TTJets-HT")) && madHT<600) cont1=false;
-      // if((s_sample.Contains("TTJets_inc")|| s_sample.Contains("TTJets_SingleLept") || s_sample.Contains("TTJets_DiLept") || s_sample.Contains("TTJets_Leptons") || s_sample.Contains("TTJets_Leptons")) && madHT>600) cont2=false;
-      // if(!genphocheck)      {        //genphomatch_before++;
-      // 	double mindr_Pho_genlep=getGenLep(bestPhoton);
-      // 	if( s_sample.Contains("TTG") )
-      // 	  {
-      // 	    if(!hasGenPromptPhoton)
-      // 	      {//h_selectBaselineYields_v1->Fill("No gen prompt #gamma",wt);
-      // 	       //if(jentry==0)cout<<"**********processing "<<s_sample<<" with non-prompt Gen photon"<<endl;
-      // 	      }
-      // 	    else if(hasGenPromptPhoton)
-      // 	      {//h_selectBaselineYields_v1->Fill("Gen prompt #gamma",wt);                                                                                                                                         
-      // 		if(!(madMinPhotonDeltaR >= 0.5 && mindr_Pho_genlep >=0.5 ))
-      // 		  {//h_phoPt_promptPho_rejected->Fill(bestPhoton.Pt(),wt);
-      // 		    //if(madMinPhotonDeltaR<0.5)                h_selectBaselineYields_v1->Fill("madMinPhotonDeltaR <0.5",wt);
-      // 		    //if(mindr_Pho_genlep<0.5)                  h_selectBaselineYields_v1->Fill("mindr_Pho_genlep<0.5",wt);   
-      // 		    cont3=false;
-      // 		  }
-      // 		else
-      // 		  {//if(madMinPhotonDeltaR >= 0.5)                       h_selectBaselineYields_v1->Fill("mindR(q/g, #gamma)",wt);
-      // 		    //if(mindr_Pho_genlep >=0.5)                          h_selectBaselineYields_v1->Fill("mindR(l, #gamma)",wt);
-      // 		  }
-      // 	      }
-      // 	  }
-	
-      // 	if(s_sample.Contains("WGJets_MonoPhoton_PtG-40to130UL") || s_sample.Contains("WGJets_MonoPhoton_PtG-130UL"))
-      // 	  {//if(s_sample.Contains("WGJets_MonoPhoton_PtG-40to130UL"||"WGJets_MonoPhoton_PtG-130UL")) 
-      // 	    if(!hasGenPromptPhoton)
-      // 	      {//h_selectBaselineYields_v1->Fill("No gen prompt #gamma",wt);
-      // 		//if(jentry==0)cout<<"**********processing "<<s_sample<<" with non-prompt Gen photon"<<endl;
-      // 	      }
-      // 	    else if(hasGenPromptPhoton)
-      // 	      {//h_selectBaselineYields_v1->Fill("Gen prompt #gamma",wt);
-      // 		if(!(madMinPhotonDeltaR >= 0.5 && mindr_Pho_genlep >=0.5 ))
-      // 		  {//h_phoPt_promptPho_rejected->Fill(bestPhoton.Pt(),wt);
-      // 		    //if(madMinPhotonDeltaR<0.5)                    h_selectBaselineYields_v1->Fill("madMinPhotonDeltaR <0.5",wt);
-      // 		    //if(mindr_Pho_genlep<0.5)                    h_selectBaselineYields_v1->Fill("mindr_Pho_genlep<0.5",wt);
-      // 		    cont4=false;
-      // 		  }
-      // 		else
-      // 		  {// if(madMinPhotonDeltaR >= 0.5)                     h_selectBaselineYields_v1->Fill("mindR(q/g, #gamma)",wt);
-      // 		    //if(mindr_Pho_genlep >=0.5)                          h_selectBaselineYields_v1->Fill("mindR(l, #gamma)",wt); 
-      // 		  }
-      // 	      }
-      // 	  }
-      // 	if(s_sample.Contains("WJets"))
-      // 	  {if(!hasGenPromptPhoton)
-      // 	      {//h_selectBaselineYields_v1->Fill("No gen prompt #gamma",wt);
-      // 		//if(jentry==0)cout<<"**********processing "<<s_sample<<" with non-prompt Gen photon"<<endl;
-      // 	      }
-      // 	    else if(hasGenPromptPhoton)
-      // 	      {//h_selectBaselineYields_v1->Fill("Gen prompt #gamma",wt);
-      // 		if(!(madMinPhotonDeltaR < 0.5 || mindr_Pho_genlep < 0.5))
-      // 		  {//h_phoPt_promptPho_rejected->Fill(bestPhoton.Pt(),wt);
-      // 		    cont5=false;
-      // 		  }
-      // 		else
-      // 		  {// if(madMinPhotonDeltaR >= 0.5)                      h_selectBaselineYields_v1->Fill("pass_mindR(q/g, #gamma)",wt);
-      // 		    //if(mindr_Pho_genlep >=0.5)                          h_selectBaselineYields_v1->Fill("pass_mindR(l, #gamma)",wt);
-      // 		  }
-      // 	      }
-      // 	  }	
-      // 	if(s_sample.Contains("TTJets_HT") || s_sample.Contains("TTJets-HT")||s_sample.Contains("TTJets-inc")|| s_sample.Contains("TTJets_inc") || s_sample.Contains("TTJets2_v17")||s_sample.Contains("TTJets")  ||s_sample.Contains("TTJets_Leptons"))
-      // 	  if(hasGenPromptPhoton && !(madMinPhotonDeltaR < 0.5 || mindr_Pho_genlep < 0.5) && !(madMinPhotonDeltaR < 0.5 || mindr_Pho_genlep < 0.5)) cont6=false;
-	  
-      // 	if(hasGenPromptPhoton && (s_sample.Contains("GJets")) && !(madMinPhotonDeltaR>0.4)) cont7=false;
-      // 	if(hasGenPromptPhoton && (s_sample.Contains("QCD")) && (madMinPhotonDeltaR>0.4 && hasGenPromptPhoton)) cont8=false;
-      // 	if(hasGenPromptPhoton && ((s_sample.Contains("ZG"))|| (s_sample.Contains("ZNuNuG")) || s_sample.Contains("ZNuNuGJets")) && !(madMinPhotonDeltaR>0.5)) cont9=false;
-      // 	if(hasGenPromptPhoton && ((s_sample.Contains("ZJets"))|| (s_sample.Contains("ZNuNuJets"))) && !(madMinPhotonDeltaR<=0.5)) cont10=false;
-      // }
-
-//==========================================================================================================================================================================================================      
       
 
 
@@ -295,7 +229,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	}
       }
   
-      
+	  //if(jentry<20) cout << wt << endl;      
       //h_NHadJets[0]->Fill(0.0,wt);      
       h_NHadJets[0]->Fill(NHadJets,wt);      
       h_MET[0]->Fill(MET,wt);
@@ -339,110 +273,108 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
       
       if (applyTrgEff)
 	{
-	  wt = wt * (((TMath::Erf((MET - p0)/p1)+1)/2.0)*p2);
-	  h_MET[7] ->Fill(MET,wt);
-	  h_Pho_pT[7] ->Fill(bestPhoton.Pt(),wt);
-	  h_Pho_eta[7] -> Fill(bestPhoton.Eta(),wt);
-	  h_Pho_phi[7] -> Fill(bestPhoton.Phi(),wt);
-	  h_NHadJets[7]-> Fill(NHadJets,wt);
+	  wt1 = wt * (((TMath::Erf((MET - p0)/p1)+1)/2.0)*p2);
+	  h_MET[7] ->Fill(MET,wt1);
+	  h_Pho_pT[7] ->Fill(bestPhoton.Pt(),wt1);
+	  h_Pho_eta[7] -> Fill(bestPhoton.Eta(),wt1);
+	  h_Pho_phi[7] -> Fill(bestPhoton.Phi(),wt1);
+	  h_NHadJets[7]-> Fill(NHadJets,wt1);
 	}
       
       if (EvtCln)
 	{
-	  h_MET[8] ->Fill(MET,wt);
-	  h_Pho_pT[8] ->Fill(bestPhoton.Pt(),wt);
-	  h_Pho_eta[8] -> Fill(bestPhoton.Eta(),wt);
-	  h_Pho_phi[8] -> Fill(bestPhoton.Phi(),wt);
-	  h_NHadJets[8]-> Fill(NHadJets,wt);   
+	  h_MET[8] ->Fill(MET,wt1);
+	  h_Pho_pT[8] ->Fill(bestPhoton.Pt(),wt1);
+	  h_Pho_eta[8] -> Fill(bestPhoton.Eta(),wt1);
+	  h_Pho_phi[8] -> Fill(bestPhoton.Phi(),wt1);
+	  h_NHadJets[8]-> Fill(NHadJets,wt1);   
 	}
       
       if (JetMetPhi)
 	{
-	  h_MET[9] ->Fill(MET,wt);
-	  h_Pho_pT[9] ->Fill(bestPhoton.Pt(),wt);
-	  h_Pho_eta[9] -> Fill(bestPhoton.Eta(),wt);
-	  h_Pho_phi[9] -> Fill(bestPhoton.Phi(),wt);
-	  h_NHadJets[9]-> Fill(NHadJets,wt);
+	  h_MET[9] ->Fill(MET,wt1);
+	  h_Pho_pT[9] ->Fill(bestPhoton.Pt(),wt1);
+	  h_Pho_eta[9] -> Fill(bestPhoton.Eta(),wt1);
+	  h_Pho_phi[9] -> Fill(bestPhoton.Phi(),wt1);
+	  h_NHadJets[9]-> Fill(NHadJets,wt1);
 	}
       
       if (rmOvrlp)
 	{
-	  h_MET[10] ->Fill(MET,wt);
-	  h_Pho_pT[10] ->Fill(bestPhoton.Pt(),wt);
-	  h_Pho_eta[10] -> Fill(bestPhoton.Eta(),wt);
-	  h_Pho_phi[10] -> Fill(bestPhoton.Phi(),wt);
-	  h_NHadJets[10]-> Fill(NHadJets,wt);
+	  h_MET[10] ->Fill(MET,wt1);
+	  h_Pho_pT[10] ->Fill(bestPhoton.Pt(),wt1);
+	  h_Pho_eta[10] -> Fill(bestPhoton.Eta(),wt1);
+	  h_Pho_phi[10] -> Fill(bestPhoton.Phi(),wt1);
+	  h_NHadJets[10]-> Fill(NHadJets,wt1);
 	}
 
       if (Pass_MET2)
 	{
-	  h_MET[11] ->Fill(MET,wt);
-	  h_Pho_pT[11] ->Fill(bestPhoton.Pt(),wt);
-	  h_Pho_eta[11] -> Fill(bestPhoton.Eta(),wt);
-	  h_Pho_phi[11] -> Fill(bestPhoton.Phi(),wt);
-	  h_NHadJets[11]-> Fill(NHadJets,wt);
+	  h_MET[11] ->Fill(MET,wt1);
+	  h_Pho_pT[11] ->Fill(bestPhoton.Pt(),wt1);
+	  h_Pho_eta[11] -> Fill(bestPhoton.Eta(),wt1);
+	  h_Pho_phi[11] -> Fill(bestPhoton.Phi(),wt1);
+	  h_NHadJets[11]-> Fill(NHadJets,wt1);
 	}
 
       if (Pass_EMu_veto) {
-	h_MET[5] ->Fill(MET,wt);
-	h_Pho_pT[5] ->Fill(bestPhoton.Pt(),wt);
-	h_Pho_eta[5] -> Fill(bestPhoton.Eta(),wt);
-	h_Pho_phi[5] -> Fill(bestPhoton.Phi(),wt);
-	h_NHadJets[5]-> Fill(NHadJets,wt);
+	h_MET[5] ->Fill(MET,wt1);
+	h_Pho_pT[5] ->Fill(bestPhoton.Pt(),wt1);
+	h_Pho_eta[5] -> Fill(bestPhoton.Eta(),wt1);
+	h_Pho_phi[5] -> Fill(bestPhoton.Phi(),wt1);
+	h_NHadJets[5]-> Fill(NHadJets,wt1);
       }
       
       if (Pass_Iso_trk_veto){
-	h_MET[6] ->Fill(MET,wt);
-	h_Pho_pT[6] ->Fill(bestPhoton.Pt(),wt);
-	h_Pho_eta[6] -> Fill(bestPhoton.Eta(),wt);
-	h_Pho_phi[6] -> Fill(bestPhoton.Phi(),wt);
-	h_NHadJets[6] -> Fill(NHadJets,wt);
+	h_MET[6] ->Fill(MET,wt1);
+	h_Pho_pT[6] ->Fill(bestPhoton.Pt(),wt1);
+	h_Pho_eta[6] -> Fill(bestPhoton.Eta(),wt1);
+	h_Pho_phi[6] -> Fill(bestPhoton.Phi(),wt1);
+	h_NHadJets[6] -> Fill(NHadJets,wt1);
       }
 
-      //for LL SR and CR
+      //for SR and CR of lost e
       if (Pass_Iso_trk_veto && bestPhoton.Pt()>100 && GenElectrons->size()>0 && ((GenElectrons[0].Pt()/bestPhoton.Pt())<=0.8 || (GenElectrons[0].Pt()/bestPhoton.Pt())>=1.2)){        
 	double dR_gen_e_gamma = DeltaR(GenElectrons[0].Eta(),GenElectrons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
-	if (dR_gen_e_gamma > 0.2) h_LL_SR_Pho_Pt->Fill(bestPhoton.Pt(),wt);
+	if (dR_gen_e_gamma > 0.2) h_LL_SR_Pho_Pt->Fill(bestPhoton.Pt(),wt1);
       }
             
       if (Pass_MET2 && bestPhoton.Pt()>100 && NElectrons==1 && NMuons==0 && isoElectronTracks){
 	double dR_reco_e_gamma = DeltaR(Electrons[0].Eta(),Electrons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
 	float m_T=sqrt(2*((Electrons[0].Pt()*MET)-(Electrons[0].Pt()*MET*cos(DeltaPhi(Electrons[0].Phi(),METPhi)))));
-	if (dR_reco_e_gamma > 0.2 && m_T<100) h_LL_CR_Pho_Pt ->Fill(bestPhoton.Pt(),wt);
+	if (dR_reco_e_gamma > 0.2 && m_T<100) h_LL_CR_Pho_Pt ->Fill(bestPhoton.Pt(),wt1);
       }
       
+
       //for stitching part
+      double minDR_pho_gen_lep, minDR_pho_qg;
+      minDR_pho_gen_lep = getGenLep(bestPhoton);
+      minDR_pho_qg = madMinPhotonDeltaR;
 
-      double minDR_pho_gen_lep_Ovrlp, minDR_pho_qg_Ovrlp, minDR_pho_gen_lep_rmOvrlp, minDR_pho_qg_rmOvrlp;
-      if(GenElectrons->size()>0){
-	if (JetMetPhi){
-	  minDR_pho_gen_lep_Ovrlp = getGenLep(bestPhoton);
-	  minDR_pho_qg_Ovrlp = madMinPhotonDeltaR;
-	  h_mindR_pho_gen_lep_Ovrlp->Fill(minDR_pho_gen_lep_Ovrlp,wt);
-	  h_mindR_pho_qg_Ovrlp->Fill(minDR_pho_qg_Ovrlp,wt);	  
-	}
-	
-	if (rmOvrlp){
-	  minDR_pho_gen_lep_rmOvrlp = getGenLep(bestPhoton);
-	  minDR_pho_qg_rmOvrlp = madMinPhotonDeltaR;
-	  h_mindR_pho_gen_lep_rmOvrlp->Fill(minDR_pho_gen_lep_rmOvrlp,wt);
-	  h_mindR_pho_qg_rmOvrlp->Fill(minDR_pho_qg_rmOvrlp,wt);
-	}
+      if (JetMetPhi){
+       	h_mindR_pho_gen_lep_Ovrlp->Fill(minDR_pho_gen_lep,wt1);
+	h_mindR_pho_qg_Ovrlp->Fill(minDR_pho_qg,wt1);	  
       }
-
+      
+      if (rmOvrlp){
+	h_mindR_pho_gen_lep_rmOvrlp->Fill(minDR_pho_gen_lep,wt1);
+	h_mindR_pho_qg_rmOvrlp->Fill(minDR_pho_qg,wt1);
+	}
+      //}
+      
       //putting conditions for hasgenprompt photons
-      if(GenElectrons->size()>0 && hasGenPromptPhoton){
+      if(hasGenPromptPhoton){
 	if (JetMetPhi){
-	  h_mindR_pho_gen_lep_Ovrlp_genPromptPho->Fill(minDR_pho_gen_lep_Ovrlp,wt);
-	  h_mindR_pho_qg_Ovrlp_genPromptPho->Fill(minDR_pho_qg_Ovrlp,wt);	  
+	  h_mindR_pho_gen_lep_Ovrlp_genPromptPho->Fill(minDR_pho_gen_lep,wt1);
+	  h_mindR_pho_qg_Ovrlp_genPromptPho->Fill(minDR_pho_qg,wt1);	  
 	}
 	
 	if (rmOvrlp){
-	  h_mindR_pho_gen_lep_rmOvrlp_genPromptPho->Fill(minDR_pho_gen_lep_rmOvrlp,wt);
-	  h_mindR_pho_qg_rmOvrlp_genPromptPho->Fill(minDR_pho_qg_rmOvrlp,wt);
+	  h_mindR_pho_gen_lep_rmOvrlp_genPromptPho->Fill(minDR_pho_gen_lep,wt1);
+	  h_mindR_pho_qg_rmOvrlp_genPromptPho->Fill(minDR_pho_qg,wt1);
 	}
       }
-
+      
       
 	                       
       
@@ -529,122 +461,122 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	}   //end genparticle loop
 	
 	for (Long64_t ii =0; ii<GenElectrons->size(); ii++){
-	  h_Gen_pT[0][0]->Fill(GenElectrons[(int)ii].Pt(),wt);
-	  h_Gen_eta[0][0]->Fill(GenElectrons[(int)ii].Eta(),wt);
-	  h_Gen_phi[0][0]->Fill(GenElectrons[(int)ii].Phi(),wt);
+	  h_Gen_pT[0][0]->Fill(GenElectrons[(int)ii].Pt(),wt1);
+	  h_Gen_eta[0][0]->Fill(GenElectrons[(int)ii].Eta(),wt1);
+	  h_Gen_phi[0][0]->Fill(GenElectrons[(int)ii].Phi(),wt1);
 	  
 	  
 	  if (ST<300) continue;
-	  h_Gen_pT[0][4]->Fill(GenElectrons[(int)ii].Pt(),wt);  
-	  h_Gen_eta[0][4]->Fill(GenElectrons[(int)ii].Eta(),wt); 	    
-	  h_Gen_phi[0][4]->Fill(GenElectrons[(int)ii].Phi(),wt); 
+	  h_Gen_pT[0][4]->Fill(GenElectrons[(int)ii].Pt(),wt1);  
+	  h_Gen_eta[0][4]->Fill(GenElectrons[(int)ii].Eta(),wt1); 	    
+	  h_Gen_phi[0][4]->Fill(GenElectrons[(int)ii].Phi(),wt1); 
 	  
 	  
 	  if (NEMu!=0) continue;
-	  h_Gen_pT[0][5]->Fill(GenElectrons[(int)ii].Pt(),wt); 	    
-	  h_Gen_eta[0][5]->Fill(GenElectrons[(int)ii].Eta(),wt); 
-	  h_Gen_phi[0][5]->Fill(GenElectrons[(int)ii].Phi(),wt); 
+	  h_Gen_pT[0][5]->Fill(GenElectrons[(int)ii].Pt(),wt1); 	    
+	  h_Gen_eta[0][5]->Fill(GenElectrons[(int)ii].Eta(),wt1); 
+	  h_Gen_phi[0][5]->Fill(GenElectrons[(int)ii].Phi(),wt1); 
 	  
 
 	  if (isoElectronTracks != 0 || isoMuonTracks != 0 || isoPionTracks != 0) continue;
-	  h_Gen_pT[0][6]->Fill(GenElectrons[(int)ii].Pt(),wt);  
-	 //h_Gen_eta[0][6]->Fill(GenElectrons[(int)ii].Eta(),wt); 	    
-	  h_Gen_phi[0][6]->Fill(GenElectrons[(int)ii].Phi(),wt);
+	  h_Gen_pT[0][6]->Fill(GenElectrons[(int)ii].Pt(),wt1);  
+	 //h_Gen_eta[0][6]->Fill(GenElectrons[(int)ii].Eta(),wt1); 	    
+	  h_Gen_phi[0][6]->Fill(GenElectrons[(int)ii].Phi(),wt1);
 	}  //end Gen electron loop
 
 	
 	for (Long64_t ii =0; ii<GenMuons->size(); ii++){
-	  h_Gen_pT[1][0]->Fill(GenMuons[(int)ii].Pt(),wt);
-	  h_Gen_eta[1][0]->Fill(GenMuons[(int)ii].Eta(),wt);
-	  h_Gen_phi[1][0]->Fill(GenMuons[(int)ii].Phi(),wt);
+	  h_Gen_pT[1][0]->Fill(GenMuons[(int)ii].Pt(),wt1);
+	  h_Gen_eta[1][0]->Fill(GenMuons[(int)ii].Eta(),wt1);
+	  h_Gen_phi[1][0]->Fill(GenMuons[(int)ii].Phi(),wt1);
 	  
 	  
 	  if (ST<300) continue;
-	  h_Gen_pT[1][4]->Fill(GenMuons[(int)ii].Pt(),wt);  
-	  h_Gen_eta[1][4]->Fill(GenMuons[(int)ii].Eta(),wt); 	    
-	  h_Gen_phi[1][4]->Fill(GenMuons[(int)ii].Phi(),wt); 
+	  h_Gen_pT[1][4]->Fill(GenMuons[(int)ii].Pt(),wt1);  
+	  h_Gen_eta[1][4]->Fill(GenMuons[(int)ii].Eta(),wt1); 	    
+	  h_Gen_phi[1][4]->Fill(GenMuons[(int)ii].Phi(),wt1); 
 	  
 	  
 	  if (NEMu!=0) continue;
-	  h_Gen_pT[1][5]->Fill(GenMuons[(int)ii].Pt(),wt); 	    
-	  h_Gen_eta[1][5]->Fill(GenMuons[(int)ii].Eta(),wt); 
-	  h_Gen_phi[1][5]->Fill(GenMuons[(int)ii].Phi(),wt); 
+	  h_Gen_pT[1][5]->Fill(GenMuons[(int)ii].Pt(),wt1); 	    
+	  h_Gen_eta[1][5]->Fill(GenMuons[(int)ii].Eta(),wt1); 
+	  h_Gen_phi[1][5]->Fill(GenMuons[(int)ii].Phi(),wt1); 
 	  
 	  
 	  if (isoElectronTracks || isoMuonTracks || isoPionTracks) continue;
-	  h_Gen_pT[1][6]->Fill(GenMuons[(int)ii].Pt(),wt);  
-	  h_Gen_eta[1][6]->Fill(GenMuons[(int)ii].Eta(),wt); 	    
-	  h_Gen_phi[1][6]->Fill(GenMuons[(int)ii].Phi(),wt);
+	  h_Gen_pT[1][6]->Fill(GenMuons[(int)ii].Pt(),wt1);  
+	  h_Gen_eta[1][6]->Fill(GenMuons[(int)ii].Eta(),wt1); 	    
+	  h_Gen_phi[1][6]->Fill(GenMuons[(int)ii].Phi(),wt1);
 	} //end Gen Muon loop
 	
 	for (Long64_t ii =0; ii<GenTaus->size(); ii++){
-	  h_Gen_pT[2][0]->Fill(GenTaus[(int)ii].Pt(),wt);
-	  h_Gen_eta[2][0]->Fill(GenTaus[(int)ii].Eta(),wt);
-	  h_Gen_phi[2][0]->Fill(GenTaus[(int)ii].Phi(),wt);
+	  h_Gen_pT[2][0]->Fill(GenTaus[(int)ii].Pt(),wt1);
+	  h_Gen_eta[2][0]->Fill(GenTaus[(int)ii].Eta(),wt1);
+	  h_Gen_phi[2][0]->Fill(GenTaus[(int)ii].Phi(),wt1);
 	  
 	  if (ST<300) continue;
-	  h_Gen_pT[2][4]->Fill(GenTaus[(int)ii].Pt(),wt);  
-	  h_Gen_eta[2][4]->Fill(GenTaus[(int)ii].Eta(),wt); 	    
-	  h_Gen_phi[2][4]->Fill(GenTaus[(int)ii].Phi(),wt); 
+	  h_Gen_pT[2][4]->Fill(GenTaus[(int)ii].Pt(),wt1);  
+	  h_Gen_eta[2][4]->Fill(GenTaus[(int)ii].Eta(),wt1); 	    
+	  h_Gen_phi[2][4]->Fill(GenTaus[(int)ii].Phi(),wt1); 
 	  
 	  if (NEMu!=0) continue;
-	  h_Gen_pT[2][5]->Fill(GenTaus[(int)ii].Pt(),wt); 	    
-	  h_Gen_eta[2][5]->Fill(GenTaus[(int)ii].Eta(),wt); 
-	  h_Gen_phi[2][5]->Fill(GenTaus[(int)ii].Phi(),wt); 
+	  h_Gen_pT[2][5]->Fill(GenTaus[(int)ii].Pt(),wt1); 	    
+	  h_Gen_eta[2][5]->Fill(GenTaus[(int)ii].Eta(),wt1); 
+	  h_Gen_phi[2][5]->Fill(GenTaus[(int)ii].Phi(),wt1); 
 	  
 	  if (isoElectronTracks != 0 || isoMuonTracks != 0 || isoPionTracks != 0) continue;
-	  h_Gen_pT[2][6]->Fill(GenTaus[(int)ii].Pt(),wt);  
-	  h_Gen_eta[2][6]->Fill(GenTaus[(int)ii].Eta(),wt); 	    
-	  h_Gen_phi[2][6]->Fill(GenTaus[(int)ii].Phi(),wt);	  
+	  h_Gen_pT[2][6]->Fill(GenTaus[(int)ii].Pt(),wt1);  
+	  h_Gen_eta[2][6]->Fill(GenTaus[(int)ii].Eta(),wt1); 	    
+	  h_Gen_phi[2][6]->Fill(GenTaus[(int)ii].Phi(),wt1);	  
 	} //end Gen Tau loop
 	
 	
 	for(Long64_t ii=0; ii<Electrons->size(); ii++){
 	  ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiE4D<float> > myele = Electrons[(int)ii];
-	  h_Reco_pT[0][0]->Fill(Electrons[(int)ii].Pt(),wt);
-	  h_Reco_eta[0][0]->Fill(Electrons[(int)ii].Eta(),wt);
-	  h_Reco_phi[0][0]->Fill(Electrons[(int)ii].Phi(),wt);
+	  h_Reco_pT[0][0]->Fill(Electrons[(int)ii].Pt(),wt1);
+	  h_Reco_eta[0][0]->Fill(Electrons[(int)ii].Eta(),wt1);
+	  h_Reco_phi[0][0]->Fill(Electrons[(int)ii].Phi(),wt1);
 	  
 	  if (ST<300) continue;
-	  h_Reco_pT[0][4]->Fill(Electrons[(int)ii].Pt(),wt);
-	  h_Reco_eta[0][4]->Fill(Electrons[(int)ii].Eta(),wt);
-	  h_Reco_phi[0][4]->Fill(Electrons[(int)ii].Phi(),wt);
+	  h_Reco_pT[0][4]->Fill(Electrons[(int)ii].Pt(),wt1);
+	  h_Reco_eta[0][4]->Fill(Electrons[(int)ii].Eta(),wt1);
+	  h_Reco_phi[0][4]->Fill(Electrons[(int)ii].Phi(),wt1);
 	  
 	  vector<myLV> v_electron;
 	  if (Electrons_passIso) v_electron.push_back(Electrons[(int)ii]);
 	  if (v_electron.size()!=0) continue;
-	  h_Reco_pT[0][5]->Fill(v_electron[0].Pt(),wt);
-	  h_Reco_eta[0][5]->Fill(v_electron[0].Eta(),wt);
-	  h_Reco_phi[0][5]->Fill(v_electron[0].Phi(),wt);
+	  h_Reco_pT[0][5]->Fill(v_electron[0].Pt(),wt1);
+	  h_Reco_eta[0][5]->Fill(v_electron[0].Eta(),wt1);
+	  h_Reco_phi[0][5]->Fill(v_electron[0].Phi(),wt1);
 	    
 	  if (isoElectronTracks != 0 || isoMuonTracks != 0 || isoPionTracks != 0) continue;
-	  h_Reco_pT[0][6]->Fill(Electrons[(int)ii].Pt(),wt);
-	  //h_Reco_eta[0][6]->Fill(Electrons[(int)ii].Eta(),wt);
-	  h_Reco_phi[0][6]->Fill(Electrons[(int)ii].Phi(),wt);	    
+	  h_Reco_pT[0][6]->Fill(Electrons[(int)ii].Pt(),wt1);
+	  //h_Reco_eta[0][6]->Fill(Electrons[(int)ii].Eta(),wt1);
+	  h_Reco_phi[0][6]->Fill(Electrons[(int)ii].Phi(),wt1);	    
 	} //end electron loop
 
 	for(Long64_t ii=0; ii<Muons->size(); ii++){
 	    ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiE4D<float> > mymu = Muons[(int)ii];
-	    h_Reco_pT[1][0]->Fill(Muons[(int)ii].Pt(),wt);
-	    h_Reco_eta[1][0]->Fill(Muons[(int)ii].Eta(),wt);
-	    h_Reco_phi[1][0]->Fill(Muons[(int)ii].Phi(),wt);
+	    h_Reco_pT[1][0]->Fill(Muons[(int)ii].Pt(),wt1);
+	    h_Reco_eta[1][0]->Fill(Muons[(int)ii].Eta(),wt1);
+	    h_Reco_phi[1][0]->Fill(Muons[(int)ii].Phi(),wt1);
 
 	    if (ST<300) continue;
-	    h_Reco_pT[1][4]->Fill(Muons[(int)ii].Pt(),wt);
-	    h_Reco_eta[1][4]->Fill(Muons[(int)ii].Eta(),wt);
-	    h_Reco_phi[1][4]->Fill(Muons[(int)ii].Phi(),wt);
+	    h_Reco_pT[1][4]->Fill(Muons[(int)ii].Pt(),wt1);
+	    h_Reco_eta[1][4]->Fill(Muons[(int)ii].Eta(),wt1);
+	    h_Reco_phi[1][4]->Fill(Muons[(int)ii].Phi(),wt1);
 
 	    vector<myLV> v_muon;
 	    if (Muons_passIso) v_muon.push_back(Muons[(int)ii]);
 	    if (v_muon.size()!=0) continue;
-	    h_Reco_pT[1][5]->Fill(v_muon[0].Pt(),wt);
-	    h_Reco_eta[1][5]->Fill(v_muon[0].Eta(),wt);
-	    h_Reco_phi[1][5]->Fill(v_muon[0].Phi(),wt);
+	    h_Reco_pT[1][5]->Fill(v_muon[0].Pt(),wt1);
+	    h_Reco_eta[1][5]->Fill(v_muon[0].Eta(),wt1);
+	    h_Reco_phi[1][5]->Fill(v_muon[0].Phi(),wt1);
 
 	    if (isoElectronTracks != 0 || isoMuonTracks != 0 || isoPionTracks != 0) continue;
-	    h_Reco_pT[1][6]->Fill(Muons[(int)ii].Pt(),wt);
-	    h_Reco_eta[1][6]->Fill(Muons[(int)ii].Eta(),wt);
-	    h_Reco_phi[1][6]->Fill(Muons[(int)ii].Phi(),wt);
+	    h_Reco_pT[1][6]->Fill(Muons[(int)ii].Pt(),wt1);
+	    h_Reco_eta[1][6]->Fill(Muons[(int)ii].Eta(),wt1);
+	    h_Reco_phi[1][6]->Fill(Muons[(int)ii].Phi(),wt1);
 	} //end Muon loop
 	
 
@@ -754,18 +686,18 @@ bool AnalyzeTProxytBSM::RemoveSampleOverlap(TString s_sample, myLV bestPhoton) {
     
     if( s_sample.Contains("TTG") ) {
       if(!hasGenPromptPhoton) {
-	//h_selectBaselineYields_v1->Fill("No gen prompt #gamma",wt);
+	//h_selectBaselineYields_v1->Fill("No gen prompt #gamma",wt1);
 	//if(jentry==0)cout<<"**********processing "<<s_sample<<" with non-prompt Gen photon"<<endl;
       } else if(hasGenPromptPhoton) {
-	//h_selectBaselineYields_v1->Fill("Gen prompt #gamma",wt);
+	//h_selectBaselineYields_v1->Fill("Gen prompt #gamma",wt1);
 	if(!(madMinPhotonDeltaR >= 0.5 && mindr_Pho_genlep >=0.5 )) {
-	 //h_phoPt_promptPho_rejected->Fill(bestPhoton.Pt(),wt);
-	  //if(madMinPhotonDeltaR<0.5)h_selectBaselineYields_v1->Fill("madMinPhotonDeltaR <0.5",wt);
-	  //if(mindr_Pho_genlep<0.5) h_selectBaselineYields_v1->Fill("mindr_Pho_genlep<0.5",wt);
+	 //h_phoPt_promptPho_rejected->Fill(bestPhoton.Pt(),wt1);
+	  //if(madMinPhotonDeltaR<0.5)h_selectBaselineYields_v1->Fill("madMinPhotonDeltaR <0.5",wt1);
+	  //if(mindr_Pho_genlep<0.5) h_selectBaselineYields_v1->Fill("mindr_Pho_genlep<0.5",wt1);
 	  cont3=false;
 	} else {
-	  //if(madMinPhotonDeltaR >= 0.5) h_selectBaselineYields_v1->Fill("mindR(q/g, #gamma)",wt);
-	  //if(mindr_Pho_genlep >=0.5)    h_selectBaselineYields_v1->Fill("mindR(l, #gamma)",wt);
+	  //if(madMinPhotonDeltaR >= 0.5) h_selectBaselineYields_v1->Fill("mindR(q/g, #gamma)",wt1);
+	  //if(mindr_Pho_genlep >=0.5)    h_selectBaselineYields_v1->Fill("mindR(l, #gamma)",wt1);
 	}
       }
     }
@@ -774,34 +706,34 @@ bool AnalyzeTProxytBSM::RemoveSampleOverlap(TString s_sample, myLV bestPhoton) {
        s_sample.Contains("WGJets_MonoPhoton_PtG-130UL")) {
       //if(s_sample.Contains("WGJets_MonoPhoton_PtG-40to130UL"||"WGJets_MonoPhoton_PtG-130UL"))
       if(!hasGenPromptPhoton) {
-	//h_selectBaselineYields_v1->Fill("No gen prompt #gamma",wt);
+	//h_selectBaselineYields_v1->Fill("No gen prompt #gamma",wt1);
 	//if(jentry==0)cout<<"**********processing "<<s_sample<<" with non-prompt Gen photon"<<endl;
       } else if(hasGenPromptPhoton) {
-	//h_selectBaselineYields_v1->Fill("Gen prompt #gamma",wt);
+	//h_selectBaselineYields_v1->Fill("Gen prompt #gamma",wt1);
 	if(!(madMinPhotonDeltaR >= 0.5 && mindr_Pho_genlep >=0.5 ))
-	  {//h_phoPt_promptPho_rejected->Fill(bestPhoton.Pt(),wt);
-	    //if(madMinPhotonDeltaR<0.5) h_selectBaselineYields_v1->Fill("madMinPhotonDeltaR <0.5",wt);
-	    //if(mindr_Pho_genlep<0.5)   h_selectBaselineYields_v1->Fill("mindr_Pho_genlep<0.5",wt);
+	  {//h_phoPt_promptPho_rejected->Fill(bestPhoton.Pt(),wt1);
+	    //if(madMinPhotonDeltaR<0.5) h_selectBaselineYields_v1->Fill("madMinPhotonDeltaR <0.5",wt1);
+	    //if(mindr_Pho_genlep<0.5)   h_selectBaselineYields_v1->Fill("mindr_Pho_genlep<0.5",wt1);
 	    cont4=false;
 	  } else {
-	  //if(madMinPhotonDeltaR >= 0.5) h_selectBaselineYields_v1->Fill("mindR(q/g, #gamma)",wt);
-	  //if(mindr_Pho_genlep >=0.5)    h_selectBaselineYields_v1->Fill("mindR(l, #gamma)",wt);
+	  //if(madMinPhotonDeltaR >= 0.5) h_selectBaselineYields_v1->Fill("mindR(q/g, #gamma)",wt1);
+	  //if(mindr_Pho_genlep >=0.5)    h_selectBaselineYields_v1->Fill("mindR(l, #gamma)",wt1);
 	}
       }
     }
     
     if(s_sample.Contains("WJets")) {
       if(!hasGenPromptPhoton) {
-	//h_selectBaselineYields_v1->Fill("No gen prompt #gamma",wt);
+	//h_selectBaselineYields_v1->Fill("No gen prompt #gamma",wt1);
 	//if(jentry==0)cout<<"**********processing "<<s_sample<<" with non-prompt Gen photon"<<endl; 
       } else if(hasGenPromptPhoton) {
-	//h_selectBaselineYields_v1->Fill("Gen prompt #gamma",wt);
+	//h_selectBaselineYields_v1->Fill("Gen prompt #gamma",wt1);
 	if(!(madMinPhotonDeltaR < 0.5 || mindr_Pho_genlep < 0.5)) {
-	  //h_phoPt_promptPho_rejected->Fill(bestPhoton.Pt(),wt);
+	  //h_phoPt_promptPho_rejected->Fill(bestPhoton.Pt(),wt1);
 	  cont5=false;
 	} else {
-	  //if(madMinPhotonDeltaR >= 0.5) h_selectBaselineYields_v1->Fill("pass_mindR(q/g, #gamma)",wt); 
-	  //if(mindr_Pho_genlep >=0.5)    h_selectBaselineYields_v1->Fill("pass_mindR(l, #gamma)",wt); 
+	  //if(madMinPhotonDeltaR >= 0.5) h_selectBaselineYields_v1->Fill("pass_mindR(q/g, #gamma)",wt1); 
+	  //if(mindr_Pho_genlep >=0.5)    h_selectBaselineYields_v1->Fill("pass_mindR(l, #gamma)",wt1); 
 	}
       }
     }
@@ -957,7 +889,7 @@ bool AnalyzeTProxytBSM::RemoveSampleOverlap(TString s_sample, myLV bestPhoton) {
       //if (jentry < 20000 && abs(PdgId) == 11) cout << "Genparticle_electron  pt:" << GenTaus[(int)ii].Pt(),wt << endl ; 
       //if (abs(PdgId)==11) {
 	//Ch_e++;
-	//h_Gen_pT[2][4]->Fill(GenTaus[(int)ii].Pt(),wt);
+	//h_Gen_pT[2][4]->Fill(GenTaus[(int)ii].Pt(),wt1);
 	
       //}
       //   if (abs(PdgId)==13) Ch_mu++;
@@ -968,21 +900,21 @@ bool AnalyzeTProxytBSM::RemoveSampleOverlap(TString s_sample, myLV bestPhoton) {
   //cout << "nentries: " << nentries << endl;
 
 
-// h_ele_pT0  ->Fill(Electrons[(int)ii].Pt(),wt);
-	    // h_ele_eta0 ->Fill(Electrons[(int)ii].Eta(),wt);
-	    // h_ele_phi0 ->Fill(Electrons[(int)ii].Phi(),wt);
+// h_ele_pT0  ->Fill(Electrons[(int)ii].Pt(),wt1);
+	    // h_ele_eta0 ->Fill(Electrons[(int)ii].Eta(),wt1);
+	    // h_ele_phi0 ->Fill(Electrons[(int)ii].Phi(),wt1);
 	    // if (MET>200){
-	    //   h_ele_pT3  ->Fill(Electrons[(int)ii].Pt(),wt);
-	    //   h_ele_eta3 ->Fill(Electrons[(int)ii].Eta(),wt);
-	    //   h_ele_phi3 ->Fill(Electrons[(int)ii].Phi(),wt);
+	    //   h_ele_pT3  ->Fill(Electrons[(int)ii].Pt(),wt1);
+	    //   h_ele_eta3 ->Fill(Electrons[(int)ii].Eta(),wt1);
+	    //   h_ele_phi3 ->Fill(Electrons[(int)ii].Phi(),wt1);
 	    // }
 
 	    //if (Electrons->size()>1 && jentry <10000) cout << Electrons[(int)ii].Pt(),wt << ", ";
 
 // 	if(GenTaus[(int)ii].Pt(),wt>1.0){
-	    // 	h_gen_pT  ->Fill(GenTaus[(int)ii].Pt(),wt);
-	    // 	h_gen_eta ->Fill(GenTaus[(int)ii].Eta(),wt);
-	    // 	h_gen_phi ->Fill(GenTaus[(int)ii].Phi(),wt);
+	    // 	h_gen_pT  ->Fill(GenTaus[(int)ii].Pt(),wt1);
+	    // 	h_gen_eta ->Fill(GenTaus[(int)ii].Eta(),wt1);
+	    // 	h_gen_phi ->Fill(GenTaus[(int)ii].Phi(),wt1);
 	    // 	}
 	  
 
@@ -990,80 +922,80 @@ bool AnalyzeTProxytBSM::RemoveSampleOverlap(TString s_sample, myLV bestPhoton) {
 	  //   //if (jentry < 1000)     std::cout << "pdgid: " <<GenParticles_PdgId[(int)ii] << ", parentid: " << GenParticles_ParentId[(int)ii] << endl; 
 	  //   //for filling the the leptons in histogram
 	  //   int PdgId = GenParticles_PdgId[(int)ii];
-	  //     double dR=DeltaR(bestPhoton.Eta(),bestPhoton.Phi(),GenParticles[(int)ii].Eta(),wt,GenParticles[(int)ii].Phi(),wt);
+	  //     double dR=DeltaR(bestPhoton.Eta(),bestPhoton.Phi(),GenParticles[(int)ii].Eta(),wt,GenParticles[(int)ii].Phi(),wt1);
 	  //   // if (GenParticles[(int)ii].Pt(),wt>10 && abs(GenParticles[(int)ii].Eta(),wt)<2.5){
 	  //   if (abs(PdgId) == 11) {
 	  //     //if (jentry<100 &&  GenElectrons->size()>0) cout << GenElectrons[(int)ii].Pt(),wt << endl;
-	  //     h_Gen_pT[0][0]->Fill(GenParticles[(int)ii].Pt(),wt);
+	  //     h_Gen_pT[0][0]->Fill(GenParticles[(int)ii].Pt(),wt1);
 	  //     NGenE++;
 	  //   }
 	      
 	  //   if (abs(PdgId) == 13){
-	  //     h_Gen_pT[1][0]->Fill(GenParticles[(int)ii].Pt(),wt);
+	  //     h_Gen_pT[1][0]->Fill(GenParticles[(int)ii].Pt(),wt1);
 	  //     NGenM++;
 	  //   }
 	  //   if (abs(PdgId) == 15) {
-	  //     h_Gen_pT[2][0]->Fill(GenParticles[(int)ii].Pt(),wt);
+	  //     h_Gen_pT[2][0]->Fill(GenParticles[(int)ii].Pt(),wt1);
 	  //     NGenT++;
 	  //   }
 
-	  //   if (abs(PdgId) == 11) h_Gen_eta[0][0]->Fill(GenParticles[(int)ii].Eta(),wt); 
-	  //   if (abs(PdgId) == 13) h_Gen_eta[1][0]->Fill(GenParticles[(int)ii].Eta(),wt);
-	  //   if (abs(PdgId) == 15) h_Gen_eta[2][0]->Fill(GenParticles[(int)ii].Eta(),wt);
+	  //   if (abs(PdgId) == 11) h_Gen_eta[0][0]->Fill(GenParticles[(int)ii].Eta(),wt1); 
+	  //   if (abs(PdgId) == 13) h_Gen_eta[1][0]->Fill(GenParticles[(int)ii].Eta(),wt1);
+	  //   if (abs(PdgId) == 15) h_Gen_eta[2][0]->Fill(GenParticles[(int)ii].Eta(),wt1);
 
-	  //   if (abs(PdgId) == 11) h_Gen_phi[0][0]->Fill(GenParticles[(int)ii].Phi(),wt); 
-	  //   if (abs(PdgId) == 13) h_Gen_phi[1][0]->Fill(GenParticles[(int)ii].Phi(),wt);
-	  //   if (abs(PdgId) == 15) h_Gen_phi[2][0]->Fill(GenParticles[(int)ii].Phi(),wt);
+	  //   if (abs(PdgId) == 11) h_Gen_phi[0][0]->Fill(GenParticles[(int)ii].Phi(),wt1); 
+	  //   if (abs(PdgId) == 13) h_Gen_phi[1][0]->Fill(GenParticles[(int)ii].Phi(),wt1);
+	  //   if (abs(PdgId) == 15) h_Gen_phi[2][0]->Fill(GenParticles[(int)ii].Phi(),wt1);
 
 
 	  //   if (ST<300) continue;
-	  //   if (abs(PdgId) == 11) h_Gen_pT[0][4]->Fill(GenParticles[(int)ii].Pt(),wt); 
-	  //   if (abs(PdgId) == 13) h_Gen_pT[1][4]->Fill(GenParticles[(int)ii].Pt(),wt);
-	  //   if (abs(PdgId) == 15) h_Gen_pT[2][4]->Fill(GenParticles[(int)ii].Pt(),wt);
+	  //   if (abs(PdgId) == 11) h_Gen_pT[0][4]->Fill(GenParticles[(int)ii].Pt(),wt1); 
+	  //   if (abs(PdgId) == 13) h_Gen_pT[1][4]->Fill(GenParticles[(int)ii].Pt(),wt1);
+	  //   if (abs(PdgId) == 15) h_Gen_pT[2][4]->Fill(GenParticles[(int)ii].Pt(),wt1);
 
-	  //   if (abs(PdgId) == 11) h_Gen_eta[0][4]->Fill(GenParticles[(int)ii].Eta(),wt); 
-	  //   if (abs(PdgId) == 13) h_Gen_eta[1][4]->Fill(GenParticles[(int)ii].Eta(),wt);
-	  //   if (abs(PdgId) == 15) h_Gen_eta[2][4]->Fill(GenParticles[(int)ii].Eta(),wt);
+	  //   if (abs(PdgId) == 11) h_Gen_eta[0][4]->Fill(GenParticles[(int)ii].Eta(),wt1); 
+	  //   if (abs(PdgId) == 13) h_Gen_eta[1][4]->Fill(GenParticles[(int)ii].Eta(),wt1);
+	  //   if (abs(PdgId) == 15) h_Gen_eta[2][4]->Fill(GenParticles[(int)ii].Eta(),wt1);
 
-	  //   if (abs(PdgId) == 11) h_Gen_phi[0][4]->Fill(GenParticles[(int)ii].Phi(),wt); 
-	  //   if (abs(PdgId) == 13) h_Gen_phi[1][4]->Fill(GenParticles[(int)ii].Phi(),wt);
-	  //   if (abs(PdgId) == 15) h_Gen_phi[2][4]->Fill(GenParticles[(int)ii].Phi(),wt);
+	  //   if (abs(PdgId) == 11) h_Gen_phi[0][4]->Fill(GenParticles[(int)ii].Phi(),wt1); 
+	  //   if (abs(PdgId) == 13) h_Gen_phi[1][4]->Fill(GenParticles[(int)ii].Phi(),wt1);
+	  //   if (abs(PdgId) == 15) h_Gen_phi[2][4]->Fill(GenParticles[(int)ii].Phi(),wt1);
 
 
 	  //   if (NEMu!=0) continue;
-	  //   if (abs(PdgId) == 11) h_Gen_pT[0][5]->Fill(GenParticles[(int)ii].Pt(),wt); 
-	  //   if (abs(PdgId) == 13) h_Gen_pT[1][5]->Fill(GenParticles[(int)ii].Pt(),wt);
-	  //   if (abs(PdgId) == 15) h_Gen_pT[2][5]->Fill(GenParticles[(int)ii].Pt(),wt);
+	  //   if (abs(PdgId) == 11) h_Gen_pT[0][5]->Fill(GenParticles[(int)ii].Pt(),wt1); 
+	  //   if (abs(PdgId) == 13) h_Gen_pT[1][5]->Fill(GenParticles[(int)ii].Pt(),wt1);
+	  //   if (abs(PdgId) == 15) h_Gen_pT[2][5]->Fill(GenParticles[(int)ii].Pt(),wt1);
 
-	  //   if (abs(PdgId) == 11) h_Gen_eta[0][5]->Fill(GenParticles[(int)ii].Eta(),wt); 
-	  //   if (abs(PdgId) == 13) h_Gen_eta[1][5]->Fill(GenParticles[(int)ii].Eta(),wt);
-	  //   if (abs(PdgId) == 15) h_Gen_eta[2][5]->Fill(GenParticles[(int)ii].Eta(),wt);
+	  //   if (abs(PdgId) == 11) h_Gen_eta[0][5]->Fill(GenParticles[(int)ii].Eta(),wt1); 
+	  //   if (abs(PdgId) == 13) h_Gen_eta[1][5]->Fill(GenParticles[(int)ii].Eta(),wt1);
+	  //   if (abs(PdgId) == 15) h_Gen_eta[2][5]->Fill(GenParticles[(int)ii].Eta(),wt1);
 
-	  //   if (abs(PdgId) == 11) h_Gen_phi[0][5]->Fill(GenParticles[(int)ii].Phi(),wt); 
-	  //   if (abs(PdgId) == 13) h_Gen_phi[1][5]->Fill(GenParticles[(int)ii].Phi(),wt);
-	  //   if (abs(PdgId) == 15) h_Gen_phi[2][5]->Fill(GenParticles[(int)ii].Phi(),wt);
+	  //   if (abs(PdgId) == 11) h_Gen_phi[0][5]->Fill(GenParticles[(int)ii].Phi(),wt1); 
+	  //   if (abs(PdgId) == 13) h_Gen_phi[1][5]->Fill(GenParticles[(int)ii].Phi(),wt1);
+	  //   if (abs(PdgId) == 15) h_Gen_phi[2][5]->Fill(GenParticles[(int)ii].Phi(),wt1);
 
 
 	  //   if (!(isoElectronTracks == 0 && isoMuonTracks == 0 && isoPionTracks == 0)) continue;
-	  //   if (abs(PdgId) == 11) h_Gen_pT[0][6]->Fill(GenParticles[(int)ii].Pt(),wt); 
-	  //   if (abs(PdgId) == 13) h_Gen_pT[1][6]->Fill(GenParticles[(int)ii].Pt(),wt);
-	  //   if (abs(PdgId) == 15) h_Gen_pT[2][6]->Fill(GenParticles[(int)ii].Pt(),wt);
+	  //   if (abs(PdgId) == 11) h_Gen_pT[0][6]->Fill(GenParticles[(int)ii].Pt(),wt1); 
+	  //   if (abs(PdgId) == 13) h_Gen_pT[1][6]->Fill(GenParticles[(int)ii].Pt(),wt1);
+	  //   if (abs(PdgId) == 15) h_Gen_pT[2][6]->Fill(GenParticles[(int)ii].Pt(),wt1);
 
-	  //   if (abs(PdgId) == 11) h_Gen_eta[0][6]->Fill(GenParticles[(int)ii].Eta(),wt); 
-	  //   if (abs(PdgId) == 13) h_Gen_eta[1][6]->Fill(GenParticles[(int)ii].Eta(),wt);
-	  //   if (abs(PdgId) == 15) h_Gen_eta[2][6]->Fill(GenParticles[(int)ii].Eta(),wt);
+	  //   if (abs(PdgId) == 11) h_Gen_eta[0][6]->Fill(GenParticles[(int)ii].Eta(),wt1); 
+	  //   if (abs(PdgId) == 13) h_Gen_eta[1][6]->Fill(GenParticles[(int)ii].Eta(),wt1);
+	  //   if (abs(PdgId) == 15) h_Gen_eta[2][6]->Fill(GenParticles[(int)ii].Eta(),wt1);
 
-	  //   if (abs(PdgId) == 11) h_Gen_phi[0][6]->Fill(GenParticles[(int)ii].Phi(),wt); 
-	  //   if (abs(PdgId) == 13) h_Gen_phi[1][6]->Fill(GenParticles[(int)ii].Phi(),wt);
-	  //   if (abs(PdgId) == 15) h_Gen_phi[2][6]->Fill(GenParticles[(int)ii].Phi(),wt);
+	  //   if (abs(PdgId) == 11) h_Gen_phi[0][6]->Fill(GenParticles[(int)ii].Phi(),wt1); 
+	  //   if (abs(PdgId) == 13) h_Gen_phi[1][6]->Fill(GenParticles[(int)ii].Phi(),wt1);
+	  //   if (abs(PdgId) == 15) h_Gen_phi[2][6]->Fill(GenParticles[(int)ii].Phi(),wt1);
 
 
 	//for lost e, lost mu, and e faking photon
-	    // if (abs(PdgId) == 13 && NMuons == 0) h_LostMuon_eta->Fill(GenParticles[(int)ii].Eta(),wt);
+	    // if (abs(PdgId) == 13 && NMuons == 0) h_LostMuon_eta->Fill(GenParticles[(int)ii].Eta(),wt1);
 	   
-	    // else if (abs(PdgId) == 11 && dR > 0.1 &&  NElectrons == 0) h_LostElectron_eta->Fill(GenParticles[(int)ii].Eta(),wt);
+	    // else if (abs(PdgId) == 11 && dR > 0.1 &&  NElectrons == 0) h_LostElectron_eta->Fill(GenParticles[(int)ii].Eta(),wt1);
 	     
-	    // else if (abs(PdgId) == 11 && bestPhotonIndxAmongPhotons >= 0 && dR < 0.1 && NElectrons == 0) h_EFakePho_eta->Fill(GenParticles[(int)ii].Eta(),wt);
+	    // else if (abs(PdgId) == 11 && bestPhotonIndxAmongPhotons >= 0 && dR < 0.1 && NElectrons == 0) h_EFakePho_eta->Fill(GenParticles[(int)ii].Eta(),wt1);
 	
 	    // else if (abs(PdgId) == 15 && GenTaus_had[0]) h_HadTau_eta -> Fill[GenParticles(int)ii].Eta(),wt;
 
@@ -1123,8 +1055,8 @@ bool AnalyzeTProxytBSM::RemoveSampleOverlap(TString s_sample, myLV bestPhoton) {
 	    //   if (Rest_flag) h_Rest_MET-> Fill(MET);
 	    // }
 		
-// if (LostE_flag) h_LostElectron_eta -> Fill(GenElectrons[0].Eta(),wt);
-	  // if (EfakePho_flag) h_EFakePho_eta->Fill(GenElectrons[0].Eta(),wt);
+// if (LostE_flag) h_LostElectron_eta -> Fill(GenElectrons[0].Eta(),wt1);
+	  // if (EfakePho_flag) h_EFakePho_eta->Fill(GenElectrons[0].Eta(),wt1);
 	  
 	  
 	    
@@ -1134,9 +1066,9 @@ bool AnalyzeTProxytBSM::RemoveSampleOverlap(TString s_sample, myLV bestPhoton) {
 	  // // Double_t rndm;
 	  // // rndm.Uniform(-10,10);		
 	  
-	  // //if (GenMuons->size() > 0 && NMuons == 0) h_LostMuon_eta -> Fill(GenMuons[0].Eta(),wt);
+	  // //if (GenMuons->size() > 0 && NMuons == 0) h_LostMuon_eta -> Fill(GenMuons[0].Eta(),wt1);
 	  // if (GenMuons->size() > 0 && NMuons == 0); 
-	  //    { h_LostMuon_eta -> Fill(GenElectrons[0].Eta(),wt);
+	  //    { h_LostMuon_eta -> Fill(GenElectrons[0].Eta(),wt1);
 	  //      cout << "jfskla" << endl;
 	      
 	  //   }
@@ -1144,19 +1076,19 @@ bool AnalyzeTProxytBSM::RemoveSampleOverlap(TString s_sample, myLV bestPhoton) {
 	    
 	  // else if(GenElectrons -> size() > 0 && NElectrons == 0 && bestPhotonIndxAmongPhotons > 0)
 	  //   { double dR = DeltaR(bestPhoton.Eta(),bestPhoton.Phi(),GenElectrons[0].Eta(),GenElectrons[0].Phi());
-	  //     if (dR > 0.1) h_LostElectron_eta -> Fill(GenElectrons[0].Eta(),wt);
+	  //     if (dR > 0.1) h_LostElectron_eta -> Fill(GenElectrons[0].Eta(),wt1);
 	  //     //LostE_flag = true;	      
-	  //     else h_EFakePho_eta->Fill(GenElectrons[0].Eta(),wt);
+	  //     else h_EFakePho_eta->Fill(GenElectrons[0].Eta(),wt1);
 	     
 	  //   }
 	  
-	  // //else if (GenTaus->size() > 0 && GenTaus_had[0]) h_HadTau_eta -> Fill(GenParticles[0].Eta(),wt);
-	  // else if (GenTaus->size() > 0 && GenTaus_had[0]) h_HadTau_eta -> Fill(GenElectrons[0].Eta(),wt);
+	  // //else if (GenTaus->size() > 0 && GenTaus_had[0]) h_HadTau_eta -> Fill(GenParticles[0].Eta(),wt1);
+	  // else if (GenTaus->size() > 0 && GenTaus_had[0]) h_HadTau_eta -> Fill(GenElectrons[0].Eta(),wt1);
 	  // // else h_Rest_eta->FillRandom("gaus",1);
-	  // else h_Rest_eta->Fill(GenElectrons[0].Eta(),wt);
+	  // else h_Rest_eta->Fill(GenElectrons[0].Eta(),wt1);
 
 
-// if (hadTau_flag) h_HadTau_eta -> Fill(GenTaus[0].Eta(),wt);  
+// if (hadTau_flag) h_HadTau_eta -> Fill(GenTaus[0].Eta(),wt1);  
 	  // if (Rest_flag) h_Rest_eta->FillRandom("gaus",1);
 
 	  
@@ -1174,8 +1106,8 @@ bool AnalyzeTProxytBSM::RemoveSampleOverlap(TString s_sample, myLV bestPhoton) {
 
 
 
-	// h_NHadJets[0]->Fill(0.0000,wt);
-       // 	//h_NHadJets[0]->Fill(NHadJets,wt);
+	// h_NHadJets[0]->Fill(0.0000,wt1);
+       // 	//h_NHadJets[0]->Fill(NHadJets,wt1);
        // sumwt += wt;
        // if (k > decade) {
        // 	 cout << "sum weight" << sumwt << endl;
@@ -1184,16 +1116,16 @@ bool AnalyzeTProxytBSM::RemoveSampleOverlap(TString s_sample, myLV bestPhoton) {
        // 	 cout << "underflow NHadJets: " << h_NHadJets[0]->GetBinContent(-1) << "\n\n";
        // }
 
-       // //h_MET[0]->Fill(0.0000,wt);
-       // h_MET[0]->Fill(MET,wt);
+       // //h_MET[0]->Fill(0.0000,wt1);
+       // h_MET[0]->Fill(MET,wt1);
        // if (k > decade) {
        // 	 cout << "MET Integral: " << h_MET[0]->Integral() << endl;
        // 	 cout << "overflow MET: " << h_MET[0]->GetBinContent(h_MET[0]->GetNbinsX() + 1) << endl;
        // 	 cout << "underflow MET: " << h_MET[0]->GetBinContent(-1) << "\n\n";  
        // }
 
-       // //h_Pho_pT[0] -> Fill(0.0000,wt);
-       // h_Pho_pT[0] -> Fill(bestPhoton.Pt(),wt);
+       // //h_Pho_pT[0] -> Fill(0.0000,wt1);
+       // h_Pho_pT[0] -> Fill(bestPhoton.Pt(),wt1);
        // if (k > decade) {
        // 	 cout << "Photon pt Integral: " << h_Pho_pT[0]->Integral() << endl;
        // 	 cout << "overflow Pho Pt: " << h_Pho_pT[0]->GetBinContent(h_Pho_pT[0]->GetNbinsX() + 1) << endl;
@@ -1209,11 +1141,11 @@ bool AnalyzeTProxytBSM::RemoveSampleOverlap(TString s_sample, myLV bestPhoton) {
       
 
       
-      // h_NHadJets[0]->Fill(NHadJets,wt);
-      // h_MET[0]->Fill(MET,wt);
-      // h_Pho_pT[0]  ->Fill(bestPhoton.Pt(),wt);
-      // h_Pho_eta[0]  ->Fill(bestPhoton.Eta(),wt);
-      // h_Pho_phi[0]  ->Fill(bestPhoton.Phi(),wt);
+      // h_NHadJets[0]->Fill(NHadJets,wt1);
+      // h_MET[0]->Fill(MET,wt1);
+      // h_Pho_pT[0]  ->Fill(bestPhoton.Pt(),wt1);
+      // h_Pho_eta[0]  ->Fill(bestPhoton.Eta(),wt1);
+      // h_Pho_phi[0]  ->Fill(bestPhoton.Phi(),wt1);
 
       // if (NEMu == 0) {
       // 	h_MET[5] ->Fill(MET);
@@ -1225,10 +1157,10 @@ bool AnalyzeTProxytBSM::RemoveSampleOverlap(TString s_sample, myLV bestPhoton) {
       // 	if (MET  < 200) continue;
       // 	nEvents++;
       // 	h_MET[1]-> Fill(MET),wt;
-      // 	h_Pho_pT[1]  ->Fill(bestPhoton.Pt(),wt);
-      // 	h_Pho_eta[1]  ->Fill(bestPhoton.Eta(),wt);
-      // 	h_Pho_phi[1]  ->Fill(bestPhoton.Phi(),wt);
-      // 	h_NHadJets[1]-> Fill(NHadJets,wt);
+      // 	h_Pho_pT[1]  ->Fill(bestPhoton.Pt(),wt1);
+      // 	h_Pho_eta[1]  ->Fill(bestPhoton.Eta(),wt1);
+      // 	h_Pho_phi[1]  ->Fill(bestPhoton.Phi(),wt1);
+      // 	h_NHadJets[1]-> Fill(NHadJets,wt1);
 
       // 	if (bestPhoton.Pt()<20) continue;
       // 	h_MET[2] -> Fill(MET);
