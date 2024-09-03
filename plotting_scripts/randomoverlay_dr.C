@@ -1,7 +1,8 @@
 const int n_pl = 4;
 bool logx = false;
 //defining the legends for each plots
-TString legend_text[10] = {"TTJets","TTGJets","hist3", "hist4", "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
+//TString legend_text[15] = {"TTJets","TTGJets","WJets", "WGJets","ZJets","ZGJets","QCDJets","GammaJets","pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
+TString legend_text[15] = {"QCD", "GJets","pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
 int line_width[12] = {2,2,2,2,2,2,2,2,2,2,2,2};
 int line_style[12] = {1,1,1,1,1,1,1,1,1,1,1,1};
 int line_color[9] = {kBlack, kGreen, kBlue, kMagenta, kRed - 3, kAzure + 7 , kCyan + 1 , kGreen + 3 };
@@ -324,7 +325,10 @@ void randomoverlay_dr(string pathname)
   vector<string> f;
   //f = {"Summer20UL18_TTJets_HT.root", "Summer20UL18_TTGJets_Tune.root", "Summer20UL18_TTJets_Leptons.root", "Summer20UL18_WJetsToLNu_HT.root", "Summer20UL18_WGJets_MonoPhoton.root", "Summer20UL18_ZJetsToNuNu_HT.root", "Summer20UL18_ZNuNuGJets_MonoPhoton.root", "Summer20UL18_QCD_HT.root"};
   
-  f = {"Summer20UL18_TTJets.root","Summer20UL18_TTGJets_Tune.root"};
+  //f = {"Summer20UL18_TTJets.root","Summer20UL18_TTGJets_Tune.root","Summer20UL18_WJetsToLNu_HT.root","Summer20UL18_WGJets_MonoPhoton.root","Summer20UL18_ZJetsToNuNu.root","Summer20UL18_ZNuNuGJets_MonoPhoton.root","Summer20UL18_QCD_HT.root","Summer20UL18_GJets_DR-0p4_HT.root"};
+  //f = {"Summer20UL18_WJetsToLNu_HT.root","Summer20UL18_WGJets_MonoPhoton.root"};
+  //  f={"Summer20UL18_ZJetsToNuNu.root","Summer20UL18_ZNuNuGJets_MonoPhoton.root"};
+  f={"Summer20UL18_QCD_HT.root","Summer20UL18_GJets_DR-0p4_HT.root"};
   //define your histograms to be read from here
   int n_files=f.size(); //you have n files in this example
  
@@ -404,11 +408,11 @@ void randomoverlay_dr(string pathname)
   	  //folder = {"plots/TT_/", "plots/TTG_/",  "plots/WLNu_/", "plots/WG_/", "plots/ZNuNu_/", "plots/ZGNuNu_/", "plots/QCD_/","plots/GJets_"};
   	  folder = {"plots/","plots/"};
   	  //sprintf(full_path,"%s/%s%s_mindR_overlay_%s",pathname.c_str(),folder[i_file].c_str(),diff_title[i_file].c_str(),filetag[i_file].c_str());
-	  sprintf(full_path,"%s/%s%s_mindR_%s",pathname.c_str(),folder[i_cut].c_str(),diff_title[i_cut].c_str(),filetag[icat].c_str());
+	  sprintf(full_path,"%s/%s_Normalized_%s_%s_QCD_G",pathname.c_str(),folder[i_cut].c_str(),diff_title[i_cut].c_str(),filetag[icat].c_str());
 	 	    
   	  //calling generate_1Dplot which will take this vector of OPOPhistograms and 
   	  //generate_1Dplot(hist_list_Njets,full_path,energy,xmax[i_file],xmin[i_file],leg_head,false,true,false,true,filetag[i_file].c_str(),xtitle[i_file].c_str(),rebin[i_file]);
-	  generate_1Dplot(hist_list_Njets,full_path,energy,xmax[i_cut],xmin[i_cut],leg_head,false,true,false,true,filetag[icat].c_str(),xtitle[i_cut].c_str(),rebin[i_cut]);
+	  generate_1Dplot(hist_list_Njets,full_path,energy,xmax[i_cut],xmin[i_cut],leg_head,true,true,false,true,filetag[icat].c_str(),xtitle[i_cut].c_str(),rebin[i_cut]);
       
   	}
 
