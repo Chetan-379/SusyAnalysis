@@ -111,7 +111,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
       decade = k;
      
       vector<myLV> hadJets, bjets;
-      int BTags = bjets.size();
+      int BTags; 
       bool Debug=false;
       vector<int> jetMatchindx;
       int bJet1Idx=-100;
@@ -137,8 +137,6 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
       // if(s_Process.Contains("2018.WGJets_MonoPhoton_PtG-40to130UL")|| s_Process.Contains("2018.WGJets_MonoPhoton_PtG-130UL")|| s_Process.Contains("2016preVFP.WGJets_MonoPhoton_PtG-40to130UL") ||s_Process.Contains("2016preVFP.WGJets_MonoPhoton_PtG-130UL") || s_Process.Contains("2017.WGJets_MonoPhoton_PtG-40to130UL")||s_Process.Contains("2017.WGJets_MonoPhoton_PtG-130UL")|| s_Process.Contains("2016postVFP.WGJets_MonoPhoton_PtG-130UL")||s_Process.Contains("2016postVFP.WGJets_MonoPhoton_PtG-40to130UL")) wt = cross_section*59.83*1000.0;
       // else wt = Weight*59.83*1000.0;
       wt = getEventWeight(s_process, cross_section);
-
-      if (wt<0) cout << "aae! aae! aae!" << endl;
       //selecting Hadronic and b jets
       for(int i=0;i<Jets->size();i++){
 	if( (Jets[i].Pt() > 30.0) && (abs(Jets[i].Eta()) <= 2.4) ){
@@ -167,6 +165,8 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	    }
 	}
       }
+
+      BTags = bjets.size();
       
       for(int i=0;i<hadJets.size();i++){
 	
@@ -217,6 +217,8 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 				Pass_Iso_trk_veto = true;			  	    
 				
 			    
+			      }
+			    }
 			  }
 			}
 		      }
@@ -226,125 +228,111 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	      }
 	    }
 	  }
-	}
-      }
-  
+	  
 	  //if(jentry<20) cout << wt << endl;      
-      //h_NHadJets[0]->Fill(0.0,wt);      
-      h_NHadJets[0]->Fill(NHadJets,wt);      
-      h_MET[0]->Fill(MET,wt);
-      h_Pho_pT[0] -> Fill(bestPhoton.Pt(),wt);
-      h_Pho_eta[0] -> Fill(bestPhoton.Eta(),wt);
-      h_Pho_phi[0] -> Fill(bestPhoton.Phi(),wt);
-
-
+	  //h_NHadJets[0]->Fill(0.0,wt);      
+	  h_NHadJets[0]->Fill(NHadJets,wt);      
+	  h_MET[0]->Fill(MET,wt);
+	  h_Pho_pT[0] -> Fill(bestPhoton.Pt(),wt);
+	  h_Pho_eta[0] -> Fill(bestPhoton.Eta(),wt);
+	  h_Pho_phi[0] -> Fill(bestPhoton.Phi(),wt);
+      
+      
                   
-      if (Pass_Pho_pT){
-	h_MET[2] -> Fill(MET,wt);
-	h_Pho_pT[2] -> Fill(bestPhoton.Pt(),wt);
-	h_Pho_eta[2] -> Fill(bestPhoton.Eta(),wt);
-	h_Pho_phi[2] -> Fill(bestPhoton.Phi(),wt);
-	h_NHadJets[2]-> Fill(NHadJets,wt);
-      }
+	  if (Pass_Pho_pT){
+	    h_MET[2] -> Fill(MET,wt);
+	    h_Pho_pT[2] -> Fill(bestPhoton.Pt(),wt);
+	    h_Pho_eta[2] -> Fill(bestPhoton.Eta(),wt);
+	    h_Pho_phi[2] -> Fill(bestPhoton.Phi(),wt);
+	    h_NHadJets[2]-> Fill(NHadJets,wt);
+	  }
+	  
+	  if (Pass_MET){ 
+	    h_MET[1]-> Fill(MET,wt);
+	    h_Pho_pT[1]  ->Fill(bestPhoton.Pt(),wt);
+	    h_Pho_eta[1]  ->Fill(bestPhoton.Eta(),wt);
+	    h_Pho_phi[1]  ->Fill(bestPhoton.Phi(),wt);
+	    h_NHadJets[1]-> Fill(NHadJets,wt);
+	  }
+	  
+	  if (Pass_NHadJets){
+	    h_MET[3] ->Fill(MET,wt);
+	    h_Pho_pT[3] ->Fill(bestPhoton.Pt(),wt);
+	    h_Pho_eta[3] -> Fill(bestPhoton.Eta(),wt);
+	    h_Pho_phi[3] -> Fill(bestPhoton.Phi(),wt);
+	    h_NHadJets[3]-> Fill(NHadJets,wt);
+	  }
+	  
+	  if (Pass_ST){
+	    h_MET[4] ->Fill(MET,wt);
+	    h_Pho_pT[4] ->Fill(bestPhoton.Pt(),wt);
+	    h_Pho_eta[4] -> Fill(bestPhoton.Eta(),wt);
+	    h_Pho_phi[4] -> Fill(bestPhoton.Phi(),wt);
+	    h_NHadJets[4]-> Fill(NHadJets,wt);
+	  }
+	  
+	  if (applyTrgEff)
+	    {
+	      wt1 = wt * (((TMath::Erf((MET - p0)/p1)+1)/2.0)*p2);
+	      h_MET[7] ->Fill(MET,wt1);
+	      h_Pho_pT[7] ->Fill(bestPhoton.Pt(),wt1);
+	      h_Pho_eta[7] -> Fill(bestPhoton.Eta(),wt1);
+	      h_Pho_phi[7] -> Fill(bestPhoton.Phi(),wt1);
+	      h_NHadJets[7]-> Fill(NHadJets,wt1);
+	    }
       
-      if (Pass_MET){ 
-	h_MET[1]-> Fill(MET,wt);
-	h_Pho_pT[1]  ->Fill(bestPhoton.Pt(),wt);
-	h_Pho_eta[1]  ->Fill(bestPhoton.Eta(),wt);
-	h_Pho_phi[1]  ->Fill(bestPhoton.Phi(),wt);
-	h_NHadJets[1]-> Fill(NHadJets,wt);
-      }
+	  if (EvtCln)
+	    {
+	      h_MET[8] ->Fill(MET,wt1);
+	      h_Pho_pT[8] ->Fill(bestPhoton.Pt(),wt1);
+	      h_Pho_eta[8] -> Fill(bestPhoton.Eta(),wt1);
+	      h_Pho_phi[8] -> Fill(bestPhoton.Phi(),wt1);
+	      h_NHadJets[8]-> Fill(NHadJets,wt1);   
+	    }
       
-      if (Pass_NHadJets){
-	h_MET[3] ->Fill(MET,wt);
-	h_Pho_pT[3] ->Fill(bestPhoton.Pt(),wt);
-	h_Pho_eta[3] -> Fill(bestPhoton.Eta(),wt);
-	h_Pho_phi[3] -> Fill(bestPhoton.Phi(),wt);
-	h_NHadJets[3]-> Fill(NHadJets,wt);
-      }
-      
-      if (Pass_ST){
-	h_MET[4] ->Fill(MET,wt);
-	h_Pho_pT[4] ->Fill(bestPhoton.Pt(),wt);
-	h_Pho_eta[4] -> Fill(bestPhoton.Eta(),wt);
-	h_Pho_phi[4] -> Fill(bestPhoton.Phi(),wt);
-	h_NHadJets[4]-> Fill(NHadJets,wt);
-      }
-      
-      if (applyTrgEff)
-	{
-	  wt1 = wt * (((TMath::Erf((MET - p0)/p1)+1)/2.0)*p2);
-	  h_MET[7] ->Fill(MET,wt1);
-	  h_Pho_pT[7] ->Fill(bestPhoton.Pt(),wt1);
-	  h_Pho_eta[7] -> Fill(bestPhoton.Eta(),wt1);
-	  h_Pho_phi[7] -> Fill(bestPhoton.Phi(),wt1);
-	  h_NHadJets[7]-> Fill(NHadJets,wt1);
-	}
-      
-      if (EvtCln)
-	{
-	  h_MET[8] ->Fill(MET,wt1);
-	  h_Pho_pT[8] ->Fill(bestPhoton.Pt(),wt1);
-	  h_Pho_eta[8] -> Fill(bestPhoton.Eta(),wt1);
-	  h_Pho_phi[8] -> Fill(bestPhoton.Phi(),wt1);
-	  h_NHadJets[8]-> Fill(NHadJets,wt1);   
-	}
-      
-      if (JetMetPhi)
-	{
-	  h_MET[9] ->Fill(MET,wt1);
-	  h_Pho_pT[9] ->Fill(bestPhoton.Pt(),wt1);
-	  h_Pho_eta[9] -> Fill(bestPhoton.Eta(),wt1);
-	  h_Pho_phi[9] -> Fill(bestPhoton.Phi(),wt1);
-	  h_NHadJets[9]-> Fill(NHadJets,wt1);
-	}
-      
-      if (rmOvrlp)
-	{
-	  h_MET[10] ->Fill(MET,wt1);
-	  h_Pho_pT[10] ->Fill(bestPhoton.Pt(),wt1);
-	  h_Pho_eta[10] -> Fill(bestPhoton.Eta(),wt1);
-	  h_Pho_phi[10] -> Fill(bestPhoton.Phi(),wt1);
-	  h_NHadJets[10]-> Fill(NHadJets,wt1);
-	}
+	  if (JetMetPhi)
+	    {
+	      h_MET[9] ->Fill(MET,wt1);
+	      h_Pho_pT[9] ->Fill(bestPhoton.Pt(),wt1);
+	      h_Pho_eta[9] -> Fill(bestPhoton.Eta(),wt1);
+	      h_Pho_phi[9] -> Fill(bestPhoton.Phi(),wt1);
+	      h_NHadJets[9]-> Fill(NHadJets,wt1);
+	    }
+	  
+	  if (rmOvrlp)
+	    {
+	      h_MET[10] ->Fill(MET,wt1);
+	      h_Pho_pT[10] ->Fill(bestPhoton.Pt(),wt1);
+	      h_Pho_eta[10] -> Fill(bestPhoton.Eta(),wt1);
+	      h_Pho_phi[10] -> Fill(bestPhoton.Phi(),wt1);
+	      h_NHadJets[10]-> Fill(NHadJets,wt1);
+	    }
+	  
+	  if (Pass_MET2)
+	    {
+	      h_MET[11] ->Fill(MET,wt1);
+	      h_Pho_pT[11] ->Fill(bestPhoton.Pt(),wt1);
+	      h_Pho_eta[11] -> Fill(bestPhoton.Eta(),wt1);
+	      h_Pho_phi[11] -> Fill(bestPhoton.Phi(),wt1);
+	      h_NHadJets[11]-> Fill(NHadJets,wt1);
+	    }
+	  
+	  if (Pass_EMu_veto) {
+	    h_MET[5] ->Fill(MET,wt1);
+	    h_Pho_pT[5] ->Fill(bestPhoton.Pt(),wt1);
+	    h_Pho_eta[5] -> Fill(bestPhoton.Eta(),wt1);
+	    h_Pho_phi[5] -> Fill(bestPhoton.Phi(),wt1);
+	    h_NHadJets[5]-> Fill(NHadJets,wt1);
+	  }
+	  
+	  if (Pass_Iso_trk_veto){
+	    h_MET[6] ->Fill(MET,wt1);
+	    h_Pho_pT[6] ->Fill(bestPhoton.Pt(),wt1);
+	    h_Pho_eta[6] -> Fill(bestPhoton.Eta(),wt1);
+	    h_Pho_phi[6] -> Fill(bestPhoton.Phi(),wt1);
+	    h_NHadJets[6] -> Fill(NHadJets,wt1);
+	  }
 
-      if (Pass_MET2)
-	{
-	  h_MET[11] ->Fill(MET,wt1);
-	  h_Pho_pT[11] ->Fill(bestPhoton.Pt(),wt1);
-	  h_Pho_eta[11] -> Fill(bestPhoton.Eta(),wt1);
-	  h_Pho_phi[11] -> Fill(bestPhoton.Phi(),wt1);
-	  h_NHadJets[11]-> Fill(NHadJets,wt1);
-	}
-
-      if (Pass_EMu_veto) {
-	h_MET[5] ->Fill(MET,wt1);
-	h_Pho_pT[5] ->Fill(bestPhoton.Pt(),wt1);
-	h_Pho_eta[5] -> Fill(bestPhoton.Eta(),wt1);
-	h_Pho_phi[5] -> Fill(bestPhoton.Phi(),wt1);
-	h_NHadJets[5]-> Fill(NHadJets,wt1);
-      }
-      
-      if (Pass_Iso_trk_veto){
-	h_MET[6] ->Fill(MET,wt1);
-	h_Pho_pT[6] ->Fill(bestPhoton.Pt(),wt1);
-	h_Pho_eta[6] -> Fill(bestPhoton.Eta(),wt1);
-	h_Pho_phi[6] -> Fill(bestPhoton.Phi(),wt1);
-	h_NHadJets[6] -> Fill(NHadJets,wt1);
-      }
-
-      //for SR and CR of lost e
-      if (Pass_Iso_trk_veto && bestPhoton.Pt()>100 && GenElectrons->size()>0 && ((GenElectrons[0].Pt()/bestPhoton.Pt())<=0.8 || (GenElectrons[0].Pt()/bestPhoton.Pt())>=1.2)){        
-	double dR_gen_e_gamma = DeltaR(GenElectrons[0].Eta(),GenElectrons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
-	if (dR_gen_e_gamma > 0.2) h_LL_SR_Pho_Pt->Fill(bestPhoton.Pt(),wt1);
-      }
-            
-      if (Pass_MET2 && bestPhoton.Pt()>100 && NElectrons==1 && NMuons==0 && isoElectronTracks){
-	double dR_reco_e_gamma = DeltaR(Electrons[0].Eta(),Electrons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
-	float m_T=sqrt(2*((Electrons[0].Pt()*MET)-(Electrons[0].Pt()*MET*cos(DeltaPhi(Electrons[0].Phi(),METPhi)))));
-	if (dR_reco_e_gamma > 0.2 && m_T<100) h_LL_CR_Pho_Pt ->Fill(bestPhoton.Pt(),wt1);
-      }
-      
 
       //for stitching part
       double minDR_pho_gen_lep, minDR_pho_qg;
@@ -360,7 +348,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	h_mindR_pho_gen_lep_rmOvrlp->Fill(minDR_pho_gen_lep,wt1);
 	h_mindR_pho_qg_rmOvrlp->Fill(minDR_pho_qg,wt1);
 	}
-      //}
+      
       
       //putting conditions for hasgenprompt photons
       if(hasGenPromptPhoton){
@@ -374,40 +362,61 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	  h_mindR_pho_qg_rmOvrlp_genPromptPho->Fill(minDR_pho_qg,wt1);
 	}
       }
+
+            //for SR and CR of lost e
+	  bool elec_CR = false, elec_SR = false;
+	  int TFbins = getBinNoV1_le(NHadJets,BTags);
+	  if (Pass_Iso_trk_veto && bestPhoton.Pt()>100 && GenElectrons->size()>0 && ((GenElectrons[0].Pt()/bestPhoton.Pt())<=0.8 || (GenElectrons[0].Pt()/bestPhoton.Pt())>=1.2)){        
+	    double dR_gen_e_gamma = DeltaR(GenElectrons[0].Eta(),GenElectrons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
+	    if (dR_gen_e_gamma > 0.2) elec_SR = true;
+	  }
+            
+      if (Pass_MET2 && bestPhoton.Pt()>100 && NElectrons==1 && NMuons==0 && isoElectronTracks){
+	double dR_reco_e_gamma = DeltaR(Electrons[0].Eta(),Electrons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
+	float m_T=sqrt(2*((Electrons[0].Pt()*MET)-(Electrons[0].Pt()*MET*cos(DeltaPhi(Electrons[0].Phi(),METPhi)))));
+	if (dR_reco_e_gamma > 0.2 && m_T<100) elec_CR = true;
+      }
       
-      
-	                       
-      
+      if (elec_SR) {
+	h_Lost_e_SR_Pho_Pt->Fill(bestPhoton.Pt(),wt1);
+	h_Lost_e_SR_binned ->Fill(TFbins,wt1);
+      }
+      if (elec_CR) {
+	h_Lost_e_CR_Pho_Pt ->Fill(bestPhoton.Pt(),wt1);
+	h_Lost_e_CR_binned ->Fill(TFbins,wt1);
+      }
+
+            	                             
       for(int i=0;i<Jets->size();i++){
 	if( (Jets[i].Pt() > 30.0) && (abs(Jets[i].Eta()) <= 2.4) ){
 	  if (!(minDR < 0.3 && i==minDRindx)){
 	    if (Jets_ID[i]){
-		Jets_pT_Sum += Jets[i].Pt();
-		h_Jet_pT[0]->Fill(Jets[i].Pt());
-		h_Jet_eta[0]->Fill(Jets[i].Eta());
-		h_Jet_phi[0]->Fill(Jets[i].Phi());
+	      Jets_pT_Sum += Jets[i].Pt();
+	      h_Jet_pT[0]->Fill(Jets[i].Pt());
+	      h_Jet_eta[0]->Fill(Jets[i].Eta());
+	      h_Jet_phi[0]->Fill(Jets[i].Phi());
+	      
+	      if (MET>200){
+		h_Jet_pT[1]->Fill(Jets[i].Pt());
+		h_Jet_eta[1]->Fill(Jets[i].Eta());
+		h_Jet_phi[1]->Fill(Jets[i].Phi());
 		
-		if (MET>200){
-		  h_Jet_pT[1]->Fill(Jets[i].Pt());
-		  h_Jet_eta[1]->Fill(Jets[i].Eta());
-		  h_Jet_phi[1]->Fill(Jets[i].Phi());
+		if (bestPhoton.Pt()<20) continue;
+		h_Jet_pT[2]->Fill(Jets[i].Pt());
+		h_Jet_eta[2]->Fill(Jets[i].Eta());
+		h_Jet_phi[2]->Fill(Jets[i].Phi());
 		
-		  if (bestPhoton.Pt()<20) continue;
-		  h_Jet_pT[2]->Fill(Jets[i].Pt());
-		  h_Jet_eta[2]->Fill(Jets[i].Eta());
-		  h_Jet_phi[2]->Fill(Jets[i].Phi());
-		  
-		  if (NHadJets < 2) continue;
-		  h_Jet_pT[3]->Fill(Jets[i].Pt());
-		  h_Jet_eta[3]->Fill(Jets[i].Eta());
-		  h_Jet_phi[3]->Fill(Jets[i].Phi());
-		  
-		  if (!(NEMu == 0)) continue;
-		  h_Jet_pT[5]->Fill(Jets[i].Pt());
-		  h_Jet_eta[5]->Fill(Jets[i].Eta());
-		  h_Jet_phi[5]->Fill(Jets[i].Phi());
-
-		  if (isoElectronTracks || isoMuonTracks || isoPionTracks) continue;
+		if (NHadJets < 2) continue;
+		h_Jet_pT[3]->Fill(Jets[i].Pt());
+		h_Jet_eta[3]->Fill(Jets[i].Eta());
+		h_Jet_phi[3]->Fill(Jets[i].Phi());
+		
+		if (!(NEMu == 0)) continue;
+		h_Jet_pT[5]->Fill(Jets[i].Pt());
+		h_Jet_eta[5]->Fill(Jets[i].Eta());
+		h_Jet_phi[5]->Fill(Jets[i].Phi());
+		
+		if (isoElectronTracks || isoMuonTracks || isoPionTracks) continue;
 		  h_Jet_pT[6]->Fill(Jets[i].Pt());
 		  h_Jet_eta[6]->Fill(Jets[i].Eta());
 		  h_Jet_phi[6]->Fill(Jets[i].Phi());
@@ -583,7 +592,9 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	for(Long64_t ii=0; ii<Photons->size(); ii++){
 	  ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiE4D<float> > mypho = Photons[(int)ii];
 	} //end photon loop
-      	
+	
+	if (jentry <100 && NHadJets==2 && BTags ==0) cout << "BinNumber: " << h_Lost_e_CR_binned->GetBin() << endl;	  
+	
 
   } // end jentry loop 
 
@@ -774,6 +785,23 @@ bool AnalyzeTProxytBSM::RemoveSampleOverlap(TString s_sample, myLV bestPhoton) {
   bool rmOvrlp = cont1 && cont2 && cont3 && cont4 && cont5 && cont6 && cont7 && cont8 && cont9 && cont10;
 
   return rmOvrlp;
+}
+
+int AnalyzeTProxytBSM::getBinNoV1_le( int nHadJets, int nbjets){
+  int sBin=-100,m_i=0;
+  if(nbjets==0){
+    if(nHadJets==2)     { sBin=1;}
+    else if(nHadJets==3)     { sBin=2;}
+    else if(nHadJets==4)     { sBin=3;}
+    else if((nHadJets==5 || nHadJets==6)){ sBin=4;}
+    else if(nHadJets>=7)   { sBin=5;}
+  }
+  else{
+    if(nHadJets>=2 && nHadJets<=4)      { sBin=6;}
+    else if((nHadJets==5 || nHadJets==6)){ sBin=7;}
+    else if(nHadJets>=7)   { sBin=8;}
+  }
+  return sBin;
 }
 
 
