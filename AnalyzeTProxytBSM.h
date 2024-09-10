@@ -56,10 +56,11 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   TH1F *h_Reco_pT[5][15], *h_Reco_eta[5][15], *h_Reco_phi[5][15];
   TH2F *h_NHadJets_pTSum, *h_GenRecoE;
   TH1F *h_Gen_MET, *h_EFakePho_MET, *h_LostElectron_MET, *h_LostMuon_MET, *h_HadTau_MET, *h_Rest_MET, *h_EFakePho_eta, *h_LostElectron_eta, *h_LostMuon_eta, *h_HadTau_eta, *h_Rest_eta;
-  TH1F *h_Lost_e_SR_Pho_Pt, *h_Lost_e_CR_Pho_Pt, *h_Lost_e_CR_binned, *h_Lost_e_SR_binned;;
   TH1F *h_mindR_pho_gen_lep_Ovrlp,*h_mindR_pho_qg_Ovrlp,*h_mindR_pho_gen_lep_rmOvrlp,*h_mindR_pho_qg_rmOvrlp;
   TH1F *h_mindR_pho_gen_lep_Ovrlp_genPromptPho,*h_mindR_pho_qg_Ovrlp_genPromptPho,*h_mindR_pho_gen_lep_rmOvrlp_genPromptPho,*h_mindR_pho_qg_rmOvrlp_genPromptPho;
-  TH1F *h_ratio;
+  TH1F *h_Lost_e_SR_Pho_Pt, *h_Lost_e_CR_Pho_Pt, *h_Lost_e_CR_binned, *h_Lost_e_SR_binned;
+  TH1F *h_Lost_mu_SR_Pho_Pt, *h_Lost_mu_CR_Pho_Pt, *h_Lost_mu_SR_binned, *h_Lost_mu_CR_binned;  
+  TH1F *h_FR_SR_binned; 
   
 };
 #endif
@@ -72,6 +73,8 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
 
   oFile = new TFile(outFileName, "recreate");
   oFile->cd();
+
+  TH1::SetDefaultSumw2(1);
   char hname_NHadJets[100], hname_Jet_Pt[100], hname_Jet_Eta[100], hname_Jet_Phi[100], hname_Met[100], hname_PhoPt[100], hname_PhoEta[100], hname_PhoPhi[100], hname_GenPt[100], hname_GenEta[100], hname_GenPhi[100], hname_RecoPt[100], hname_RecoEta[100], hname_RecoPhi[100]; 
   // Book your histograms & summary counters here 
   for (int i=0; i<selection.size();i++)
@@ -149,7 +152,7 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
   h_HadTau_MET = new TH1F("h_HadTau_MET", "h_HadTau_MET",100, 0.0, 5000.0);
   h_Rest_MET = new TH1F ("h_Rest_MET", "h_Rest_MET", 100, 0.0, 5000.0);
 
-  h_Lost_e_SR_Pho_Pt = new TH1F("h_LL_SR_Pho_Pt","h_LL_SR_Pho_Pt",50,0.0,1000.0);
+  h_Lost_e_SR_Pho_Pt = new TH1F("h_LL_SR_Pho_Pt","h_LL_SR_Pho_Pt",50,0.0,1000.0); 
   h_Lost_e_CR_Pho_Pt = new TH1F("h_LL_CR_Pho_Pt","h_LL_CR_Pho_Pt",50,0.0,1000.0);
 
   h_mindR_pho_gen_lep_Ovrlp=new TH1F("h_mindR_pho_gen_lep_Ovrlp","h_mindR_pho_gen_lep_Ovrlp",100,0.0,5.0);
@@ -164,6 +167,11 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
 
   h_Lost_e_CR_binned = new TH1F("lost_e_CR_binned","lost_e_CR_binned",10,0,10);
   h_Lost_e_SR_binned = new TH1F("lost_e_SR_binned","lost_e_SR_binned",10,0,10);
+
+  h_Lost_mu_SR_binned = new TH1F("lost_mu_SR_binned","lost_mu_SR_binned",10,0,10);
+  h_Lost_mu_CR_binned = new TH1F("lost_mu_CR_binned","lost_mu_CR_binned",10,0,10);
+    
+  h_FR_SR_binned = new TH1F("FR_SR_binned","h_FR_SR_binned",10,0.0,10);
 }
 
 AnalyzeTProxytBSM::AnalyzeTProxytBSM(const TString &inputFileList, const char *outFileName,const char *dataset, const char *sample, const char* LostlepFlag, const char* phoID) {

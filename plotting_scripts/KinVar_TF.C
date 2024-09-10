@@ -1,7 +1,7 @@
 const int n_pl = 4;
 bool logx = false;
 //defining the legends for each plots
-TString legend_text[10] = {"CR","SR","hist3", "hist4", "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
+TString legend_text[10] = {"SR","CR","hist3", "hist4", "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
 int line_width[12] = {2,2,2,2,2,2,2,2,2,2,2,2};
 int line_style[12] = {1,1,1,1,1,1,1,1,1,1,1,1};
 int line_color[9] = {kBlack, kRed, kGreen+2, kMagenta, kBlue, kAzure + 7 , kCyan + 1 , kGreen + 3 };
@@ -167,6 +167,11 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio,char const *tag_name=""
   cout<<" hist.size() = "<<hist.size()<<endl;
 
   for(int i = 0; i < (int)hist.size(); i++) {
+
+    char final_label[100];
+    float Integral = hist.at(i)->Integral();     
+    sprintf(final_label,"%s (%0.2f)",legend_text[i].Data(), Integral); 
+
     if(normalize) {
       	hist.at(i)->Scale(1.0/hist.at(i)->Integral());
       	hist.at(i)->GetYaxis()->SetTitle("Normalized");
@@ -213,13 +218,6 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio,char const *tag_name=""
      hist.at(i)->Rebin(rebin);
     }
     //setting up the legend style and all
-       vector <string> Intg;
-    char final_label[100];
-    //int Entries = hist.at(i)->GetEntries().setprecision(1)
-    //int Entries = hist.at(i)->GetEntries();
-    float Integral = hist.at(i)->Integral();
-      //sprintf(final_label,"Integral: %f",setprecision(2) << (hist.at(i)->Integral()));
-    sprintf(final_label,"%s (%0.2f)",legend_text[i].Data(), Integral); 
 
     
     //leg_entry[i] = legend->AddEntry(hist.at(i),(hist.at(i)->Integral().c_str()),"xsl");
@@ -285,7 +283,7 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio,char const *tag_name=""
   hist_ratio->GetXaxis()->SetTitleSize(0.13);
   hist_ratio->GetYaxis()->SetTitle("SR/CR");//TF = #frac{N_{SR}}{N_{CR}}");//(0#mu,1#gamma)}{(1#mu,1#gamma)}");
   hist_ratio->GetXaxis()->SetLabelSize(0.1);
-  hist_ratio->GetYaxis()->SetRangeUser(0.0,1.2);
+  hist_ratio->GetYaxis()->SetRangeUser(0.0,1.7);
   hist_ratio->GetXaxis()->SetRangeUser(xmin,xrange+4);
   // if(which_TFbins==1) //default 8 bins                                                                                                    
     //   hist_ratio->GetXaxis()->SetRangeUser(0,10);//xmin,xrange);                                                                                                 
@@ -460,7 +458,7 @@ void KinVar_TF(string pathname)
 	  //path to save the files a jpg or pdf
 	  vector<string> folder;
 	  //folder = {"plots/TT_/", "plots/TTG_/",  "plots/WLNu_/", "plots/WG_/", "plots/ZNuNu_/", "plots/ZGNuNu_/", "plots/QCD_/","plots/GJets_"};
-	  folder = {"plots/TT_/", "plots/TTG_/",  "plots/WLNu_/", "plots/WG_/"};
+	  folder = {"plots/LL_plots/TT_/", "plots/LL_plots/TTG_/",  "plots/LL_plots/WLNu_/", "plots/LL_plots/WG_/"};
 	  //folder = {"plots/WLNu_/", "plots/WG_/"};
 	  
 

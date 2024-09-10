@@ -249,7 +249,7 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio,char const *tag_name=""
   if(ymin<0.0) ymin = 1e-4;
   //  if(ymax<=10) ymax=10;
   for(int i = 0; i < (int)hist.size(); i++) {
-    if(!normalize) hist.at(i)->GetYaxis()->SetRangeUser(ymin*10,ymax*5);
+    if(!normalize) hist.at(i)->GetYaxis()->SetRangeUser(ymin*10,ymax+(ymax/5));
     else
       hist.at(i)->GetYaxis()->SetRangeUser(0.001,ymax*5.0);
     //    p1->SetGrid();
@@ -419,17 +419,24 @@ void Bin_NB_TF(string pathname)
   int n_files=f.size(); //you have n files in this example
  
   //string histname1[100], histname2[100], histname3[100];
-  vector<string> histnames;
-  histnames = {"lost_e_SR_binned","lost_e_CR_binned"};      //put the histogram names you want to overlay
+  vector<string> histnames1,histnames2,histnames3;
+  histnames1 = {"lost_e_SR_binned","lost_e_CR_binned"};      //put the histogram names you want to overlay
+  histnames2 = {"h_FR_SR_binned"};
   
   vector<vector<string>> bigbaseline;
-  vector<string> baseline1; // , baseline2, baseline3;
+  bigbaseline = {histnames1};
+
+  vector<string> baseline1,baseline2; // , baseline2, baseline3;
 
   //baseline1 = {"h_pho_pT0","h_pho_pT3","h_pho_pT4", "h_pho_pT5"};
-  for (int i=0; i<histnames.size();i++){
-    baseline1.push_back(histnames[i]);
+  for (int i=0; i<histnames1.size();i++){
+    baseline1.push_back(histnames1[i]);
   }
-    //baseline1 = {histnames[0], histname1[1], histname1[2], histname1[3]};
+
+  for (int i=0; i<histnames2.size();i++){
+    baseline2.push_back(histnames2[i]);
+  }
+  
   
 
 
@@ -489,13 +496,13 @@ void Bin_NB_TF(string pathname)
 	  //path to save the files a jpg or pdf
 	  vector<string> folder;
 	  //folder = {"plots/TT_/", "plots/TTG_/",  "plots/WLNu_/", "plots/WG_/", "plots/ZNuNu_/", "plots/ZGNuNu_/", "plots/QCD_/","plots/GJets_"};
-	  folder = {"plots/TT_/", "plots/TTG_/",  "plots/WLNu_/", "plots/WG_/"};
+	  folder = {"plots/LL_plots/TT_/", "plots/LL_plots/TTG_/",  "plots/LL_plots/WLNu_/", "plots/LL_plots/WG_/"};
 	  
 
 	  sprintf(full_path,"%s/%sN-BJet_binned_SR_CR_overlay_TF_%s",pathname.c_str(),folder[i_file].c_str(),filetag[i_file].c_str());
 
 	  //calling generate_1Dplot which will take this vector of histograms and 
-	  generate_1Dplot(hist_list_Njets,hPho_pt_ratio,full_path,energy,xmax[i_file],xmin[i_file],leg_head,false,true,false,true,filetag[i_file].c_str(),xtitle[i_file].c_str(),rebin[i_file]);
+	  generate_1Dplot(hist_list_Njets,hPho_pt_ratio,full_path,energy,xmax[i_file],xmin[i_file],leg_head,false,false,false,true,filetag[i_file].c_str(),xtitle[i_file].c_str(),rebin[i_file]);
       
 	}
 

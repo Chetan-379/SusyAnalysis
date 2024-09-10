@@ -186,10 +186,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
       if(NHadJets>=2)
 	dPhi_METjet2 = abs(DeltaPhi(METPhi,hadJets[1].Phi()));
 
-
       
-
-
       //defining flags for applying baseline selections
       bool Pass_EMu_veto=false, Pass_Iso_trk_veto=false, Pass_Pho_pT=false, Pass_MET=false, Pass_NHadJets=false, Pass_ST=false, applyTrgEff = false, EvtCln=false,JetMetPhi=false,rmOvrlp=false, Pass_MET2=false;
       	  
@@ -214,9 +211,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 			    if (NEMu == 0) {
 			      Pass_EMu_veto = true;	
 			      if (!(isoElectronTracks || isoMuonTracks || isoPionTracks)){
-				Pass_Iso_trk_veto = true;			  	    
-				
-			    
+				Pass_Iso_trk_veto = true;			  	    							    
 			      }
 			    }
 			  }
@@ -236,9 +231,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	  h_Pho_pT[0] -> Fill(bestPhoton.Pt(),wt);
 	  h_Pho_eta[0] -> Fill(bestPhoton.Eta(),wt);
 	  h_Pho_phi[0] -> Fill(bestPhoton.Phi(),wt);
-      
-      
-                  
+                              
 	  if (Pass_Pho_pT){
 	    h_MET[2] -> Fill(MET,wt);
 	    h_Pho_pT[2] -> Fill(bestPhoton.Pt(),wt);
@@ -349,8 +342,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	h_mindR_pho_qg_rmOvrlp->Fill(minDR_pho_qg,wt1);
 	}
       
-      
-      //putting conditions for hasgenprompt photons
+      //putting conditions for hasgenPromptPhotons
       if(hasGenPromptPhoton){
 	if (JetMetPhi){
 	  h_mindR_pho_gen_lep_Ovrlp_genPromptPho->Fill(minDR_pho_gen_lep,wt1);
@@ -363,28 +355,62 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	}
       }
 
-            //for SR and CR of lost e
-	  bool elec_CR = false, elec_SR = false;
-	  int TFbins = getBinNoV1_le(NHadJets,BTags);
-	  if (Pass_Iso_trk_veto && bestPhoton.Pt()>100 && GenElectrons->size()>0 && ((GenElectrons[0].Pt()/bestPhoton.Pt())<=0.8 || (GenElectrons[0].Pt()/bestPhoton.Pt())>=1.2)){        
-	    double dR_gen_e_gamma = DeltaR(GenElectrons[0].Eta(),GenElectrons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
-	    if (dR_gen_e_gamma > 0.2) elec_SR = true;
-	  }
-            
-      if (Pass_MET2 && bestPhoton.Pt()>100 && NElectrons==1 && NMuons==0 && isoElectronTracks){
-	double dR_reco_e_gamma = DeltaR(Electrons[0].Eta(),Electrons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
-	float m_T=sqrt(2*((Electrons[0].Pt()*MET)-(Electrons[0].Pt()*MET*cos(DeltaPhi(Electrons[0].Phi(),METPhi)))));
-	if (dR_reco_e_gamma > 0.2 && m_T<100) elec_CR = true;
+          //selecting SR for lost e
+      bool lost_elec_CR = false, lost_elec_SR = false, FR_SR = false, FR_CR = false;
+      int TFbins = getBinNoV1_le(NHadJets,BTags);
+      if (Pass_Iso_trk_veto && GenElectrons->size()>0 && ((GenElectrons[0].Pt()/bestPhoton.Pt())<=0.8 || (GenElectrons[0].Pt()/bestPhoton.Pt())>=1.2)){        
+	double dR_gen_e_gamma = DeltaR(GenElectrons[0].Eta(),GenElectrons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
+	if (dR_gen_e_gamma > 0.2) lost_elec_SR = true;
       }
       
-      if (elec_SR) {
-	h_Lost_e_SR_Pho_Pt->Fill(bestPhoton.Pt(),wt1);
-	h_Lost_e_SR_binned ->Fill(TFbins,wt1);
-      }
-      if (elec_CR) {
-	h_Lost_e_CR_Pho_Pt ->Fill(bestPhoton.Pt(),wt1);
-	h_Lost_e_CR_binned ->Fill(TFbins,wt1);
-      }
+	  //Fake rate SR
+	  else if (Pass_Iso_trk_veto && GenElectrons->size()>0 && !((GenElectrons[0].Pt()/bestPhoton.Pt())<=0.8 || (GenElectrons[0].Pt()/bestPhoton.Pt())>=1.2)){
+	    double dR_gen_e_gamma = DeltaR(GenElectrons[0].Eta(),GenElectrons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
+	    if (dR_gen_e_gamma < 0.2) FR_SR = true;	    
+	  }
+
+	  //selecting CR for lost e  
+	  if (Pass_MET2 && NElectrons==1 && NMuons==0 && isoElectronTracks && (!(isoMuonTracks || isoPionTracks))){
+	    double dR_reco_e_gamma = DeltaR(Electrons[0].Eta(),Electrons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
+	    float m_T=sqrt(2*((Electrons[0].Pt()*MET)-(Electrons[0].Pt()*MET*cos(DeltaPhi(Electrons[0].Phi(),METPhi)))));
+	    if (dR_reco_e_gamma >= 0.2 && m_T<100) lost_elec_CR = true;
+	  }
+
+	  //selecting lost muon SR
+	  bool lost_mu_CR = false, lost_mu_SR = false;
+	  if (Pass_Iso_trk_veto){        
+	    lost_mu_SR = true;
+	  }
+
+	  //selecting lost muon CR
+	  if (Pass_MET2 && NElectrons==0 && NMuons==1 && isoMuonTracks && (!( isoElectronTracks || isoPionTracks))){	    
+	    float m_T=sqrt(2*((Muons[0].Pt()*MET)-(Muons[0].Pt()*MET*cos(DeltaPhi(Muons[0].Phi(),METPhi)))));
+	    if (m_T<100) lost_mu_CR = true;
+	  }
+
+
+	  if(jentry<1000) cout << "weight is: " << Weight << endl;
+	  
+          
+
+	  
+	  
+	  if (lost_elec_SR) {
+	    h_Lost_e_SR_Pho_Pt->Fill(bestPhoton.Pt(),wt1);
+	    h_Lost_e_SR_binned ->Fill(TFbins,wt1);
+	  }
+	  if (lost_elec_CR) {
+	    h_Lost_e_CR_Pho_Pt ->Fill(bestPhoton.Pt(),wt1);
+	    h_Lost_e_CR_binned ->Fill(TFbins,wt1);
+	  }
+
+	  if (FR_SR) {
+	    h_FR_SR_binned -> Fill(TFbins,wt1);
+	  }
+
+	  if (lost_mu_SR){
+	    h_Lost_mu_SR_binned -> Fill(TFbins,wt1);
+	  }
 
             	                             
       for(int i=0;i<Jets->size();i++){
@@ -592,8 +618,6 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	for(Long64_t ii=0; ii<Photons->size(); ii++){
 	  ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiE4D<float> > mypho = Photons[(int)ii];
 	} //end photon loop
-	
-	if (jentry <100 && NHadJets==2 && BTags ==0) cout << "BinNumber: " << h_Lost_e_CR_binned->GetBin() << endl;	  
 	
 
   } // end jentry loop 
