@@ -39,6 +39,8 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   double getGenLep(myLV);
   bool RemoveSampleOverlap(TString s_sample, myLV bestPhoton);
   int getBinNoV1_le(int nHadJets, int nbjets);
+  int getBinNoV6_WithOnlyBLSelec(int nHadJets,int nbjets);
+
 
   TFile *oFile;
 
@@ -59,9 +61,16 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   TH1F *h_mindR_pho_gen_lep_Ovrlp,*h_mindR_pho_qg_Ovrlp,*h_mindR_pho_gen_lep_rmOvrlp,*h_mindR_pho_qg_rmOvrlp;
   TH1F *h_mindR_pho_gen_lep_Ovrlp_genPromptPho,*h_mindR_pho_qg_Ovrlp_genPromptPho,*h_mindR_pho_gen_lep_rmOvrlp_genPromptPho,*h_mindR_pho_qg_rmOvrlp_genPromptPho;
   TH1F *h_Lost_e_SR_Pho_Pt, *h_Lost_e_CR_Pho_Pt, *h_Lost_e_CR_binned, *h_Lost_e_SR_binned;
+  TH1D *h_Lost_e_TF;
   TH1F *h_Lost_mu_SR_Pho_Pt, *h_Lost_mu_CR_Pho_Pt, *h_Lost_mu_SR_binned, *h_Lost_mu_CR_binned;  
-  TH1F *h_FR_SR_binned; 
-  
+  TH1F *h_FR_SR_binned;
+  TH1F *h_Lost_e_SR_srch_binned, *h_Lost_e_CR_srch_binned;
+  vector<double> METLowEdge={200,300,370,450,600,750,900};
+  vector<double> METLowEdge_1={200,300,370,450,600,750};
+  vector<double> METLowEdge_2={200,300,370,450,600};
+
+  //hists for trying
+  TH1F *h_dR_gen_e_reco_pho, *h_gen_e_reco_pho_ratio, *h_mT_reco_e_G;  
 };
 #endif
 
@@ -107,26 +116,26 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
       {
 	if (i==0 || i>3){      //i>3 conditon is to take histograms after sT cut                              
 	   
-	   sprintf(hname_GenPt,"h_Gen%s_Pt_%s",genparticle[j].c_str(),selection[i].c_str());
-	   sprintf(hname_GenEta,"h_Gen%s_Eta_%s",genparticle[j].c_str(),selection[i].c_str());
-	   sprintf(hname_GenPhi,"h_Gen%s_Phi_%s",genparticle[j].c_str(),selection[i].c_str());
-
-	   sprintf(hname_RecoPt,"h_Reco%s_Pt_%s",recoparticle[j].c_str(),selection[i].c_str());
-	   sprintf(hname_RecoEta,"h_Reco%s_Eta_%s",recoparticle[j].c_str(),selection[i].c_str());
-	   sprintf(hname_RecoPhi,"h_Reco%s_Phi_%s",recoparticle[j].c_str(),selection[i].c_str());
-
+	  sprintf(hname_GenPt,"h_Gen%s_Pt_%s",genparticle[j].c_str(),selection[i].c_str());
+	  sprintf(hname_GenEta,"h_Gen%s_Eta_%s",genparticle[j].c_str(),selection[i].c_str());
+	  sprintf(hname_GenPhi,"h_Gen%s_Phi_%s",genparticle[j].c_str(),selection[i].c_str());
+	  
+	  sprintf(hname_RecoPt,"h_Reco%s_Pt_%s",recoparticle[j].c_str(),selection[i].c_str());
+	  sprintf(hname_RecoEta,"h_Reco%s_Eta_%s",recoparticle[j].c_str(),selection[i].c_str());
+	  sprintf(hname_RecoPhi,"h_Reco%s_Phi_%s",recoparticle[j].c_str(),selection[i].c_str());
+	  
 	   
-	   h_Gen_pT[j][i] = new TH1F(hname_GenPt, hname_GenPt, 100,0.0,1000.0);
-	   //h_Gen_eta[j][i] = new TH1F(hname_GenEta, hname_GenEta, 500,-10,10);
-	   h_Gen_eta[j][i] = new TH1F(hname_GenEta, hname_GenEta, 50,-10,10);
-	   h_Gen_phi[j][i] = new TH1F(hname_GenPhi, hname_GenPhi, 100,-5.0,5.0);
-       
-
-	   if (j==2) continue;
-	   h_Reco_pT[j][i] = new TH1F(hname_RecoPt, hname_RecoPt, 100,0.0,1000.0);
-	   h_Reco_eta[j][i] = new TH1F(hname_RecoEta, hname_RecoEta, 500,-10.0,10.0);
-	   h_Reco_phi[j][i] = new TH1F(hname_RecoPhi, hname_RecoPhi, 100,-5.0,5.0);
-	   
+	  h_Gen_pT[j][i] = new TH1F(hname_GenPt, hname_GenPt, 100,0.0,1000.0);
+	  //h_Gen_eta[j][i] = new TH1F(hname_GenEta, hname_GenEta, 500,-10,10);
+	  h_Gen_eta[j][i] = new TH1F(hname_GenEta, hname_GenEta, 50,-10,10);
+	  h_Gen_phi[j][i] = new TH1F(hname_GenPhi, hname_GenPhi, 100,-5.0,5.0);
+	  
+	  
+	  if (j==2) continue;
+	  h_Reco_pT[j][i] = new TH1F(hname_RecoPt, hname_RecoPt, 100,0.0,1000.0);
+	  h_Reco_eta[j][i] = new TH1F(hname_RecoEta, hname_RecoEta, 500,-10.0,10.0);
+	  h_Reco_phi[j][i] = new TH1F(hname_RecoPhi, hname_RecoPhi, 100,-5.0,5.0);
+	  
 	}
       }      
     }
@@ -137,7 +146,6 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
   h_GenRecoE = new TH2F("h_GenRecoE", "h_GenRecoE",10,0,10,10,0,10);
   h_GenRecoE->SetXTitle("Gen");
   h_GenRecoE->SetYTitle("Reco");
-
   
   h_EFakePho_eta = new TH1F("h_EFakePho_Eta","hname_EFakePho_Eta",50, -10.0, 10.0);
   h_LostElectron_eta = new TH1F("h_LostElectron_Eta","hname_LostElectron_Eta",50, -10.0, 10.0);
@@ -151,10 +159,7 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
   h_LostMuon_MET = new TH1F("h_LostMuon_MET","hname_LostMuon_MET",100, 0.0, 5000.0);
   h_HadTau_MET = new TH1F("h_HadTau_MET", "h_HadTau_MET",100, 0.0, 5000.0);
   h_Rest_MET = new TH1F ("h_Rest_MET", "h_Rest_MET", 100, 0.0, 5000.0);
-
-  h_Lost_e_SR_Pho_Pt = new TH1F("h_LL_SR_Pho_Pt","h_LL_SR_Pho_Pt",50,0.0,1000.0); 
-  h_Lost_e_CR_Pho_Pt = new TH1F("h_LL_CR_Pho_Pt","h_LL_CR_Pho_Pt",50,0.0,1000.0);
-
+ 
   h_mindR_pho_gen_lep_Ovrlp=new TH1F("h_mindR_pho_gen_lep_Ovrlp","h_mindR_pho_gen_lep_Ovrlp",100,0.0,5.0);
   h_mindR_pho_qg_Ovrlp=new TH1F("h_mindR_pho_qg_Ovrlp","h_mindR_pho_qg_Ovrlp",100,0.0,5.0);
   h_mindR_pho_gen_lep_rmOvrlp=new TH1F("h_mindR_pho_gen_lep_rmOvrlp","h_mindR_pho_gen_lep_rmOvrlp",100,0.0,5.0);
@@ -165,13 +170,25 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
   h_mindR_pho_gen_lep_rmOvrlp_genPromptPho=new TH1F("h_mindR_pho_gen_lep_rmOvrlp_genPromptPho","h_mindR_pho_gen_lep_rmOvrlp_genPromptPho",100,0.0,5.0);
   h_mindR_pho_qg_rmOvrlp_genPromptPho=new TH1F("h_mindR_pho_qg_rmOvrlp_genPromptPho","h_mindR_pho_qg_rmOvrlp_genPromptPho",100,0.0,5.0);
 
+  h_Lost_e_SR_Pho_Pt = new TH1F("h_LL_SR_Pho_Pt","h_LL_SR_Pho_Pt",50,0.0,1000.0); 
+  h_Lost_e_CR_Pho_Pt = new TH1F("h_LL_CR_Pho_Pt","h_LL_CR_Pho_Pt",50,0.0,1000.0);
+
   h_Lost_e_CR_binned = new TH1F("lost_e_CR_binned","lost_e_CR_binned",10,0,10);
   h_Lost_e_SR_binned = new TH1F("lost_e_SR_binned","lost_e_SR_binned",10,0,10);
+  h_Lost_e_TF = new TH1D("h_Lost_e_TF","h_Lost_e_TF",10,0.0,10.0);
+
+  h_Lost_e_SR_srch_binned = new TH1F("lost_e_SR_srch_binned","lost_e_SR_srch_binned",35,0,35);
+  h_Lost_e_CR_srch_binned = new TH1F("lost_e_CR_srch_binned","lost_e_CR_srch_binned",35,0,35);
 
   h_Lost_mu_SR_binned = new TH1F("lost_mu_SR_binned","lost_mu_SR_binned",10,0,10);
   h_Lost_mu_CR_binned = new TH1F("lost_mu_CR_binned","lost_mu_CR_binned",10,0,10);
     
   h_FR_SR_binned = new TH1F("FR_SR_binned","h_FR_SR_binned",10,0.0,10);
+
+  h_dR_gen_e_reco_pho= new TH1F("h_dR_gen_e_reco_pho","h_dR_gen_e_reco_pho",100,0.0,5.0);
+  h_gen_e_reco_pho_ratio = new TH1F("h_gen_e_reco_pho_ratio","h_gen_e_reco_pho_ratio",200,0,2);
+  h_mT_reco_e_G = new TH1F("mT_reco_e_G","mT_reco_e_G",100,0.0,1000.0);
+  
 }
 
 AnalyzeTProxytBSM::AnalyzeTProxytBSM(const TString &inputFileList, const char *outFileName,const char *dataset, const char *sample, const char* LostlepFlag, const char* phoID) {

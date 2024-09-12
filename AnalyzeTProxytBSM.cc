@@ -324,6 +324,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	    h_Pho_eta[6] -> Fill(bestPhoton.Eta(),wt1);
 	    h_Pho_phi[6] -> Fill(bestPhoton.Phi(),wt1);
 	    h_NHadJets[6] -> Fill(NHadJets,wt1);
+	    
 	  }
 
 
@@ -355,62 +356,74 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	}
       }
 
-          //selecting SR for lost e
-      bool lost_elec_CR = false, lost_elec_SR = false, FR_SR = false, FR_CR = false;
       int TFbins = getBinNoV1_le(NHadJets,BTags);
+      int SrchBins = getBinNoV6_WithOnlyBLSelec(NHadJets,BTags);
+
+          //selecting SR for lost e
+      bool lost_elec_CR = false, lost_elec_SR = false, FR_SR = false, FR_CR = false;      
       if (Pass_Iso_trk_veto && GenElectrons->size()>0 && ((GenElectrons[0].Pt()/bestPhoton.Pt())<=0.8 || (GenElectrons[0].Pt()/bestPhoton.Pt())>=1.2)){        
 	double dR_gen_e_gamma = DeltaR(GenElectrons[0].Eta(),GenElectrons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
 	if (dR_gen_e_gamma > 0.2) lost_elec_SR = true;
       }
+
+      //Fake rate SR
+      else if (Pass_Iso_trk_veto && GenElectrons->size()>0 && !((GenElectrons[0].Pt()/bestPhoton.Pt())<=0.8 || (GenElectrons[0].Pt()/bestPhoton.Pt())>=1.2)){
+	double dR_gen_e_gamma = DeltaR(GenElectrons[0].Eta(),GenElectrons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
+	if (dR_gen_e_gamma < 0.2) FR_SR = true;	    
+	  }
       
-	  //Fake rate SR
-	  else if (Pass_Iso_trk_veto && GenElectrons->size()>0 && !((GenElectrons[0].Pt()/bestPhoton.Pt())<=0.8 || (GenElectrons[0].Pt()/bestPhoton.Pt())>=1.2)){
-	    double dR_gen_e_gamma = DeltaR(GenElectrons[0].Eta(),GenElectrons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
-	    if (dR_gen_e_gamma < 0.2) FR_SR = true;	    
-	  }
-
-	  //selecting CR for lost e  
-	  if (Pass_MET2 && NElectrons==1 && NMuons==0 && isoElectronTracks && (!(isoMuonTracks || isoPionTracks))){
-	    double dR_reco_e_gamma = DeltaR(Electrons[0].Eta(),Electrons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
+      //selecting CR for lost e  
+      if (Pass_MET2 && NElectrons==1 && NMuons==0 && isoElectronTracks && (!(isoMuonTracks || isoPionTracks))){
+	double dR_reco_e_gamma = DeltaR(Electrons[0].Eta(),Electrons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
 	    float m_T=sqrt(2*((Electrons[0].Pt()*MET)-(Electrons[0].Pt()*MET*cos(DeltaPhi(Electrons[0].Phi(),METPhi)))));
+	    h_mT_reco_e_G->Fill(m_T);
 	    if (dR_reco_e_gamma >= 0.2 && m_T<100) lost_elec_CR = true;
-	  }
+      }
 
-	  //selecting lost muon SR
-	  bool lost_mu_CR = false, lost_mu_SR = false;
-	  if (Pass_Iso_trk_veto){        
-	    lost_mu_SR = true;
+     
+      //selecting lost muon SR
+      bool lost_mu_CR = false, lost_mu_SR = false;
+      if (Pass_Iso_trk_veto){        
+	lost_mu_SR = true;
 	  }
-
-	  //selecting lost muon CR
+      
+      //selecting lost muon CR
 	  if (Pass_MET2 && NElectrons==0 && NMuons==1 && isoMuonTracks && (!( isoElectronTracks || isoPionTracks))){	    
 	    float m_T=sqrt(2*((Muons[0].Pt()*MET)-(Muons[0].Pt()*MET*cos(DeltaPhi(Muons[0].Phi(),METPhi)))));
 	    if (m_T<100) lost_mu_CR = true;
 	  }
-
-
-	  if(jentry<1000) cout << "weight is: " << Weight << endl;
-	  
-          
-
 	  
 	  
 	  if (lost_elec_SR) {
 	    h_Lost_e_SR_Pho_Pt->Fill(bestPhoton.Pt(),wt1);
 	    h_Lost_e_SR_binned ->Fill(TFbins,wt1);
+	    h_Lost_e_SR_srch_binned -> Fill(SrchBins,wt1);
 	  }
+
 	  if (lost_elec_CR) {
 	    h_Lost_e_CR_Pho_Pt ->Fill(bestPhoton.Pt(),wt1);
 	    h_Lost_e_CR_binned ->Fill(TFbins,wt1);
+	    h_Lost_e_CR_srch_binned -> Fill(SrchBins,wt1);
 	  }
 
 	  if (FR_SR) {
 	    h_FR_SR_binned -> Fill(TFbins,wt1);
 	  }
-
+	  
 	  if (lost_mu_SR){
 	    h_Lost_mu_SR_binned -> Fill(TFbins,wt1);
 	  }
+
+
+	  //================================================================================================================
+	  //testing
+	  if (Pass_Iso_trk_veto && GenElectrons->size()>0){        
+	    double dR_gen_e_gamma = DeltaR(GenElectrons[0].Eta(),GenElectrons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
+	    h_dR_gen_e_reco_pho ->Fill(dR_gen_e_gamma);
+	    h_gen_e_reco_pho_ratio ->Fill(GenElectrons[0].Pt()/bestPhoton.Pt());
+	  }
+
+	    //==============================================================================================================
 
             	                             
       for(int i=0;i<Jets->size();i++){
@@ -443,10 +456,10 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 		h_Jet_phi[5]->Fill(Jets[i].Phi());
 		
 		if (isoElectronTracks || isoMuonTracks || isoPionTracks) continue;
-		  h_Jet_pT[6]->Fill(Jets[i].Pt());
-		  h_Jet_eta[6]->Fill(Jets[i].Eta());
-		  h_Jet_phi[6]->Fill(Jets[i].Phi());
-		  
+		h_Jet_pT[6]->Fill(Jets[i].Pt());
+		h_Jet_eta[6]->Fill(Jets[i].Eta());
+		h_Jet_phi[6]->Fill(Jets[i].Phi());
+		
 		}
 	      }
 	    }
@@ -565,12 +578,12 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	  h_Gen_phi[2][6]->Fill(GenTaus[(int)ii].Phi(),wt1);	  
 	} //end Gen Tau loop
 	
-	
 	for(Long64_t ii=0; ii<Electrons->size(); ii++){
 	  ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiE4D<float> > myele = Electrons[(int)ii];
 	  h_Reco_pT[0][0]->Fill(Electrons[(int)ii].Pt(),wt1);
 	  h_Reco_eta[0][0]->Fill(Electrons[(int)ii].Eta(),wt1);
 	  h_Reco_phi[0][0]->Fill(Electrons[(int)ii].Phi(),wt1);
+	  if (jentry < 1000) cout << Electrons[(int)ii].Pt() << "\t";
 	  
 	  if (ST<300) continue;
 	  h_Reco_pT[0][4]->Fill(Electrons[(int)ii].Pt(),wt1);
@@ -589,7 +602,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	  //h_Reco_eta[0][6]->Fill(Electrons[(int)ii].Eta(),wt1);
 	  h_Reco_phi[0][6]->Fill(Electrons[(int)ii].Phi(),wt1);	    
 	} //end electron loop
-
+	if (jentry<1000)cout << endl;
 	for(Long64_t ii=0; ii<Muons->size(); ii++){
 	    ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiE4D<float> > mymu = Muons[(int)ii];
 	    h_Reco_pT[1][0]->Fill(Muons[(int)ii].Pt(),wt1);
@@ -634,6 +647,23 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
   cout << h_NHadJets[11]->Integral()<< endl;
   cout << h_NHadJets[5]->Integral() << endl;
   cout << h_NHadJets[6]->Integral() << endl;
+
+  // //calculating the SR yield in diff bins
+  // float TF=0;
+  // TH1D* h_temp = TH1D* h_Lost_e_CR_binned->Clone();
+  // h_Lost_e_TF = h_Lost_e_CR_binned->Clone();
+  // h_Lost_e_TF->Divide(h_temp);
+  
+  
+  // vector<float> SR_pred[35];
+  // for(int ibin = 0;ibin < 8; ibin++){
+  //   //TF=h_Lost_e_SR_binned->GetBinContent(ibin)/h_Lost_e_CR_binned->GetBinContent(ibin);
+  //   TF= h_Lost_e_TF-> GetBinContent(ibin);
+    
+  //   for(int jbin =1; jbin < 8; jbin++){
+  //     SR_pred[jbin] = TF*h_Lost_e_CR_binned->GetBinContent(jbin);
+  //   }
+  // }
 
   
 } // End Eventloop
@@ -827,6 +857,167 @@ int AnalyzeTProxytBSM::getBinNoV1_le( int nHadJets, int nbjets){
   }
   return sBin;
 }
+
+int AnalyzeTProxytBSM::getBinNoV6_WithOnlyBLSelec(int nHadJets,int nbjets)
+{
+  
+  int sBin=-100,m_i=0;
+  if(nbjets==0 ){
+    if(nHadJets>=2 && nHadJets<=4)     { sBin=0;}
+    else if(nHadJets==5 || nHadJets==6){ sBin=7;}
+    else if(nHadJets>=7)               { sBin=13;}
+  }
+  else{
+    if(nHadJets>=2 && nHadJets<=4)     { sBin=18;}
+    else if(nHadJets==5 || nHadJets==6){ sBin=23;}
+    else if(nHadJets>=7)               { sBin=28;}
+  }
+  if(sBin==0){
+    for(int i=0;i<METLowEdge.size()-1;i++){
+      if(METLowEdge[i]<199.99) continue;
+      int sBin1=sBin;
+      m_i++;
+      if(MET >= METLowEdge[i] && MET < METLowEdge[i+1]){ sBin = sBin+m_i;
+	break; }
+      else if(MET >= METLowEdge[METLowEdge.size()-1])  { sBin = 7         ;
+        break; }
+    }
+  }
+  else if(sBin==7 || sBin==33 || sBin==39){
+    int sBin1=sBin;
+    for(int i=0;i<METLowEdge_1.size()-1;i++){
+      if(METLowEdge_1[i]<199.99) continue;
+      m_i++;
+      if(MET >= METLowEdge_1[i] && MET < METLowEdge_1[i+1]){ sBin = sBin+m_i;break;}
+      else if(MET >= METLowEdge_1[METLowEdge_1.size()-1])  { sBin = sBin+6; break; }
+    }
+  }
+
+  else 
+    {
+      for(int i=0;i<METLowEdge_2.size()-1;i++){
+	if(METLowEdge_2[i]<199.99) continue;
+	m_i++;
+	if(MET >= METLowEdge_2[i] && MET < METLowEdge_2[i+1]){ sBin = sBin+m_i;break; }
+	else if(MET >= METLowEdge_2[METLowEdge_2.size()-1])  { sBin = sBin+5; break; }
+      }
+    }
+  // if(sBin==0){
+  //   for(int i=0;i<METLowEdge.size()-1;i++){
+  //     if(METLowEdge[i]<199.99) continue;
+  //     int sBin1=sBin;
+  //     m_i++;
+  //     if(MET >= METLowEdge[i] && MET < METLowEdge[i+1]){ sBin = sBin+m_i;
+  //       break; }
+  //     else if(MET >= METLowEdge[METLowEdge.size()])  { sBin = 6;
+  //       break; }
+  //   }
+  //   else if (sBin==7){
+  //     for(int i=0;i<METLowEdge.size()-1;i++){
+  // 	if(METLowEdge[i]<199.99) continue;
+  // 	int sBin1=sBin;
+  // 	m_i++;
+  // 	if(MET >= METLowEdge[i] && MET < METLowEdge[i+1]){ sBin = sBin+m_i;
+  // 	  break; }
+  // 	else if(MET >= METLowEdge[METLowEdge.size()-1])  { sBin = 6;
+  // 	  break; }
+
+  //   }
+    
+  // }
+  // else if(sBin==7 || sBin==13 || sBin==19 || sBin==25 || sBin==31){
+  //   int sBin1=sBin;
+  //   for(int i=0;i<METLowEdge.size()-1;i++){
+  //     if(METLowEdge_1[i]<199.99) continue;
+  //     m_i++;
+  //     if(MET >= METLowEdge_1[i] && MET < METLowEdge_1[i+1]){ sBin = sBin+m_i;
+  //       break;}
+  //     else if(MET >= METLowEdge_1[METLowEdge_1.size()-1])  { sBin = sBin+6;
+  //       break; }
+  //   }
+  // }
+
+  // else if(sBin==37){
+  //   for(int i=0;i<METLowEdge.size()-1;i++){
+  //     if(METLowEdge[i]<99.99) continue;
+  //     m_i++;
+  //     if(MET >= METLowEdge[i] && MET < METLowEdge[i+1]){ sBin = sBin+m_i;break; }
+  //     else if(MET >= METLowEdge[METLowEdge.size()-1])  { sBin = 44   ;break; }
+  //     // else if(MET >= METLowEdge[METLowEdge.size()-1])  { sBin = 44   ;break; }                                                                                                                    
+
+  //   }
+  // }
+
+  // else if(sBin==44){
+  //   for(int i=0;i<METLowEdge.size()-1;i++){
+  //     if(METLowEdge[i]<99.99) continue;
+  //     m_i++;
+  //     if(MET >= METLowEdge[i] && MET < METLowEdge[i+1]){ sBin = sBin+m_i;break; }
+  //     else if(MET >= METLowEdge[METLowEdge.size()-1])  { sBin = 52   ;break; }
+  //     // else if(MET >= METLowEdge[METLowEdge.size()-1])  { sBin = 51   ;break; }                                                                                                                    
+
+//     }
+//   }
+// -
+  // int sBin=-100,m_i=0;
+  // if(nbjets==0 ){
+  //   if(nHadJets>=2 && nHadJets<=4)     { sBin=0;}
+  //   else if(nHadJets==5 || nHadJets==6){ sBin=8;}
+  //   else if(nHadJets>=7)               { sBin=15;}
+  // }
+  // else{
+  //   if(nHadJets>=2 && nHadJets<=4)     { sBin=22;}
+  //   else if(nHadJets==5 || nHadJets==6){ sBin=29;}
+  //   else if(nHadJets>=7)               { sBin=36;}
+  // }
+  // if(sBin==0){
+  //   for(int i=0;i<METLowEdge.size()-1;i++){
+  //     if(METLowEdge[i]<99.99) continue;
+  //     int sBin1=sBin;
+  //     m_i++;
+  //     if(MET >= METLowEdge[i] && MET < METLowEdge[i+1]){ sBin = sBin+m_i;
+  // 	break; }
+  //     else if(MET >= METLowEdge[METLowEdge.size()-1])  { sBin = 7;
+  // 	break; }
+  //   }
+  // }
+  // else if(sBin==8 || sBin==15 || sBin==22 || sBin==29 || sBin==36){
+  //   int sBin1=sBin;
+  //   for(int i=0;i<METLowEdge_1.size()-1;i++){
+  //     if(METLowEdge_1[i]<99.99) continue;
+  //     m_i++;
+  //     if(MET >= METLowEdge_1[i] && MET < METLowEdge_1[i+1]){ sBin = sBin+m_i;
+  // 	break;}
+  //     else if(MET >= METLowEdge_1[METLowEdge_1.size()-1])  { sBin = sBin+6;
+  // 	break; }
+  //   }
+  // }
+
+  // else if(sBin==37){
+  //   for(int i=0;i<METLowEdge.size()-1;i++){
+  //     if(METLowEdge[i]<99.99) continue;
+  //     m_i++;
+  //     if(MET >= METLowEdge[i] && MET < METLowEdge[i+1]){ sBin = sBin+m_i;break; }
+  //     else if(MET >= METLowEdge[METLowEdge.size()-1])  { sBin = 44   ;break; }
+  //     else if(MET >= METLowEdge[METLowEdge.size()-1])  { sBin = 44   ;break; }
+
+  // }
+  // }
+
+  // else if(sBin==44){
+  //   for(int i=0;i<METLowEdge.size()-1;i++){
+  //     if(METLowEdge[i]<99.99) continue;
+  //     m_i++;
+  //     if(MET >= METLowEdge[i] && MET < METLowEdge[i+1]){ sBin = sBin+m_i;break; }
+  //     else if(MET >= METLowEdge[METLowEdge.size()-1])  { sBin = 52   ;break; }
+  //     // else if(MET >= METLowEdge[METLowEdge.size()-1])  { sBin = 51   ;break; }
+
+  //   }
+  //}
+
+  return sBin;
+}
+
 
 
 //SS//== not using this functions == 
