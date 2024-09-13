@@ -388,8 +388,9 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	  }
       
       //selecting lost muon CR
+      float m_T = 0;
 	  if (Pass_MET2 && NElectrons==0 && NMuons==1 && isoMuonTracks && (!( isoElectronTracks || isoPionTracks))){	    
-	    float m_T=sqrt(2*((Muons[0].Pt()*MET)-(Muons[0].Pt()*MET*cos(DeltaPhi(Muons[0].Phi(),METPhi)))));
+	    m_T = sqrt(2*((Muons[0].Pt()*MET)-(Muons[0].Pt()*MET*cos(DeltaPhi(Muons[0].Phi(),METPhi)))));
 	    if (m_T<100) lost_mu_CR = true;
 	  }
 	  
@@ -404,6 +405,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	    h_Lost_e_CR_Pho_Pt ->Fill(bestPhoton.Pt(),wt1);
 	    h_Lost_e_CR_binned ->Fill(TFbins,wt1);
 	    h_Lost_e_CR_srch_binned -> Fill(SrchBins,wt1);
+	    h_mT_reco_e_G -> Fill(m_T);
 	  }
 
 	  if (FR_SR) {
@@ -421,9 +423,10 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	    double dR_gen_e_gamma = DeltaR(GenElectrons[0].Eta(),GenElectrons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
 	    h_dR_gen_e_reco_pho ->Fill(dR_gen_e_gamma);
 	    h_gen_e_reco_pho_ratio ->Fill(GenElectrons[0].Pt()/bestPhoton.Pt());
+	    h_dRvsRatio->Fill(dR_gen_e_gamma,GenElectrons[0].Pt()/bestPhoton.Pt());
 	  }
 
-	    //==============================================================================================================
+	  //==============================================================================================================
 
             	                             
       for(int i=0;i<Jets->size();i++){
@@ -583,8 +586,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	  h_Reco_pT[0][0]->Fill(Electrons[(int)ii].Pt(),wt1);
 	  h_Reco_eta[0][0]->Fill(Electrons[(int)ii].Eta(),wt1);
 	  h_Reco_phi[0][0]->Fill(Electrons[(int)ii].Phi(),wt1);
-	  if (jentry < 1000) cout << Electrons[(int)ii].Pt() << "\t";
-	  
+	  	  
 	  if (ST<300) continue;
 	  h_Reco_pT[0][4]->Fill(Electrons[(int)ii].Pt(),wt1);
 	  h_Reco_eta[0][4]->Fill(Electrons[(int)ii].Eta(),wt1);
@@ -602,7 +604,8 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	  //h_Reco_eta[0][6]->Fill(Electrons[(int)ii].Eta(),wt1);
 	  h_Reco_phi[0][6]->Fill(Electrons[(int)ii].Phi(),wt1);	    
 	} //end electron loop
-	if (jentry<1000)cout << endl;
+	//if (jentry<1000)cout << endl;
+
 	for(Long64_t ii=0; ii<Muons->size(); ii++){
 	    ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiE4D<float> > mymu = Muons[(int)ii];
 	    h_Reco_pT[1][0]->Fill(Muons[(int)ii].Pt(),wt1);

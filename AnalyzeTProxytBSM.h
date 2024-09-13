@@ -70,7 +70,8 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   vector<double> METLowEdge_2={200,300,370,450,600};
 
   //hists for trying
-  TH1F *h_dR_gen_e_reco_pho, *h_gen_e_reco_pho_ratio, *h_mT_reco_e_G;  
+  TH1F *h_dR_gen_e_reco_pho, *h_gen_e_reco_pho_ratio, *h_mT_reco_e_G;
+  TH2F *h_dRvsRatio;
 };
 #endif
 
@@ -187,7 +188,8 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
 
   h_dR_gen_e_reco_pho= new TH1F("h_dR_gen_e_reco_pho","h_dR_gen_e_reco_pho",100,0.0,5.0);
   h_gen_e_reco_pho_ratio = new TH1F("h_gen_e_reco_pho_ratio","h_gen_e_reco_pho_ratio",200,0,2);
-  h_mT_reco_e_G = new TH1F("mT_reco_e_G","mT_reco_e_G",100,0.0,1000.0);
+  h_dRvsRatio = new TH2F("dRvsRatio","dRvsRatio",100,0.0,5.0,100,0,5);
+  h_mT_reco_e_G = new TH1F("mT_reco_e_G","mT_reco_e_G",100,0.0,500.0);
   
 }
 
