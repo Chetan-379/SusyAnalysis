@@ -141,7 +141,7 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio,char const *tag_name=""
   double x = 0.15;
   double y = 0.90;
   TLegend *legend; //legend to be drawn on the plot - shift x,ys if you want to move this on the canvas
-  legend = new TLegend(0.82,0.70,0.96,0.85);  
+  legend = new TLegend(0.72,0.70,0.86,0.85);  
   legend->SetTextSize(0.030);
   legend->SetLineColor(kWhite);
   char* lhead = new char[100];
@@ -249,9 +249,10 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio,char const *tag_name=""
   if(ymin<0.0) ymin = 1e-4;
   //  if(ymax<=10) ymax=10;
   for(int i = 0; i < (int)hist.size(); i++) {
-    if(!normalize) hist.at(i)->GetYaxis()->SetRangeUser(ymin*10,ymax+(ymax/5));
+    //if(!normalize) hist.at(i)->GetYaxis()->SetRangeUser(ymin*10,ymax*(ymax/5));
+    if(!normalize) hist.at(i)->GetYaxis()->SetRangeUser(ymin*100,ymax*10);
     else
-      hist.at(i)->GetYaxis()->SetRangeUser(0.001,ymax*5.0);
+      hist.at(i)->GetYaxis()->SetRangeUser(ymin,ymax*10);
     //    p1->SetGrid();
     
     if(!i) hist.at(i)->Draw("hist");
@@ -408,50 +409,26 @@ void Bin_NB_TF(string pathname)
   char *leg_head = new char[200];
   //define your files here
   vector<string> f;
-  //f = {"./root_files/Summer20UL18_TTJets_HT.root", "./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_WJetsToLNu_HT.root", "./root_files/Summer20UL18_WGJets_MonoPhoton.root", "./root_files/Summer20UL18_ZJetsToNuNu_HT.root", "./root_files/Summer20UL18_ZNuNuGJets_MonoPhoton.root", "./root_files/Summer20UL18_QCD_HT.root", "./root_files/Summer20UL18_GJets_DR-0p4_HT.root"};
-
   f = {"./root_files/Summer20UL18_TTJets_HT.root", "./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_WJetsToLNu_HT.root", "./root_files/Summer20UL18_WGJets_MonoPhoton.root"};
-  //f = {"./root_files/Summer20UL18_WJetsToLNu_HT.root", "./root_files/Summer20UL18_WGJets_MonoPhoton.root"};
+
+  //define your histograms to be overlayed from here 
+  vector<string> histnames1;
+  histnames1 = {"lost_e_SR_binned","lost_e_CR_binned"};  
   
-
-  //f = {"Summer20UL18_TTGJets_Tune.root"};
-  //define your histograms to be read from here
-  int n_files=f.size(); //you have n files in this example
- 
-  //string histname1[100], histname2[100], histname3[100];
-  vector<string> histnames1,histnames2,histnames3;
-  histnames1 = {"lost_e_SR_binned","lost_e_CR_binned"};      //put the histogram names you want to overlay
-  histnames2 = {"h_FR_SR_binned"};
-  
-  vector<vector<string>> bigbaseline;
-  bigbaseline = {histnames1};
-
-  vector<string> baseline1,baseline2; // , baseline2, baseline3;
-
-  //baseline1 = {"h_pho_pT0","h_pho_pT3","h_pho_pT4", "h_pho_pT5"};
+  vector<string> baseline1;
   for (int i=0; i<histnames1.size();i++){
     baseline1.push_back(histnames1[i]);
   }
-
-  for (int i=0; i<histnames2.size();i++){
-    baseline2.push_back(histnames2[i]);
-  }
   
   
-
-
   //string to be added to output file name - useful when you have different files and reading the same histograms from these
+  vector<vector<string>> bigbaseline;
   bigbaseline = {baseline1};
 
   for (int bigi=0; bigi<bigbaseline.size(); bigi++)
     {
       vector<string> filetag;
-      //filetag={"TTJets_2018","TTGJets_2018", "WJetsToLNu_2018", "WGJets_2018", "ZJetsToNuNu_2018", "ZNuNuGJets_2018", "QCD_2018", "GJets_2018"};
-      filetag={"TTJets_2018","TTGJets_2018", "WJetsToLNu_2018", "WGJets_2018"};
-      
-      //filetag={"WJetsToLNu_2018", "WGJets_2018"};
-      
-      //filetag={"TTGJets_2018"};
+      filetag={"TTGJets_Process_2018"," ", "WGJets_Process_2018", " "};
       //luminosity for each year - depends if you want to use it or - generate1Dplot uses this number and add it on the top
       vector<float>energyy;
       energyy={59.74,41.529};//,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,19.5,19.5,19.5,19.5,19.5,19.5,19.5,36.0,36.0,36.0,36.0,36.0,36.0,36.0};
@@ -460,52 +437,58 @@ void Bin_NB_TF(string pathname)
       vector<int >rebin = {2,2,2,2,2,2,2,2,2}; //keep it 1 if you don't want to change hist bins
       
       //x axis title for all plots///
-      // vector<string>xtitle = {title[bigi], title[bigi]};
-      //x axis range
       vector<int>xmax = {2000,2000,2000,2000,2000,2000,2000,2000};
-      //vector<int>xmin = {-10,-10,-10,-10,-10,-10,-10,-10};
-      vector<int>xmin = {0,0,0,0,0,0,0,0};
+      vector<int>xmin = {0,0,0,0,0,0,0,0};            
+      vector<vector<TH1F*>> hist_add;
 
       //looping over each files///  
-      for(int i_file=0; i_file < f.size(); i_file++) //looping over each file
-	{ TFile *root_file = new TFile(f[i_file].c_str()); 
-	  vector<TH1F*> hist_list_Njets;
-	  for(int i_cut=0; i_cut<bigbaseline[bigi].size();i_cut++) //looping over different histograms which should be overlayed on the same canvas and these histograms are saved in the same file
+      for(int i_file=0; i_file < f.size(); i_file++){ //looping over each file
+	vector<TH1F*> hist_list_Njets;
+	 TFile *root_file = new TFile(f[i_file].c_str()); 
+	  
+	  for(int i_cut=0; i_cut<bigbaseline[bigi].size();i_cut++) //looping over different histograms which should be overlayed on the same canvas and these histograms are saved in the same file	    
 	    {
-	      //sprintf(hist_name,"%s",baseline[i_cut].c_str());
 	      sprintf(hist_name,"%s",bigbaseline[bigi][i_cut].c_str());
-	       cout<<"i_file "<<i_file<<"\t"<<i_cut<<"\t"<<root_file->GetName()<< "\t" << hist_name<<endl;
+	      cout<<"i_file "<<i_file<<"\t"<<i_cut<<"\t"<<root_file->GetName()<< "\t" << hist_name<<endl;
 	      TH1F* resp = (TH1F*)root_file->Get(hist_name); //reading hist from the TFile
 	      hist_list_Njets.push_back(resp);
 	    }
-	  float energy=energyy[0];
-	  int xrange=0.0;
 	  
-	  TH1D* hPho_pt_total =(TH1D*)hist_list_Njets.at(1)->Clone();
-	  TH1D* hPho_pt_ratio = (TH1D*)hist_list_Njets.at(0)->Clone();
-	  hPho_pt_ratio->Divide(hPho_pt_total);
-
-	   //x axis title for all plots///
-	  vector<string>diff_title;
-	  //diff_title = { "Pho_pT" , "Pt_Miss", "NHadJets"};
-	  //diff_title = {"Bin_no."};
-	  diff_title = {"Bin No."};
-	  vector<string>xtitle;
-	  //xtitle = {diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi]};
-	  xtitle = {diff_title[0], diff_title[0], diff_title[0], diff_title[0]};
-	  //path to save the files a jpg or pdf
-	  vector<string> folder;
-	  //folder = {"plots/TT_/", "plots/TTG_/",  "plots/WLNu_/", "plots/WG_/", "plots/ZNuNu_/", "plots/ZGNuNu_/", "plots/QCD_/","plots/GJets_"};
-	  folder = {"plots/LL_plots/TT_/", "plots/LL_plots/TTG_/",  "plots/LL_plots/WLNu_/", "plots/LL_plots/WG_/"};
-	  
-
-	  sprintf(full_path,"%s/%sN-BJet_binned_SR_CR_overlay_TF_%s",pathname.c_str(),folder[i_file].c_str(),filetag[i_file].c_str());
-
-	  //calling generate_1Dplot which will take this vector of histograms and 
-	  generate_1Dplot(hist_list_Njets,hPho_pt_ratio,full_path,energy,xmax[i_file],xmin[i_file],leg_head,false,false,false,true,filetag[i_file].c_str(),xtitle[i_file].c_str(),rebin[i_file]);
-      
+	  hist_add.push_back(hist_list_Njets);
 	}
-
+	 
+	
+      for (int ibkg=0; ibkg<3; ibkg+=2){
+	vector<TH1F*> h_added;
+	cout << "ibkg: " << ibkg << endl;
+	for(int ihist=0; ihist<2; ihist++){
+	  cout << "adding hists: " << hist_add[ibkg][ihist]->GetName() << "("<< f[ibkg] <<") & " << hist_add[ibkg+1][ihist]->GetName() << "("<< f[ibkg+1] <<")" << endl;	  
+	  cout << hist_add[ibkg][ihist]->Integral() << "\t" << hist_add[ibkg+1][ihist]->Integral() << endl;
+	  TH1F* h_total= (TH1F*)hist_add[ibkg][ihist]-> Clone();
+	  h_total ->Add(hist_add[ibkg+1][ihist]);
+	  cout << "sum is: " << h_total->Integral() << endl;
+	  h_added.push_back(h_total);
+	}
+	float energy=energyy[0];
+	int xrange=0.0;	  
+	TH1D* h_CR =(TH1D*)hist_add[ibkg].at(1)->Clone();
+	TH1D* h_TF = (TH1D*)hist_add[ibkg].at(0)->Clone();	
+	h_TF->Divide(h_CR);
+	
+	//x axis title for all plots///
+	vector<string>diff_title;
+	diff_title = {"Bin_No."};
+	vector<string>xtitle;
+	xtitle = {diff_title[0], diff_title[0], diff_title[0], diff_title[0]};
+	
+	//path to save the files a jpg or pdf
+	vector<string> folder;	  
+	folder = {"plots/LL_plots/TTG_/", "./","plots/LL_plots/WG_/"};
+	sprintf(full_path,"%s/%sStitched_binned_SR_CR_overlay_%s",pathname.c_str(),folder[ibkg].c_str(),filetag[ibkg].c_str());
+	  
+	//calling generate_1Dplot which will take this vector of histograms and 
+	generate_1Dplot(h_added,h_TF,full_path,energy,xmax[ibkg],xmin[ibkg],leg_head,false,true,false,true,filetag[ibkg].c_str(),xtitle[ibkg].c_str(),rebin[ibkg]);
+      }
     }
 }
 
