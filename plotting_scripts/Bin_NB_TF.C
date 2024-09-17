@@ -407,9 +407,15 @@ void Bin_NB_TF(string pathname)
   char* full_path10 = new char[2000];
   char* full_path11= new char[2000];
   char *leg_head = new char[200];
+
+  TFile *TF_NBJet;
+  TF_NBJet = new TFile("TF_NBJet.root", "RECREATE");
+
   //define your files here
   vector<string> f;
-  f = {"./root_files/Summer20UL18_TTJets_HT.root", "./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_WJetsToLNu_HT.root", "./root_files/Summer20UL18_WGJets_MonoPhoton.root"};
+  //  f = {"./root_files/Summer20UL18_TTJets_HT.root", "./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_WJetsToLNu_HT.root", "./root_files/Summer20UL18_WGJets_MonoPhoton.root"};
+
+  f = {"Summer20UL18_TTJets_HT.root", "Summer20UL18_TTGJets_Tune.root", "Summer20UL18_WJetsToLNu_HT.root", "Summer20UL18_WGJets_MonoPhoton.root"};
 
   //define your histograms to be overlayed from here 
   vector<string> histnames1;
@@ -444,20 +450,55 @@ void Bin_NB_TF(string pathname)
       //looping over each files///  
       for(int i_file=0; i_file < f.size(); i_file++){ //looping over each file
 	vector<TH1F*> hist_list_Njets;
-	 TFile *root_file = new TFile(f[i_file].c_str()); 
-	  
-	  for(int i_cut=0; i_cut<bigbaseline[bigi].size();i_cut++) //looping over different histograms which should be overlayed on the same canvas and these histograms are saved in the same file	    
-	    {
+	TFile *root_file = new TFile(f[i_file].c_str()); 
+	 for(int i_cut=0; i_cut<bigbaseline[bigi].size();i_cut++) //looping over different histograms which should be overlayed on the same canvas and these histograms are saved in the same file	    
+	   {
 	      sprintf(hist_name,"%s",bigbaseline[bigi][i_cut].c_str());
 	      cout<<"i_file "<<i_file<<"\t"<<i_cut<<"\t"<<root_file->GetName()<< "\t" << hist_name<<endl;
 	      TH1F* resp = (TH1F*)root_file->Get(hist_name); //reading hist from the TFile
-	      hist_list_Njets.push_back(resp);
+	      hist_list_Njets.push_back(resp);	      
 	    }
-	  
-	  hist_add.push_back(hist_list_Njets);
-	}
-	 
-	
+	 hist_add.push_back(hist_list_Njets);
+      }
+      
+      //TF_NBJet->cd();
+      vector<TH1D*> h_TF_sample;
+      vector<const char*> sample_names;
+      const char* samp_name1 = new char[50];
+      const char* samp_name2 = new char[50];
+      const char* samp_name3 = new char[50];
+      const char* samp_name4 = new char[50];
+      samp_name1 = "h_TF_TTJets";
+      samp_name2 = "h_TF_TTGJets";
+      samp_name3 = "h_TF_WJets";
+      samp_name4 = "h_TF_WGJets";
+
+      sample_names = {samp_name1, samp_name2, samp_name3, samp_name4};
+      
+      
+	//sample_name = {"TTJets","TTGJets","WJets","WGJets"};
+     
+      for (int ifile =0; ifile < f.size(); ifile++){
+	TH1D* h_CR = (TH1D*)hist_add[ifile].at(1)->Clone(); 
+	TH1D* h_TF = (TH1D*) hist_add[ifile].at(0)->Clone(sample_names[ifile]);
+	cout << "working!!" << endl;		
+      	h_TF->Divide(h_CR);
+	TF_NBJet ->cd();
+	h_TF->Write();	
+      }
+
+      
+      // for (int ifile=0; ifile < f.size(); ifile++){
+      // TF_NBJet ->cd();
+      // TH1F* hists[100];
+      // hists[ifile] = (TH1F*) h_TF_sample[ifile];      
+      // }
+
+      // TF_NBJet ->cd();
+      // TF_NBJet ->Write();
+      // TF_NBJet ->Close();
+            	      
+
       for (int ibkg=0; ibkg<3; ibkg+=2){
 	vector<TH1F*> h_added;
 	cout << "ibkg: " << ibkg << endl;
@@ -469,12 +510,22 @@ void Bin_NB_TF(string pathname)
 	  cout << "sum is: " << h_total->Integral() << endl;
 	  h_added.push_back(h_total);
 	}
+
 	float energy=energyy[0];
-	int xrange=0.0;	  
-	TH1D* h_CR =(TH1D*)hist_add[ibkg].at(1)->Clone();
-	TH1D* h_TF = (TH1D*)hist_add[ibkg].at(0)->Clone();	
+	int xrange=0.0;
+	//vector<TH1D*> h_TF;
+	
+	TH1D* h_CR = (TH1D*)hist_add[ibkg].at(1)->Clone();
+	TH1D* h_TF = (TH1D*)hist_add[ibkg].at(0)->Clone();
 	h_TF->Divide(h_CR);
 	
+
+	// TF_NBJet->cd();
+	// vector<TH1D*> h_TF_GJets[4];
+	// TH1D* h_TF_GJets = (TH1D*)hist_add[ibkg+1].at(0)->Clone();
+	// TH1D* h_CR_GJets =(TH1D*)hist_add[ibkg+1].at(1)->Clone();	
+	// h_TF_GJets->Divide(h_CR_GJets);
+		
 	//x axis title for all plots///
 	vector<string>diff_title;
 	diff_title = {"Bin_No."};
@@ -488,6 +539,7 @@ void Bin_NB_TF(string pathname)
 	  
 	//calling generate_1Dplot which will take this vector of histograms and 
 	generate_1Dplot(h_added,h_TF,full_path,energy,xmax[ibkg],xmin[ibkg],leg_head,false,true,false,true,filetag[ibkg].c_str(),xtitle[ibkg].c_str(),rebin[ibkg]);
+	
       }
     }
 }
