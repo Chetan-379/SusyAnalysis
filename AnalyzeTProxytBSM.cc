@@ -99,6 +99,15 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
   double sumwt = 0;
   
   int nEvents=0, NGenL=0, NLostElectrons=0, NLostMuons=0, NEFakePho=0;
+  string src_file="TF_NBJet.root";
+  TFile *root_file = new TFile(src_file.c_str());
+  TH1F* h_TF;	   
+  if(s_sample.Contains("TTG")) h_TF = (TH1F*) root_file ->Get("h_TF_TTGJets");
+  if(s_sample.Contains("TTJets") || s_sample.Contains("TTJets_Leptons")) h_TF = (TH1F*) root_file ->Get("h_TF_TTJets");
+  if(s_sample.Contains("WJets")) h_TF = (TH1F*) root_file ->Get("h_TF_WJets");
+  if(s_sample.Contains("WGJets_MonoPhoton_PtG-40to130UL")||s_sample.Contains("WGJets_MonoPhoton_PtG-130UL")) h_TF = (TH1F*) root_file ->Get("h_TF_WGJets");
+
+	 
 
   for (Long64_t jentry=0; jentry<fChain->GetEntries(); jentry++){
     fDirector.SetReadEntry(jentry);
@@ -326,7 +335,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	    h_NHadJets[6] -> Fill(NHadJets,wt1);
 	    
 	  }
-
+	 
 
       //for stitching part
       double minDR_pho_gen_lep, minDR_pho_qg;
@@ -414,6 +423,76 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	  
 	  if (lost_mu_SR){
 	    h_Lost_mu_SR_binned -> Fill(TFbins,wt1);
+	  }
+	
+	  
+	  //cout << h_TF->GetName() << endl;
+	  
+	  if (lost_elec_CR){		    
+	    //calculating the SR yield in diff bins
+	    float TF=0;	           
+	   
+	   
+	    for(int ibin = 0;ibin < 7; ibin++){
+	      double wt2=0; 
+
+	      if (ibin == 1){
+		if (NHadJets==2) TF = h_TF ->GetBinContent(1);
+		if (NHadJets==3) TF = h_TF ->GetBinContent(2);
+		if (NHadJets==4) TF = h_TF ->GetBinContent(3);		
+		wt2 = TF*wt1;		  
+		for(int jbin =1; jbin <=7; jbin++){
+		  h_Lost_e_SR_srch_binned_pred->Fill(SrchBins,wt2);
+		  //SR_pred[jbin] = TF*h_Lost_e_CR_binned->h_TF ->GetBinContent(jbin);
+		}
+	      }
+	      
+	      if (ibin == 2){
+		TF = h_TF ->GetBinContent(4);
+		wt2 = TF*wt1;		 
+		for(int jbin =8; jbin <=13; jbin++){
+		  h_Lost_e_SR_srch_binned_pred->Fill(SrchBins,wt2);
+		  //SR_pred[jbin] = TF*h_Lost_e_CR_binned->h_TF ->GetBinContent(jbin);
+		}
+	      }
+	      
+	      if (ibin == 3){
+		TF = h_TF ->GetBinContent(5);
+		wt2 = TF*wt1;	
+		for(int jbin =14; jbin <=18; jbin++){
+		  h_Lost_e_SR_srch_binned_pred->Fill(SrchBins,wt2);
+		  //SR_pred[jbin] = TF*h_Lost_e_CR_binned->h_TF ->GetBinContent(jbin);
+		}
+	      }
+	      
+	      if (ibin == 4){
+		TF = h_TF ->GetBinContent(6);
+		wt2 = TF*wt1;	
+		for(int jbin =19; jbin <=23; jbin++){
+		  h_Lost_e_SR_srch_binned_pred->Fill(SrchBins,wt2);
+		  //SR_pred[jbin] = TF*h_Lost_e_CR_binned->h_TF ->GetBinContent(jbin);
+		}
+	      }
+	      
+	      if (ibin == 5){
+		TF = h_TF ->GetBinContent(7);
+		wt2 = TF*wt1;
+		for(int jbin = 24; jbin <= 28; jbin++){
+		  h_Lost_e_SR_srch_binned_pred->Fill(SrchBins,wt2);
+		  //SR_pred[jbin] = TF*h_Lost_e_CR_binned->h_TF ->GetBinContent(jbin);
+		}
+	      }
+	      
+	      if (ibin == 6){
+		TF = h_TF ->GetBinContent(7);
+		wt2 = TF*wt1;
+		for(int jbin = 24; jbin <= 28; jbin++){
+		  h_Lost_e_SR_srch_binned_pred->Fill(SrchBins,wt2);
+		  //SR_pred[jbin] = TF*h_Lost_e_CR_binned->h_TF ->GetBinContent(jbin);
+		}
+	      }	    
+	      //root_file->Close();
+	    }
 	  }
 
 
@@ -651,25 +730,9 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
   cout << h_NHadJets[5]->Integral() << endl;
   cout << h_NHadJets[6]->Integral() << endl;
 
-  // //calculating the SR yield in diff bins
-  // float TF=0;
-  // TH1D* h_temp = TH1D* h_Lost_e_CR_binned->Clone();
-  // h_Lost_e_TF = h_Lost_e_CR_binned->Clone();
-  // h_Lost_e_TF->Divide(h_temp);
-  
-  
-  // vector<float> SR_pred[35];
-  // for(int ibin = 0;ibin < 8; ibin++){
-  //   //TF=h_Lost_e_SR_binned->GetBinContent(ibin)/h_Lost_e_CR_binned->GetBinContent(ibin);
-  //   TF= h_Lost_e_TF-> GetBinContent(ibin);
-    
-  //   for(int jbin =1; jbin < 8; jbin++){
-  //     SR_pred[jbin] = TF*h_Lost_e_CR_binned->GetBinContent(jbin);
-  //   }
-  // }
 
   
-} // End Eventloop
+}// End Eventloop
 
 
 
@@ -1358,24 +1421,24 @@ int AnalyzeTProxytBSM::getBinNoV6_WithOnlyBLSelec(int nHadJets,int nbjets)
        // if (k > decade) {
        // 	 cout << "sum weight" << sumwt << endl;
        // 	 cout << "NHadjets Integral: " << h_NHadJets[0]->Integral() << endl;
-       // 	 cout << "overflow NhadJets: " << h_NHadJets[0]->GetBinContent(h_NHadJets[0]->GetNbinsX() + 1) << endl;
-       // 	 cout << "underflow NHadJets: " << h_NHadJets[0]->GetBinContent(-1) << "\n\n";
+       // 	 cout << "overflow NhadJets: " << h_NHadJets[0]->h_TF ->GetBinContent(h_NHadJets[0]->GetNbinsX() + 1) << endl;
+       // 	 cout << "underflow NHadJets: " << h_NHadJets[0]->h_TF ->GetBinContent(-1) << "\n\n";
        // }
 
        // //h_MET[0]->Fill(0.0000,wt1);
        // h_MET[0]->Fill(MET,wt1);
        // if (k > decade) {
        // 	 cout << "MET Integral: " << h_MET[0]->Integral() << endl;
-       // 	 cout << "overflow MET: " << h_MET[0]->GetBinContent(h_MET[0]->GetNbinsX() + 1) << endl;
-       // 	 cout << "underflow MET: " << h_MET[0]->GetBinContent(-1) << "\n\n";  
+       // 	 cout << "overflow MET: " << h_MET[0]->h_TF ->GetBinContent(h_MET[0]->GetNbinsX() + 1) << endl;
+       // 	 cout << "underflow MET: " << h_MET[0]->h_TF ->GetBinContent(-1) << "\n\n";  
        // }
 
        // //h_Pho_pT[0] -> Fill(0.0000,wt1);
        // h_Pho_pT[0] -> Fill(bestPhoton.Pt(),wt1);
        // if (k > decade) {
        // 	 cout << "Photon pt Integral: " << h_Pho_pT[0]->Integral() << endl;
-       // 	 cout << "overflow Pho Pt: " << h_Pho_pT[0]->GetBinContent(h_Pho_pT[0]->GetNbinsX() + 1) << endl;
-       // 	 cout << "underflow Photon pt: " << h_Pho_pT[0]->GetBinContent(-1) << "\n\n";
+       // 	 cout << "overflow Pho Pt: " << h_Pho_pT[0]->h_TF ->GetBinContent(h_Pho_pT[0]->GetNbinsX() + 1) << endl;
+       // 	 cout << "underflow Photon pt: " << h_Pho_pT[0]->h_TF ->GetBinContent(-1) << "\n\n";
        // }
 
 

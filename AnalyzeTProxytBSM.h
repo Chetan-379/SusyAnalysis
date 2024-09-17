@@ -64,7 +64,7 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   TH1D *h_Lost_e_TF;
   TH1F *h_Lost_mu_SR_Pho_Pt, *h_Lost_mu_CR_Pho_Pt, *h_Lost_mu_SR_binned, *h_Lost_mu_CR_binned;  
   TH1F *h_FR_SR_binned;
-  TH1F *h_Lost_e_SR_srch_binned, *h_Lost_e_CR_srch_binned;
+  TH1F *h_Lost_e_SR_srch_binned, *h_Lost_e_CR_srch_binned, *h_Lost_e_SR_srch_binned_pred;
   vector<double> METLowEdge={200,300,370,450,600,750,900};
   vector<double> METLowEdge_1={200,300,370,450,600,750};
   vector<double> METLowEdge_2={200,300,370,450,600};
@@ -178,8 +178,9 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
   h_Lost_e_SR_binned = new TH1F("lost_e_SR_binned","lost_e_SR_binned",10,0,10);
   h_Lost_e_TF = new TH1D("h_Lost_e_TF","h_Lost_e_TF",10,0.0,10.0);
 
-  h_Lost_e_SR_srch_binned = new TH1F("lost_e_SR_srch_binned","lost_e_SR_srch_binned",35,0,35);
+  h_Lost_e_SR_srch_binned = new TH1F("lost_e_SR_srch_binned","lost_e_SR_srch_binned",35,0,35); 
   h_Lost_e_CR_srch_binned = new TH1F("lost_e_CR_srch_binned","lost_e_CR_srch_binned",35,0,35);
+  h_Lost_e_SR_srch_binned_pred = new TH1F("lost_e_SR_srch_binned_pred","lost_e_SR_srch_binned_pred",35,0,35);
 
   h_Lost_mu_SR_binned = new TH1F("lost_mu_SR_binned","lost_mu_SR_binned",10,0,10);
   h_Lost_mu_CR_binned = new TH1F("lost_mu_CR_binned","lost_mu_CR_binned",10,0,10);
