@@ -283,7 +283,7 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio,char const *tag_name=""
   hist_ratio->GetXaxis()->SetTitleSize(0.13);
   hist_ratio->GetYaxis()->SetTitle("SR/CR");//TF = #frac{N_{SR}}{N_{CR}}");//(0#mu,1#gamma)}{(1#mu,1#gamma)}");
   hist_ratio->GetXaxis()->SetLabelSize(0.1);
-  hist_ratio->GetYaxis()->SetRangeUser(0.0,1.7);
+  hist_ratio->GetYaxis()->SetRangeUser(0.0,1.2);
   hist_ratio->GetXaxis()->SetRangeUser(xmin,xrange+4);
   // if(which_TFbins==1) //default 8 bins                                                                                                    
     //   hist_ratio->GetXaxis()->SetRangeUser(0,10);//xmin,xrange);                                                                                                 
@@ -379,7 +379,7 @@ void KinVar_TF(string pathname)
   vector<string> f;
   //f = {"./root_files/Summer20UL18_TTJets_HT.root", "./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_WJetsToLNu_HT.root", "./root_files/Summer20UL18_WGJets_MonoPhoton.root", "./root_files/Summer20UL18_ZJetsToNuNu_HT.root", "./root_files/Summer20UL18_ZNuNuGJets_MonoPhoton.root", "./root_files/Summer20UL18_QCD_HT.root", "./root_files/Summer20UL18_GJets_DR-0p4_HT.root"};
 
-  f = {"./root_files/Summer20UL18_TTJets_HT.root", "./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_WJetsToLNu_HT.root", "./root_files/Summer20UL18_WGJets_MonoPhoton.root"};
+  f = {"Summer20UL18_TTJets_HT.root", "Summer20UL18_TTGJets_Tune.root", "Summer20UL18_WJetsToLNu_HT.root", "Summer20UL18_WGJets_MonoPhoton.root"};
   //f = {"./root_files/Summer20UL18_WJetsToLNu_HT.root", "./root_files/Summer20UL18_WGJets_MonoPhoton.root"};
   
 
@@ -469,7 +469,7 @@ void KinVar_TF(string pathname)
 
 	//path to save the files a jpg or pdf
 	vector<string> folder;	  
-	folder = {"plots/LL_plots/TTG_/", "./","plots/LL_plots/WG_/"}; 
+	folder = {"plots/", "./","plots/"}; 
 	sprintf(full_path,"%s/%sStitched_Normalised_%s_SR_CR_overlay_%s",pathname.c_str(),folder[ibkg].c_str(),diff_title[bigi].c_str(),filetag[ibkg].c_str());
 
 	//calling generate_1Dplot which will take this vector of histograms 
