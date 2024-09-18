@@ -1,7 +1,7 @@
 const int n_pl = 4;
 bool logx = false;
 //defining the legends for each plots
-TString legend_text[10] = {"SR","CR","hist3", "hist4", "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
+TString legend_text[10] = {"expected SR","predicted SR", "hist4", "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
 int line_width[12] = {2,2,2,2,2,2,2,2,2,2,2,2};
 int line_style[12] = {1,1,1,1,1,1,1,1,1,1,1,1};
 int line_color[9] = {kBlack, kRed, kGreen+2, kMagenta, kBlue, kAzure + 7 , kCyan + 1 , kGreen + 3 };
@@ -133,31 +133,25 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio,char const *tag_name=""
   p1->SetTopMargin(1);
 
   p1->cd();
-  p1->SetGridx();
-  pad_1->SetGridx();
+  //p1->SetGridx();
+  //pad_1->SetGridx();
   
   vector<TString> legName;
   std::string leg_head_str = leg_head;
   double x = 0.15;
   double y = 0.90;
+
   TLegend *legend; //legend to be drawn on the plot - shift x,ys if you want to move this on the canvas
-  legend = new TLegend(0.72,0.70,0.86,0.85);  
+  legend = new TLegend(0.18,0.78,0.72,0.88);  
   legend->SetTextSize(0.030);
   legend->SetLineColor(kWhite);
+  legend->SetNColumns(2);
   char* lhead = new char[100];
-
-  // TLegend *legend1; //legend to be drawn on the plot - shift x,ys if you want to move this on the canvas
-  // legend1 = new TLegend(0.65,0.55,0.79,0.8);  
-  // legend1->SetTextSize(0.030);
-  // legend1->SetLineColor(kWhite);
-  //char* lhead = new char[100];
   
   sprintf(lhead,"#bf{%s} ",title); // legend header -- for example you are plotting this for WGJets then title string can be "WGJets"
   legend->SetHeader(lhead);
   legend->SetLineColor(kWhite);
 
-  //legend1->SetHeader(lhead);
-  //legend1->SetLineColor(kWhite);
 
   TLegendEntry* leg_entry[11];
   TLegendEntry* leg_entry1[11];
@@ -201,25 +195,49 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio,char const *tag_name=""
     hist.at(i)->GetYaxis()->SetTitleOffset(1.1);
     hist.at(i)->GetXaxis()->SetTitleOffset(1.1);
 
-    //labelling the bins
-    vector<string> binlabel{"(2,0)","(3,0)","(4,0)","(5-6,0)","(>=7,0)","(2-4,1)","(5-6,1)","(>=7,1)"};
-    for (int j=0; j < 8; j++){
-      hist.at(i)->GetXaxis()-> SetBinLabel(j+2,binlabel[j].c_str());}
+    // //labelling the bins
+    // vector<string> binlabel{"(2,0)","(3,0)","(4,0)","(5-6,0)","(>=7,0)","(2-4,1)","(5-6,1)","(>=7,1)"};
+    // for (int j=0; j < 8; j++){
+    //   hist.at(i)->GetXaxis()-> SetBinLabel(j+2,binlabel[j].c_str());}
 
     TLatex* textOnTop = new TLatex();
-  textOnTop->SetTextSize(0.04);
-
-  //textOnTop->DrawLatexNDC(0.13,0.96,"CMS it{#bf{Simulation Preliminary}}");
-  textOnTop->DrawLatexNDC(0.13,0.96,"it{#bf{Work in Progress}}");
-  
-  sprintf(lhead,"%s ",title);
-  //textOnTop->DrawLatexNDC(0.79,0.96,lhead);
-  textOnTop->DrawLatexNDC(0.79,0.4,lhead);
-  char* en_lat = new char[500];
-  textOnTop->SetTextSize(0.035);
+    textOnTop->SetTextSize(0.04);
+    
+    //textOnTop->DrawLatexNDC(0.13,0.96,"CMS it{#bf{Simulation Preliminary}}");
+    textOnTop->DrawLatexNDC(0.13,0.96,"it{#bf{Work in Progress}}");
+    
+    sprintf(lhead,"%s ",title);
+    //textOnTop->DrawLatexNDC(0.79,0.96,lhead);
+    textOnTop->DrawLatexNDC(0.79,0.4,lhead);
+    char* en_lat = new char[500];
+    textOnTop->SetTextSize(0.035);
     if(DoRebin) { //if rebin flag is on - this will reduce the bin size by half
-     hist.at(i)->Rebin(rebin);
+      hist.at(i)->Rebin(rebin);
     }
+    
+    if(hist.at(i)->GetMaximum() > ymax) ymax = hist.at(i)->GetMaximum();
+    if(hist.at(i)->GetMinimum() < ymin) ymin = hist.at(i)->GetMinimum();
+    
+    // legend = new TLegend(0.32,0.65,0.86,0.85);  
+    // legend->SetTextSize(0.030);
+    // legend->SetLineColor(kWhite);
+    // legend->SetNColumns(4);
+    // char* lhead = new char[100];
+    
+    // sprintf(lhead,"#bf{%s} ",title); // legend header -- for example you are plotting this for WGJets then title string can be "WGJets"
+    // legend->SetHeader(lhead);
+    // legend->SetLineColor(kWhite);
+    
+    //legend1->SetHeader(lhead);
+    //legend1->SetLineColor(kWhite);
+
+    // TLegendEntry* leg_entry[11];
+    // TLegendEntry* leg_entry1[11];
+    // float x_label_size = 0.045;
+    // double ymin = 100000.0;
+    // double ymax = 0.0;
+    // double xrange = xmax;
+    
     //setting up the legend style and all
     vector <string> Intg;
     char final_label[100];
@@ -238,8 +256,8 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio,char const *tag_name=""
     //leg_entry[i] = legend->AddEntry(hist.at(i),(hist.at(i)->Integral().c_str()),"xsl");
     leg_entry[i]->SetTextColor(hist.at(i)->GetLineColor());
     //leg_entry1[i]->SetTextColor(hist.at(i)->GetLineColor());
-    if(hist.at(i)->GetMaximum() > ymax) ymax = hist.at(i)->GetMaximum();
-    if(hist.at(i)->GetMinimum() < ymin) ymin = hist.at(i)->GetMinimum();
+    // if(hist.at(i)->GetMaximum() > ymax) ymax = hist.at(i)->GetMaximum();
+    // if(hist.at(i)->GetMinimum() < ymin) ymin = hist.at(i)->GetMinimum();
     //setLastBinAsOverFlow(hist.at(i),0);
     
   }
@@ -250,7 +268,7 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio,char const *tag_name=""
   //  if(ymax<=10) ymax=10;
   for(int i = 0; i < (int)hist.size(); i++) {
     //if(!normalize) hist.at(i)->GetYaxis()->SetRangeUser(ymin*10,ymax*(ymax/5));
-    if(!normalize) hist.at(i)->GetYaxis()->SetRangeUser(ymin*100,ymax*10);
+    if(!normalize) hist.at(i)->GetYaxis()->SetRangeUser(0.001,ymax*100);
     else
       hist.at(i)->GetYaxis()->SetRangeUser(ymin,ymax*10);
     //    p1->SetGrid();
@@ -259,6 +277,14 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio,char const *tag_name=""
     else   hist.at(i)->Draw("hist sames"); //overlaying the histograms
 	
   }
+
+  // TLegend *legend; //legend to be drawn on the plot - shift x,ys if you want to move this on the canvas
+  // legend = new TLegend(0.72,0.70,0.86,0.85);  
+  // legend->SetTextSize(0.030);
+  // legend->SetLineColor(kWhite);
+  // legend->SetNColumns(2);
+  // char* lhead = new char[100];
+
   
   legend->Draw();
   //legend1->Draw();
@@ -278,41 +304,52 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio,char const *tag_name=""
   //textOnTop->DrawLatexNDC(0.12,0.96,"CMS #it{#bf{Preliminary}}");
   textOnTop->DrawLatexNDC(0.12,0.91," #it{#bf{Work in Progress}}");
   
-  char* en_lat = new char[500];
-  textOnTop->SetTextSize(0.04);
-  float inlumi=energy;
-  sprintf(en_lat,"#bf{%0.2f fb^{-1} (13 TeV)}",inlumi);
-  textOnTop->DrawLatexNDC(0.7,0.91,en_lat);
+  // char* en_lat = new char[500];
+  // textOnTop->SetTextSize(0.04);
+  // float inlumi=energy;
+  // sprintf(en_lat,"#bf{%0.2f fb^{-1} (13 TeV)}",inlumi);
+  // textOnTop->DrawLatexNDC(0.7,0.91,en_lat);
 
-  // TLatex Tl;
-  // Tl.SetTextSize(0.055);
-  // Tl.SetTextColor(kBlack);
-  // Tl.DrawLatex(3.5,0.40,"N^{ 0}_{ 2-4}");
-  // Tl.DrawLatex(10.5,100,"N^{ 0}_{ 5-6}");
-  // Tl.DrawLatex(15.5,100,"N^{ 0}_{ #geq7}");
-  // Tl.DrawLatex(21.5,100,"N^{ #geq1}_{ 2-4}");
-  // Tl.DrawLatex(26.5,100,"N^{ #geq1}_{ 5-6}");
-  // Tl.DrawLatex(33.5,100,"N^{ #geq1}_{ #geq7}");
-  // Tl.DrawLatex(1.5,0.1,"N^{ 0}_{ 2}");
-  // Tl.DrawLatex(3.5,0.1,"N^{ 0}_{ 3}");
-  // Tl.DrawLatex(5.5,0.1,"N^{ 0}_{ 4}");
-  // Tl.DrawLatex(7.5,0.1,"N^{ 0}_{ 5,6}");
-  // Tl.DrawLatex(9.5,0.1,"N^{ 0}_{>=7}");
-  // Tl.DrawLatex(11.5,0.1,"N^{ #geq1}_{ #geq2}");
-  // Tl.DrawLatex(13.5,0.1,"N^{ #geq1}_{ 5,6}");
-  // Tl.DrawLatex(15.5,0.1,"N^{ #geq1}_{ #geq7}");
+  TLine *line1V7=new TLine( 8.0,0.001, 8.0,ymax*5);
+  TLine *line2V7=new TLine(14.0,0.001, 14.0,ymax*5);
+  TLine *line3V7=new TLine(19.0,0.001, 19.0,ymax*5);
+  TLine *line4V7=new TLine(24.0,0.001, 24.0,ymax*5);
+  TLine *line5V7=new TLine(29.0,0.001, 29.0,ymax*5);
 
+  
+  line1V7->Draw();      line2V7->Draw();  line3V7->Draw();
+  line4V7->Draw();      line5V7->Draw(); //line6V7->Draw();          
+
+  TArrow *arrow1 = new TArrow( 1.0,ymax*5, 8.0,ymax*5,0.01,"<|>");
+  TArrow *arrow2 = new TArrow( 8.0,ymax*5, 14.0,ymax*5,0.01,"<|>");
+  TArrow *arrow3 = new TArrow(14.0,ymax*5, 19.0,ymax*5,0.01,"<|>");
+  TArrow *arrow4 = new TArrow(19.0,ymax*5, 24.0,ymax*5,0.01,"<|>");
+  TArrow *arrow5 = new TArrow(24.0,ymax*5, 29.0,ymax*5,0.01,"<|>");
+  TArrow *arrow6 = new TArrow(29.0,ymax*5, 35.0,ymax*5,0.01,"<|>");
+    
+  arrow1->Draw(); arrow2->Draw(); arrow3->Draw();
+  arrow4->Draw(); arrow5->Draw(); arrow6->Draw();
+  
+  TLatex Tl;
+  Tl.SetTextSize(0.035);
+  Tl.DrawLatex(3.5,ymax*5.9,"N^{ 0}_{ 2-4}");
+  Tl.DrawLatex(9.5,ymax*5.9,"N^{ 0}_{ 5-6}");
+  Tl.DrawLatex(15.5,ymax*5.9,"N^{ 0}_{ #geq7}");
+  Tl.DrawLatex(19.5,ymax*5.9,"N^{ #geq1}_{ 2-4}");
+  Tl.DrawLatex(25.5,ymax*5.9,"N^{ #geq1}_{ 5-6}");
+  Tl.DrawLatex(30.5,ymax*5.9,"N^{ #geq1}_{ #geq7}");
+  
+  //gPad->Update();
  
-
   hist_ratio->SetLineWidth(2);
   hist_ratio->SetLineStyle(1);
   hist_ratio->SetMarkerSize(0.2);
   hist_ratio->SetLineColor(kBlack);
   hist_ratio->SetTitle(" ");  
   hist_ratio->GetXaxis()->SetTitleSize(0.13);
-  hist_ratio->GetYaxis()->SetTitle("SR/CR");//TF = #frac{N_{SR}}{N_{CR}}");//(0#mu,1#gamma)}{(1#mu,1#gamma)}");
+  hist_ratio->GetYaxis()->SetTitle("exp/pred");//TF = #frac{N_{SR}}{N_{CR}}");//(0#mu,1#gamma)}{(1#mu,1#gamma)}");
   hist_ratio->GetXaxis()->SetLabelSize(0.1);
-  hist_ratio->GetYaxis()->SetRangeUser(0.0,1.7);
+  hist_ratio->GetYaxis()->SetRangeUser(-0.5,2.5);
   hist_ratio->GetXaxis()->SetRangeUser(xmin,xrange+4);
   // if(which_TFbins==1) //default 8 bins                                                                                                    
     //   hist_ratio->GetXaxis()->SetRangeUser(0,10);//xmin,xrange);                                                                                                 
@@ -408,25 +445,24 @@ void Bin_NB_TF(string pathname)
   char* full_path11= new char[2000];
   char *leg_head = new char[200];
 
-  TFile *TF_NBJet;
-  TF_NBJet = new TFile("TF_NBJet.root", "RECREATE");
-
+  
   //define your files here
   vector<string> f;
-  //  f = {"./root_files/Summer20UL18_TTJets_HT.root", "./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_WJetsToLNu_HT.root", "./root_files/Summer20UL18_WGJets_MonoPhoton.root"};
+  f = {"./root_files/Summer20UL18_TTJets_HT.root", "./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_WJetsToLNu_HT.root", "./root_files/Summer20UL18_WGJets_MonoPhoton.root"};
 
-  f = {"Summer20UL18_TTJets_HT.root", "Summer20UL18_TTGJets_Tune.root", "Summer20UL18_WJetsToLNu_HT.root", "Summer20UL18_WGJets_MonoPhoton.root"};
-
+  //f = {"Summer20UL18_TTJets_HT.root", "Summer20UL18_TTGJets_Tune.root", "Summer20UL18_WJetsToLNu_HT.root", "Summer20UL18_WGJets_MonoPhoton.root"};
+  //f = {"./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_TTGJets_Tune.root"};
   //define your histograms to be overlayed from here 
   vector<string> histnames1;
-  histnames1 = {"lost_e_SR_binned","lost_e_CR_binned"};  
+  
+  histnames1 = {"lost_e_SR_srch_binned", "lost_e_SR_srch_binned_pred", "lost_e_CR_srch_binned"};
+  //histnames1 = {"lost_e_SR_srch_binned", "lost_e_SR_srch_binned_pred"};
   
   vector<string> baseline1;
   for (int i=0; i<histnames1.size();i++){
     baseline1.push_back(histnames1[i]);
   }
-  
-  
+    
   //string to be added to output file name - useful when you have different files and reading the same histograms from these
   vector<vector<string>> bigbaseline;
   bigbaseline = {baseline1};
@@ -461,56 +497,37 @@ void Bin_NB_TF(string pathname)
 	 hist_add.push_back(hist_list_Njets);
       }
       
-      //TF_NBJet->cd();
-      vector<TH1D*> h_TF_sample;
-      vector<const char*> sample_names;
-      const char* samp_name1 = new char[50];
-      const char* samp_name2 = new char[50];
-      const char* samp_name3 = new char[50];
-      const char* samp_name4 = new char[50];
-      samp_name1 = "h_TF_TTJets";
-      samp_name2 = "h_TF_TTGJets";
-      samp_name3 = "h_TF_WJets";
-      samp_name4 = "h_TF_WGJets";
-
-      sample_names = {samp_name1, samp_name2, samp_name3, samp_name4};
       
+      TFile *TF_NBJet;
+      TF_NBJet = new TFile("root_files/TF_NBJet.root", "RECREATE");
       
-	//sample_name = {"TTJets","TTGJets","WJets","WGJets"};
-     
-      for (int ifile =0; ifile < f.size(); ifile++){
-	TH1D* h_CR = (TH1D*)hist_add[ifile].at(1)->Clone(); 
-	TH1D* h_TF = (TH1D*) hist_add[ifile].at(0)->Clone(sample_names[ifile]);
-	cout << "working!!" << endl;		
-      	h_TF->Divide(h_CR);
-	TF_NBJet ->cd();
-	h_TF->Write();	
+      TH1F* h_total_SR = (TH1F*)hist_add[0][0]-> Clone();
+      TH1F* h_total_CR = (TH1F*)hist_add[0][1]-> Clone();
+      for (int ifile =1; ifile < f.size(); ifile++){
+	cout << "SR Integral of sample" << ifile+1 << ": " << hist_add[ifile][0]->Integral() << endl;
+	h_total_SR ->Add(hist_add[ifile][0]);
+	h_total_CR ->Add(hist_add[ifile][2]);
       }
-
+      cout << "Total Integral: " << h_total_SR->Integral() << endl;
+      //TH1D* h_CR = (TH1D*)hist_add[ifile].at(2)->Clone(); 
+      TH1D* h_TF = (TH1D*) h_total_SR->Clone("combined_TF");
+      h_TF->Divide(h_total_CR);
+      TF_NBJet ->cd();
+      h_TF->Write();	
       
-      // for (int ifile=0; ifile < f.size(); ifile++){
-      // TF_NBJet ->cd();
-      // TH1F* hists[100];
-      // hists[ifile] = (TH1F*) h_TF_sample[ifile];      
-      // }
-
-      // TF_NBJet ->cd();
-      // TF_NBJet ->Write();
-      // TF_NBJet ->Close();
-            	      
-
+                  	      
       for (int ibkg=0; ibkg<3; ibkg+=2){
-	vector<TH1F*> h_added;
-	cout << "ibkg: " << ibkg << endl;
-	for(int ihist=0; ihist<2; ihist++){
-	  cout << "adding hists: " << hist_add[ibkg][ihist]->GetName() << "("<< f[ibkg] <<") & " << hist_add[ibkg+1][ihist]->GetName() << "("<< f[ibkg+1] <<")" << endl;	  
-	  cout << hist_add[ibkg][ihist]->Integral() << "\t" << hist_add[ibkg+1][ihist]->Integral() << endl;
-	  TH1F* h_total= (TH1F*)hist_add[ibkg][ihist]-> Clone();
-	  h_total ->Add(hist_add[ibkg+1][ihist]);
-	  cout << "sum is: " << h_total->Integral() << endl;
-	  h_added.push_back(h_total);
-	}
-
+      	vector<TH1F*> h_added;
+      	cout << "ibkg: " << ibkg << endl;
+      	for(int ihist=0; ihist < 2; ihist++){
+      	  cout << "adding hists: " << hist_add[ibkg][ihist]->GetName() << "("<< f[ibkg] <<") & " << hist_add[ibkg+1][ihist]->GetName() << "("<< f[ibkg+1] <<")" << endl;	  
+      	  cout << hist_add[ibkg][ihist]->Integral() << "\t" << hist_add[ibkg+1][ihist]->Integral() << endl;
+      	  TH1F* h_total= (TH1F*)hist_add[ibkg][ihist]-> Clone();
+      	  h_total ->Add(hist_add[ibkg+1][ihist]);
+      	  cout << "sum is: " << h_total->Integral() << endl;
+      	  h_added.push_back(h_total);
+      	}
+	
 	float energy=energyy[0];
 	int xrange=0.0;
 	//vector<TH1D*> h_TF;
@@ -519,13 +536,6 @@ void Bin_NB_TF(string pathname)
 	TH1D* h_TF = (TH1D*)hist_add[ibkg].at(0)->Clone();
 	h_TF->Divide(h_CR);
 	
-
-	// TF_NBJet->cd();
-	// vector<TH1D*> h_TF_GJets[4];
-	// TH1D* h_TF_GJets = (TH1D*)hist_add[ibkg+1].at(0)->Clone();
-	// TH1D* h_CR_GJets =(TH1D*)hist_add[ibkg+1].at(1)->Clone();	
-	// h_TF_GJets->Divide(h_CR_GJets);
-		
 	//x axis title for all plots///
 	vector<string>diff_title;
 	diff_title = {"Bin_No."};
@@ -535,7 +545,7 @@ void Bin_NB_TF(string pathname)
 	//path to save the files a jpg or pdf
 	vector<string> folder;	  
 	folder = {"plots/LL_plots/TTG_/", "./","plots/LL_plots/WG_/"};
-	sprintf(full_path,"%s/%sStitched_binned_SR_CR_overlay_%s",pathname.c_str(),folder[ibkg].c_str(),filetag[ibkg].c_str());
+	sprintf(full_path,"%s/%sValidate_binned_SR_CR_overlay_%s",pathname.c_str(),folder[ibkg].c_str(),filetag[ibkg].c_str());
 	  
 	//calling generate_1Dplot which will take this vector of histograms and 
 	generate_1Dplot(h_added,h_TF,full_path,energy,xmax[ibkg],xmin[ibkg],leg_head,false,true,false,true,filetag[ibkg].c_str(),xtitle[ibkg].c_str(),rebin[ibkg]);
@@ -543,6 +553,7 @@ void Bin_NB_TF(string pathname)
       }
     }
 }
+
 
 
 

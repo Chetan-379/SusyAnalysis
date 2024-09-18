@@ -102,13 +102,14 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
   string src_file="TF_NBJet.root";
   TFile *root_file = new TFile(src_file.c_str());
   TH1F* h_TF;	   
-  if(s_sample.Contains("TTG")) h_TF = (TH1F*) root_file ->Get("h_TF_TTGJets");
-  if(s_sample.Contains("TTJets") || s_sample.Contains("TTJets_Leptons")) h_TF = (TH1F*) root_file ->Get("h_TF_TTJets");
-  if(s_sample.Contains("WJets")) h_TF = (TH1F*) root_file ->Get("h_TF_WJets");
-  if(s_sample.Contains("WGJets_MonoPhoton_PtG-40to130UL")||s_sample.Contains("WGJets_MonoPhoton_PtG-130UL")) h_TF = (TH1F*) root_file ->Get("h_TF_WGJets");
-
-	 
-
+  // if(s_sample.Contains("TTG")) h_TF = (TH1F*) root_file ->Get("h_TF_TTGJets");
+  // if(s_sample.Contains("TTJets") || s_sample.Contains("TTJets_Leptons")) h_TF = (TH1F*) root_file ->Get("h_TF_TTJets");
+  // if(s_sample.Contains("WJets")) h_TF = (TH1F*) root_file ->Get("h_TF_WJets");
+  // if(s_sample.Contains("WGJets_MonoPhoton_PtG-40to130UL")||s_sample.Contains("WGJets_MonoPhoton_PtG-130UL")) h_TF = (TH1F*) root_file ->Get("h_TF_WGJets");
+  h_TF = (TH1F*) root_file ->Get("combined_TF");
+  float TF=0;
+  double wt2=0;
+  
   for (Long64_t jentry=0; jentry<fChain->GetEntries(); jentry++){
     fDirector.SetReadEntry(jentry);
       
@@ -424,76 +425,72 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	  if (lost_mu_SR){
 	    h_Lost_mu_SR_binned -> Fill(TFbins,wt1);
 	  }
-	
-	  
-	  //cout << h_TF->GetName() << endl;
-	  
-	  if (lost_elec_CR){		    
-	    //calculating the SR yield in diff bins
-	    float TF=0;	           
-	   
-	   
-	    for(int ibin = 0;ibin < 7; ibin++){
-	      double wt2=0; 
 
-	      if (ibin == 1){
-		if (NHadJets==2) TF = h_TF ->GetBinContent(1);
-		if (NHadJets==3) TF = h_TF ->GetBinContent(2);
-		if (NHadJets==4) TF = h_TF ->GetBinContent(3);		
-		wt2 = TF*wt1;		  
-		for(int jbin =1; jbin <=7; jbin++){
-		  h_Lost_e_SR_srch_binned_pred->Fill(SrchBins,wt2);
-		  //SR_pred[jbin] = TF*h_Lost_e_CR_binned->h_TF ->GetBinContent(jbin);
-		}
-	      }
-	      
-	      if (ibin == 2){
-		TF = h_TF ->GetBinContent(4);
-		wt2 = TF*wt1;		 
-		for(int jbin =8; jbin <=13; jbin++){
-		  h_Lost_e_SR_srch_binned_pred->Fill(SrchBins,wt2);
-		  //SR_pred[jbin] = TF*h_Lost_e_CR_binned->h_TF ->GetBinContent(jbin);
-		}
-	      }
-	      
-	      if (ibin == 3){
-		TF = h_TF ->GetBinContent(5);
-		wt2 = TF*wt1;	
-		for(int jbin =14; jbin <=18; jbin++){
-		  h_Lost_e_SR_srch_binned_pred->Fill(SrchBins,wt2);
-		  //SR_pred[jbin] = TF*h_Lost_e_CR_binned->h_TF ->GetBinContent(jbin);
-		}
-	      }
-	      
-	      if (ibin == 4){
-		TF = h_TF ->GetBinContent(6);
-		wt2 = TF*wt1;	
-		for(int jbin =19; jbin <=23; jbin++){
-		  h_Lost_e_SR_srch_binned_pred->Fill(SrchBins,wt2);
-		  //SR_pred[jbin] = TF*h_Lost_e_CR_binned->h_TF ->GetBinContent(jbin);
-		}
-	      }
-	      
-	      if (ibin == 5){
-		TF = h_TF ->GetBinContent(7);
-		wt2 = TF*wt1;
-		for(int jbin = 24; jbin <= 28; jbin++){
-		  h_Lost_e_SR_srch_binned_pred->Fill(SrchBins,wt2);
-		  //SR_pred[jbin] = TF*h_Lost_e_CR_binned->h_TF ->GetBinContent(jbin);
-		}
-	      }
-	      
-	      if (ibin == 6){
-		TF = h_TF ->GetBinContent(7);
-		wt2 = TF*wt1;
-		for(int jbin = 24; jbin <= 28; jbin++){
-		  h_Lost_e_SR_srch_binned_pred->Fill(SrchBins,wt2);
-		  //SR_pred[jbin] = TF*h_Lost_e_CR_binned->h_TF ->GetBinContent(jbin);
-		}
-	      }	    
-	      //root_file->Close();
-	    }
+	  //validating TF Method
+	  if (lost_elec_CR){
+	    TF = h_TF->GetBinContent(TFbins+1);
+	    wt2 = TF*wt1;
+	    h_Lost_e_SR_srch_binned_pred->Fill(SrchBins,wt2);
 	  }
+
+	  // //calculating the SR yield in diff bins
+	  // if (lost_elec_CR){		    	    
+	  //   float TF=0;	           	   	   
+	  //   for(int ibin = 0;ibin < 7; ibin++){
+	  //     double wt2=0; 
+	      
+	  //     if (ibin == 1){
+	  // 	if (NHadJets==2) TF = h_TF ->GetBinContent(1);
+	  // 	if (NHadJets==3) TF = h_TF ->GetBinContent(2);
+	  // 	if (NHadJets==4) TF = h_TF ->GetBinContent(3);		
+	  // 	wt2 = TF*wt1;		  
+	  // 	for(int jbin =1; jbin <=7; jbin++){
+	  // 	  h_Lost_e_SR_srch_binned_pred->Fill(SrchBins,wt2);
+	  // 	}
+	  //     }
+	      
+	  //     if (ibin == 2){
+	  // 	TF = h_TF ->GetBinContent(4);
+	  // 	wt2 = TF*wt1;		 
+	  // 	for(int jbin =8; jbin <=13; jbin++){
+	  // 	  h_Lost_e_SR_srch_binned_pred->Fill(SrchBins,wt2);
+	  // 	}
+	  //     }
+	      
+	  //     if (ibin == 3){
+	  // 	TF = h_TF ->GetBinContent(5);
+	  // 	wt2 = TF*wt1;	
+	  // 	for(int jbin =14; jbin <=18; jbin++){
+	  // 	  h_Lost_e_SR_srch_binned_pred->Fill(SrchBins,wt2);
+	  // 	}
+	  //     }
+	      
+	  //     if (ibin == 4){
+	  // 	TF = h_TF ->GetBinContent(6);
+	  // 	wt2 = TF*wt1;	
+	  // 	for(int jbin =19; jbin <=23; jbin++){
+	  // 	  h_Lost_e_SR_srch_binned_pred->Fill(SrchBins,wt2);
+	  // 	}
+	  //     }
+	      
+	  //     if (ibin == 5){
+	  // 	TF = h_TF ->GetBinContent(7);
+	  // 	wt2 = TF*wt1;
+	  // 	for(int jbin = 24; jbin <= 28; jbin++){
+	  // 	  h_Lost_e_SR_srch_binned_pred->Fill(SrchBins,wt2);
+	  // 	}
+	  //     }
+	      
+	  //     if (ibin == 6){
+	  // 	TF = h_TF ->GetBinContent(7);
+	  // 	wt2 = TF*wt1;
+	  // 	for(int jbin = 24; jbin <= 28; jbin++){
+	  // 	  h_Lost_e_SR_srch_binned_pred->Fill(SrchBins,wt2);
+	  // 	}
+	  //     }	    
+	  //     //root_file->Close();
+	  //   }
+	  
 
 
 	  //================================================================================================================
