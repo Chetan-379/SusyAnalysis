@@ -115,7 +115,7 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio,char const *tag_name=""
   // p1->SetLeftMargin(0.14);
   // p1->SetTopMargin(0.05);
   // p1->cd();
-  // gStyle->SetOptStat(0);
+   gStyle->SetOptStat(0);
 
   //  auto *pad_1 = new TPad("pad_1","pad_1",0.,0.0,1.,0.32); pad_1->Draw();
   auto *pad_1 = new TPad("pad_1","pad_1",0.,0.0,1.,0.32); pad_1->Draw();
@@ -482,7 +482,7 @@ void all_combined_Bin_NB_TF(string pathname)
     // }
     
    	string filetag;
-	filetag = "TTG+WG";
+	filetag = "TTG+WG_2018";
 	//filetag={"TTGJets_Process_2018"," ", "WGJets_Process_2018", " "};
 	//luminosity for each year - depends if you want to use it or - generate1Dplot uses this number and add it on the top
 	vector<float>energyy;
@@ -538,14 +538,14 @@ void all_combined_Bin_NB_TF(string pathname)
 	    TH1F* h_total_SR_pred = (TH1F*)hist_file[0][2]-> Clone();	 
 
 	    //cout << "SR_pred Integral of sample: " << f[0] << ": " << hist_file[0][2]->Integral() << endl;
-	    cout << "SR_pred Integral of sample: " << f[0] << ": " << h_total_SR_pred->Integral() << endl;
+	    cout << "SR Integral of sample: " << f[0] << ": " << h_total_SR->Integral() << endl;
 	    for (int ifile =1; ifile < f.size(); ifile++){
-	      cout << "SR_pred Integral of sample: " << f[ifile] << ": " << hist_file[ifile][2]->Integral() << endl;
+	      cout << "SR Integral of sample: " << f[ifile] << ": " << hist_file[ifile][0]->Integral() << endl;
 	      h_total_SR ->Add(hist_file[ifile][0]);	    
 	      h_total_CR ->Add(hist_file[ifile][1]);
 	      h_total_SR_pred ->Add(hist_file[ifile][2]);
 	    }
-	    cout << "Total Integral: " << h_total_SR_pred->Integral() << endl;
+	    cout << "Total Integral: " << h_total_SR->Integral() << endl;
 	    h_added = {h_total_SR, h_total_SR_pred};
 	   
 	  
