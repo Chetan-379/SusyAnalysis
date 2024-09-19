@@ -535,7 +535,7 @@ void all_combined_Bin_NB_TF(string pathname)
 	    vector<TH1F*> h_added;	    	    
 	    TH1F* h_total_SR = (TH1F*)hist_file[0][0]-> Clone();	 
 	    TH1F* h_total_CR = (TH1F*)hist_file[0][1]-> Clone();
-	    TH1F* h_total_SR_pred = (TH1F*)hist_file[0][2]-> Clone();	 
+	    TH1F* h_total_SR_pred = (TH1F*)hist_file[0][1]-> Clone();	 
 
 	    //cout << "SR_pred Integral of sample: " << f[0] << ": " << hist_file[0][2]->Integral() << endl;
 	    cout << "SR Integral of sample: " << f[0] << ": " << h_total_SR->Integral() << endl;
@@ -543,9 +543,10 @@ void all_combined_Bin_NB_TF(string pathname)
 	      cout << "SR Integral of sample: " << f[ifile] << ": " << hist_file[ifile][0]->Integral() << endl;
 	      h_total_SR ->Add(hist_file[ifile][0]);	    
 	      h_total_CR ->Add(hist_file[ifile][1]);
-	      h_total_SR_pred ->Add(hist_file[ifile][2]);
+	      h_total_SR_pred ->Add(hist_file[ifile][1]);
 	    }
-	    cout << "Total Integral: " << h_total_SR->Integral() << endl;
+	    cout << "Total SR Integral: " << h_total_SR->Integral() << endl;
+	    cout << "Total SR_pred Integral: " << h_total_SR_pred->Integral() << endl;
 	    h_added = {h_total_SR, h_total_SR_pred};
 	   
 	  
