@@ -448,7 +448,7 @@ void all_combined_Bin_NB_TF(string pathname)
   
   //define your files here
   vector<string> f;
-  f = {"./root_files/Summer20UL18_TTJets_HT.root", "./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_WJetsToLNu_HT.root", "./root_files/Summer20UL18_WGJets_MonoPhoton.root"};
+  f = {"./root_files/Summer20UL18_TTJets.root", "./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_WJetsToLNu_HT.root", "./root_files/Summer20UL18_WGJets_MonoPhoton.root"};
 
   //f = {"Summer20UL18_TTJets_HT.root", "Summer20UL18_TTGJets_Tune.root", "Summer20UL18_WJetsToLNu_HT.root", "Summer20UL18_WGJets_MonoPhoton.root"};
   //f = {"./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_TTGJets_Tune.root"};

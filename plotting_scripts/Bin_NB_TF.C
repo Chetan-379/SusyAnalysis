@@ -115,7 +115,7 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio,char const *tag_name=""
   // p1->SetLeftMargin(0.14);
   // p1->SetTopMargin(0.05);
   // p1->cd();
-  // gStyle->SetOptStat(0);
+  gStyle->SetOptStat(0);
 
   //  auto *pad_1 = new TPad("pad_1","pad_1",0.,0.0,1.,0.32); pad_1->Draw();
   auto *pad_1 = new TPad("pad_1","pad_1",0.,0.0,1.,0.32); pad_1->Draw();
@@ -273,8 +273,8 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio,char const *tag_name=""
       hist.at(i)->GetYaxis()->SetRangeUser(ymin,ymax*10);
     //    p1->SetGrid();
     
-    if(!i) hist.at(i)->Draw("hist");
-    else   hist.at(i)->Draw("hist sames"); //overlaying the histograms
+    if(!i) hist.at(i)->Draw();
+    else   hist.at(i)->Draw("sames"); //overlaying the histograms
 	
   }
 
@@ -385,7 +385,7 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio,char const *tag_name=""
   //hist_ratio->SetOptStat(0);
   
   pad_1->cd();
-  gStyle->SetOptStat(0);
+  //gStyle->SetOptStat(0);
 
   
   
@@ -448,7 +448,7 @@ void Bin_NB_TF(string pathname)
   
   //define your files here
   vector<string> f;
-  f = {"./root_files/Summer20UL18_TTJets_HT.root", "./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_WJetsToLNu_HT.root", "./root_files/Summer20UL18_WGJets_MonoPhoton.root"};
+  f = {"./root_files/Summer20UL18_TTJets.root", "./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_WJetsToLNu_HT.root", "./root_files/Summer20UL18_WGJets_MonoPhoton.root"};
 
   //f = {"Summer20UL18_TTJets_HT.root", "Summer20UL18_TTGJets_Tune.root", "Summer20UL18_WJetsToLNu_HT.root", "Summer20UL18_WGJets_MonoPhoton.root"};
   //f = {"./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_TTGJets_Tune.root"};
@@ -470,7 +470,8 @@ void Bin_NB_TF(string pathname)
   for (int bigi=0; bigi<bigbaseline.size(); bigi++)
     {
       vector<string> filetag;
-      filetag={"TTGJets_Process_2018"," ", "WGJets_Process_2018", " "};
+      filetag={"TTJets_2018", "TTGJets_2018", "WJets_2018", "WGJets_2018"};
+      //filetag={"TTGJets_Process_2018", " ", "WGJets_Process_2018", " "};
       //luminosity for each year - depends if you want to use it or - generate1Dplot uses this number and add it on the top
       vector<float>energyy;
       energyy={59.74,41.529};//,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,19.5,19.5,19.5,19.5,19.5,19.5,19.5,36.0,36.0,36.0,36.0,36.0,36.0,36.0};
@@ -498,34 +499,68 @@ void Bin_NB_TF(string pathname)
       }
       
       
-      TFile *TF_NBJet;
-      TF_NBJet = new TFile("root_files/TF_NBJet.root", "RECREATE");
+      // TFile *TF_NBJet;
+      // TF_NBJet = new TFile("root_files/TF_NBJet.root", "RECREATE");
       
-      TH1F* h_total_SR = (TH1F*)hist_add[0][0]-> Clone();
-      TH1F* h_total_CR = (TH1F*)hist_add[0][1]-> Clone();
-      for (int ifile =1; ifile < f.size(); ifile++){
-	cout << "SR Integral of sample" << ifile+1 << ": " << hist_add[ifile][0]->Integral() << endl;
-	h_total_SR ->Add(hist_add[ifile][0]);
-	h_total_CR ->Add(hist_add[ifile][2]);
-      }
-      cout << "Total Integral: " << h_total_SR->Integral() << endl;
-      //TH1D* h_CR = (TH1D*)hist_add[ifile].at(2)->Clone(); 
-      TH1D* h_TF = (TH1D*) h_total_SR->Clone("combined_TF");
-      h_TF->Divide(h_total_CR);
-      TF_NBJet ->cd();
-      h_TF->Write();	
+      // TH1F* h_total_SR = (TH1F*)hist_add[0][0]-> Clone();
+      // TH1F* h_total_CR = (TH1F*)hist_add[0][1]-> Clone();
+      // for (int ifile =1; ifile < f.size(); ifile++){
+      // 	cout << "SR Integral of sample" << ifile+1 << ": " << hist_add[ifile][0]->Integral() << endl;
+      // 	h_total_SR ->Add(hist_add[ifile][0]);
+      // 	h_total_CR ->Add(hist_add[ifile][2]);
+      // }
+      // cout << "Total Integral: " << h_total_SR->Integral() << endl;
+      // //TH1D* h_CR = (TH1D*)hist_add[ifile].at(2)->Clone(); 
+      // TH1D* h_TF = (TH1D*) h_total_SR->Clone("combined_TF");
+      // h_TF->Divide(h_total_CR);
+      // TF_NBJet ->cd();
+      // h_TF->Write();	
       
                   	      
-      for (int ibkg=0; ibkg<3; ibkg+=2){
+      // for (int ibkg=0; ibkg<3; ibkg+=2){
+      // 	vector<TH1F*> h_added;
+      // 	cout << "ibkg: " << ibkg << endl;
+      // 	for(int ihist=0; ihist < 2; ihist++){
+      // 	  cout << "adding hists: " << hist_add[ibkg][ihist]->GetName() << "("<< f[ibkg] <<") & " << hist_add[ibkg+1][ihist]->GetName() << "("<< f[ibkg+1] <<")" << endl;	  
+      // 	  cout << hist_add[ibkg][ihist]->Integral() << "\t" << hist_add[ibkg+1][ihist]->Integral() << endl;
+      // 	  TH1F* h_total= (TH1F*)hist_add[ibkg][ihist]-> Clone();
+      // 	  h_total ->Add(hist_add[ibkg+1][ihist]);
+      // 	  cout << "sum is: " << h_total->Integral() << endl;
+      // 	  h_added.push_back(h_total);
+      // 	}
+	
+      // 	float energy=energyy[0];
+      // 	int xrange=0.0;
+      // 	//vector<TH1D*> h_TF;
+	
+      // 	TH1D* h_CR = (TH1D*)hist_add[ibkg].at(1)->Clone();
+      // 	TH1D* h_TF = (TH1D*)hist_add[ibkg].at(0)->Clone();
+      // 	h_TF->Divide(h_CR);
+	
+      // 	//x axis title for all plots///
+      // 	vector<string>diff_title;
+      // 	diff_title = {"Bin_No."};
+      // 	vector<string>xtitle;
+      // 	xtitle = {diff_title[0], diff_title[0], diff_title[0], diff_title[0]};
+	
+      // 	//path to save the files a jpg or pdf
+      // 	vector<string> folder;	  
+      // 	folder = {"plots/LL_plots/TTG_/", "./","plots/LL_plots/WG_/"};
+      // 	sprintf(full_path,"%s/%sValidate_binned_SR_CR_overlay_%s",pathname.c_str(),folder[ibkg].c_str(),filetag[ibkg].c_str());
+	  
+      // 	//calling generate_1Dplot which will take this vector of histograms and 
+      // 	generate_1Dplot(h_added,h_TF,full_path,energy,xmax[ibkg],xmin[ibkg],leg_head,false,true,false,true,filetag[ibkg].c_str(),xtitle[ibkg].c_str(),rebin[ibkg]);
+
+      for (int ibkg=0; ibkg<f.size(); ibkg++){
       	vector<TH1F*> h_added;
-      	cout << "ibkg: " << ibkg << endl;
+      	//cout << "ibkg: " << ibkg << endl;
       	for(int ihist=0; ihist < 2; ihist++){
-      	  cout << "adding hists: " << hist_add[ibkg][ihist]->GetName() << "("<< f[ibkg] <<") & " << hist_add[ibkg+1][ihist]->GetName() << "("<< f[ibkg+1] <<")" << endl;	  
-      	  cout << hist_add[ibkg][ihist]->Integral() << "\t" << hist_add[ibkg+1][ihist]->Integral() << endl;
-      	  TH1F* h_total= (TH1F*)hist_add[ibkg][ihist]-> Clone();
-      	  h_total ->Add(hist_add[ibkg+1][ihist]);
-      	  cout << "sum is: " << h_total->Integral() << endl;
-      	  h_added.push_back(h_total);
+      	  // cout << "adding hists: " << hist_add[ibkg][ihist]->GetName() << "("<< f[ibkg] <<") & " << hist_add[ibkg+1][ihist]->GetName() << "("<< f[ibkg+1] <<")" << endl;	  
+      	  // cout << hist_add[ibkg][ihist]->Integral() << "\t" << hist_add[ibkg+1][ihist]->Integral() << endl;
+      	  // TH1F* h_total= (TH1F*)hist_add[ibkg][ihist]-> Clone();
+      	  // h_total ->Add(hist_add[ibkg+1][ihist]);
+      	  // cout << "sum is: " << h_total->Integral() << endl;
+      	  h_added.push_back(hist_add[ibkg][ihist]);
       	}
 	
 	float energy=energyy[0];
@@ -538,17 +573,19 @@ void Bin_NB_TF(string pathname)
 	
 	//x axis title for all plots///
 	vector<string>diff_title;
-	diff_title = {"Bin_No."};
+	diff_title = {"Bin No."};
 	vector<string>xtitle;
 	xtitle = {diff_title[0], diff_title[0], diff_title[0], diff_title[0]};
 	
 	//path to save the files a jpg or pdf
 	vector<string> folder;	  
-	folder = {"plots/LL_plots/TTG_/", "./","plots/LL_plots/WG_/"};
-	sprintf(full_path,"%s/%sValidate_binned_SR_CR_overlay_%s",pathname.c_str(),folder[ibkg].c_str(),filetag[ibkg].c_str());
+	//folder = {"plots/LL_plots/TTG_/", "./","plots/LL_plots/WG_/"};
+	folder = {"plots/LL_plots/TT_/", "plots/LL_plots/TTG_/", "plots/LL_plots/WLNu_/", "plots/LL_plots/WG_/"};
+	sprintf(full_path,"%s/%sSingle_Validate_binned_SR_CR_overlay_%s",pathname.c_str(),folder[ibkg].c_str(),filetag[ibkg].c_str());
 	  
 	//calling generate_1Dplot which will take this vector of histograms and 
 	generate_1Dplot(h_added,h_TF,full_path,energy,xmax[ibkg],xmin[ibkg],leg_head,false,true,false,true,filetag[ibkg].c_str(),xtitle[ibkg].c_str(),rebin[ibkg]);
+
 	
       }
     }
