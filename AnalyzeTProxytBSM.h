@@ -45,7 +45,8 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   TFile *oFile;
 
   TH1D *h_MET[15];
-  TH1D *h_NHadJets[15];  
+  TH1D *h_NHadJets[15];
+  TH1D *h_NbJets[15];
   TH1D *h_Pho_pT[15];
 
   // TH1F *h_MET[10];
@@ -60,18 +61,39 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   TH1F *h_Gen_MET, *h_EFakePho_MET, *h_LostElectron_MET, *h_LostMuon_MET, *h_HadTau_MET, *h_Rest_MET, *h_EFakePho_eta, *h_LostElectron_eta, *h_LostMuon_eta, *h_HadTau_eta, *h_Rest_eta;
   TH1F *h_mindR_pho_gen_lep_Ovrlp,*h_mindR_pho_qg_Ovrlp,*h_mindR_pho_gen_lep_rmOvrlp,*h_mindR_pho_qg_rmOvrlp;
   TH1F *h_mindR_pho_gen_lep_Ovrlp_genPromptPho,*h_mindR_pho_qg_Ovrlp_genPromptPho,*h_mindR_pho_gen_lep_rmOvrlp_genPromptPho,*h_mindR_pho_qg_rmOvrlp_genPromptPho;
-  TH1F *h_Lost_e_SR_Pho_Pt, *h_Lost_e_CR_Pho_Pt, *h_Lost_e_CR_binned, *h_Lost_e_SR_binned;
+
+  TH1F *h_Lost_e_SR_Pho_Pt, *h_Lost_e_CR_Pho_Pt;
+  TH1F *h_Lost_e_SR_MET, *h_Lost_e_CR_MET;
+  TH1D *h_Lost_e_SR_NHadJets, *h_Lost_e_CR_NHadJets;
+  TH1F *h_Lost_e_SR_NbJets, *h_Lost_e_CR_NbJets;
+  TH1F *h_Lost_e_CR_binned, *h_Lost_e_SR_binned;
   TH1D *h_Lost_e_TF;
-  TH1F *h_Lost_mu_SR_Pho_Pt, *h_Lost_mu_CR_Pho_Pt, *h_Lost_mu_SR_binned, *h_Lost_mu_CR_binned;  
-  TH1F *h_FR_SR_binned;
   TH1F *h_Lost_e_SR_srch_binned, *h_Lost_e_CR_srch_binned, *h_Lost_e_SR_srch_binned_pred;
+
+  TH1F *h_Lost_mu_SR_Pho_Pt, *h_Lost_mu_CR_Pho_Pt;
+  TH1D *h_Lost_mu_SR_NHadJets, *h_Lost_mu_CR_NHadJets;
+  TH1F *h_Lost_mu_SR_binned, *h_Lost_mu_CR_binned;
+
+  TH1D *h_Had_tau_SR_NHadJets;
+
+  TH1F *h_FR_SR_binned;
+  TH1D *h_FR_SR_NHadJets;
+
+  TH1D *h_rest_NHadJets;
+
   vector<double> METLowEdge={200,300,370,450,600,750,900};
   vector<double> METLowEdge_1={200,300,370,450,600,750};
   vector<double> METLowEdge_2={200,300,370,450,600};
 
   //hists for trying
+  //==========================================
   TH1F *h_dR_gen_e_reco_pho, *h_gen_e_reco_pho_ratio, *h_mT_reco_e_G;
   TH2F *h_dRvsRatio;
+  TH1I *h_Gen_taus_size;
+  TH1I *h_ptcl_W_rest;
+  
+  //==========================================
+
 };
 #endif
 
@@ -85,11 +107,12 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
   oFile->cd();
 
   TH1::SetDefaultSumw2(1);
-  char hname_NHadJets[100], hname_Jet_Pt[100], hname_Jet_Eta[100], hname_Jet_Phi[100], hname_Met[100], hname_PhoPt[100], hname_PhoEta[100], hname_PhoPhi[100], hname_GenPt[100], hname_GenEta[100], hname_GenPhi[100], hname_RecoPt[100], hname_RecoEta[100], hname_RecoPhi[100]; 
+  char hname_NHadJets[100], hname_NbJets[100], hname_Jet_Pt[100], hname_Jet_Eta[100], hname_Jet_Phi[100], hname_Met[100], hname_PhoPt[100], hname_PhoEta[100], hname_PhoPhi[100], hname_GenPt[100], hname_GenEta[100], hname_GenPhi[100], hname_RecoPt[100], hname_RecoEta[100], hname_RecoPhi[100]; 
   // Book your histograms & summary counters here 
   for (int i=0; i<selection.size();i++)
     {
       sprintf(hname_NHadJets,"h_NHadJets_%s",selection[i].c_str());
+      sprintf(hname_NbJets,"h_NbJets_%s",selection[i].c_str());
       sprintf(hname_Jet_Pt,"h_Jet_Pt_%s",selection[i].c_str());
       sprintf(hname_Jet_Eta,"h_Jet_Eta_%s",selection[i].c_str());
       sprintf(hname_Jet_Phi,"h_Jet_Phi_%s",selection[i].c_str());
@@ -99,6 +122,7 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
       sprintf(hname_PhoPhi,"h_Pho_Phi_%s",selection[i].c_str());
 
       h_NHadJets[i]= new TH1D(hname_NHadJets, hname_NHadJets, 50,0,50);
+      h_NbJets[i]= new TH1D(hname_NbJets, hname_NbJets, 20,0,20);
       h_MET[i] = new TH1D(hname_Met,hname_Met,100,0,5000);
       h_Pho_pT[i]= new TH1D(hname_PhoPt,hname_PhoPt,100,0,1000);
 
@@ -115,8 +139,7 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
       //Defing histogram for different gen particles for different cuts
       for (int j=0; j<genparticle.size(); j++)
       {
-	if (i==0 || i>3){      //i>3 conditon is to take histograms after sT cut                              
-	   
+	if (i==0 || i>3){      //i>3 conditon is to take histograms after sT cut                              	   
 	  sprintf(hname_GenPt,"h_Gen%s_Pt_%s",genparticle[j].c_str(),selection[i].c_str());
 	  sprintf(hname_GenEta,"h_Gen%s_Eta_%s",genparticle[j].c_str(),selection[i].c_str());
 	  sprintf(hname_GenPhi,"h_Gen%s_Phi_%s",genparticle[j].c_str(),selection[i].c_str());
@@ -124,14 +147,12 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
 	  sprintf(hname_RecoPt,"h_Reco%s_Pt_%s",recoparticle[j].c_str(),selection[i].c_str());
 	  sprintf(hname_RecoEta,"h_Reco%s_Eta_%s",recoparticle[j].c_str(),selection[i].c_str());
 	  sprintf(hname_RecoPhi,"h_Reco%s_Phi_%s",recoparticle[j].c_str(),selection[i].c_str());
-	  
-	   
+	  	   
 	  h_Gen_pT[j][i] = new TH1F(hname_GenPt, hname_GenPt, 100,0.0,1000.0);
 	  //h_Gen_eta[j][i] = new TH1F(hname_GenEta, hname_GenEta, 500,-10,10);
 	  h_Gen_eta[j][i] = new TH1F(hname_GenEta, hname_GenEta, 50,-10,10);
 	  h_Gen_phi[j][i] = new TH1F(hname_GenPhi, hname_GenPhi, 100,-5.0,5.0);
-	  
-	  
+	  	  
 	  if (j==2) continue;
 	  h_Reco_pT[j][i] = new TH1F(hname_RecoPt, hname_RecoPt, 100,0.0,1000.0);
 	  h_Reco_eta[j][i] = new TH1F(hname_RecoEta, hname_RecoEta, 500,-10.0,10.0);
@@ -171,27 +192,40 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
   h_mindR_pho_gen_lep_rmOvrlp_genPromptPho=new TH1F("h_mindR_pho_gen_lep_rmOvrlp_genPromptPho","h_mindR_pho_gen_lep_rmOvrlp_genPromptPho",100,0.0,5.0);
   h_mindR_pho_qg_rmOvrlp_genPromptPho=new TH1F("h_mindR_pho_qg_rmOvrlp_genPromptPho","h_mindR_pho_qg_rmOvrlp_genPromptPho",100,0.0,5.0);
 
-  h_Lost_e_SR_Pho_Pt = new TH1F("h_LL_SR_Pho_Pt","h_LL_SR_Pho_Pt",50,0.0,1000.0); 
-  h_Lost_e_CR_Pho_Pt = new TH1F("h_LL_CR_Pho_Pt","h_LL_CR_Pho_Pt",50,0.0,1000.0);
-
+  h_Lost_e_SR_Pho_Pt = new TH1F("lost_e_SR_Pho_Pt","lost_e_SR_Pho_Pt",50,0.0,1000.0); 
+  h_Lost_e_CR_Pho_Pt = new TH1F("lost_e_CR_Pho_Pt","lost_e_CR_Pho_Pt",50,0.0,1000.0);
+  h_Lost_e_SR_MET = new TH1F("lost_e_SR_MET","lost_e_SR_MET",50,0.0,1000.0); 
+  h_Lost_e_CR_MET = new TH1F("lost_e_CR_MET","lost_e_CR_MET",50,0.0,1000.0);
+  h_Lost_e_SR_NHadJets = new TH1D("lost_e_SR_NHadJets","lost_e_SR_NHadJets",20,0.0,20.0); 
+  h_Lost_e_CR_NHadJets = new TH1D("lost_e_CR_NHadJets","lost_e_CR_NHadJets",20,0.0,20.0);
+  h_Lost_e_SR_NbJets = new TH1F("lost_e_SR_NbJets","lost_e_SR_NbJets",10,0.0,10.0); 
+  h_Lost_e_CR_NbJets = new TH1F("lost_e_CR_NbJets","lost_e_CR_NbJets",10,0.0,10.0);
+  
   h_Lost_e_CR_binned = new TH1F("lost_e_CR_binned","lost_e_CR_binned",10,0,10);
   h_Lost_e_SR_binned = new TH1F("lost_e_SR_binned","lost_e_SR_binned",10,0,10);
   h_Lost_e_TF = new TH1D("h_Lost_e_TF","h_Lost_e_TF",10,0.0,10.0);
-
   h_Lost_e_SR_srch_binned = new TH1F("lost_e_SR_srch_binned","lost_e_SR_srch_binned",35,0,35); 
   h_Lost_e_CR_srch_binned = new TH1F("lost_e_CR_srch_binned","lost_e_CR_srch_binned",35,0,35);
   h_Lost_e_SR_srch_binned_pred = new TH1F("lost_e_SR_srch_binned_pred","lost_e_SR_srch_binned_pred",35,0,35);
 
+  h_Lost_mu_SR_NHadJets = new TH1D("lost_mu_SR_NHadJets","lost_mu_SR_NHadJets",20,0,20);
   h_Lost_mu_SR_binned = new TH1F("lost_mu_SR_binned","lost_mu_SR_binned",10,0,10);
   h_Lost_mu_CR_binned = new TH1F("lost_mu_CR_binned","lost_mu_CR_binned",10,0,10);
+
+  h_Had_tau_SR_NHadJets = new TH1D("had_tau_SR_NHadJets","had_tau_SR_NHadJets",20,0.0,20.0);
     
   h_FR_SR_binned = new TH1F("FR_SR_binned","h_FR_SR_binned",10,0.0,10);
+  h_FR_SR_NHadJets = new TH1D("FR_SR_NHadJets","FR_SR_NHadJets",20,0.0,20.0);
 
+  h_rest_NHadJets = new TH1D("rest_NHadJets","rest_NHadJets",20,0.0,20.0);
+  
+  //testing
   h_dR_gen_e_reco_pho= new TH1F("h_dR_gen_e_reco_pho","h_dR_gen_e_reco_pho",100,0.0,5.0);
   h_gen_e_reco_pho_ratio = new TH1F("h_gen_e_reco_pho_ratio","h_gen_e_reco_pho_ratio",200,0,2);
   h_dRvsRatio = new TH2F("dRvsRatio","dRvsRatio",100,0.0,5.0,100,0,5);
   h_mT_reco_e_G = new TH1F("mT_reco_e_G","mT_reco_e_G",100,0.0,500.0);
-  
+  h_Gen_taus_size = new TH1I("h_gen_taus_size", "h_gen_taus_size",10,0,10);
+  h_ptcl_W_rest = new TH1I("h_ptcls_W","h_ptcls_W",20,-10,10);
 }
 
 AnalyzeTProxytBSM::AnalyzeTProxytBSM(const TString &inputFileList, const char *outFileName,const char *dataset, const char *sample, const char* LostlepFlag, const char* phoID) {
