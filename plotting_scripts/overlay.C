@@ -327,30 +327,21 @@ void overlay(string pathname)
   //define your histograms to be read from here
   int n_files=f.size(); //you have n files in this example
  
-  string histname[3][3][3], histname2[100], histname3[100];
-  //char hname_NHadJets[100], hname_Jet_Pt[100], hname_Jet_Eta[100], hname_Jet_Phi[100], hname_Met[100], hname_PhoPt[100], hname_PhoEta[100], hname_PhoPhi[100]; 
-  char hname_Gen[100];
+  string histname1[100][100], histname2[100], histname3[100];
+  //char hname_NHadJets[100], hname_Jet_Pt[100], hname_Jet_Eta[100], hname_Jet_Phi[100], hname_Met[100], hname_PhoPt[100], hname_PhoEta[100], hname_PhoPhi[100];
+  char hname_GenPt[100];
   //vector<string> histPhoPt[100]
   // Book your histograms & summary counters here
-//vector<string> selection = {"no_cut", "MET", "Pho_pT", "NHadjets", "ST", "Lep_veto", "Iso_Lep_Trk_veto"};
-  vector <string> Gen = {"Electron","Muon","Tau"};
-  vector<string> var = {"Pt","Eta","Phi"};
+    //vector<string> selection = {"no_cut", "MET", "Pho_pT", "NHadjets", "ST", "Lep_veto", "Iso_Lep_Trk_veto"};
   vector<string> selection = {"ST", "Lep_veto", "Iso_Lep_Trk_veto"};
-  //vector<vector<vector<string>>> Baseline;
-  vector<string> Baseline;
-  //vector<vector<vector<vector<string>>>> Variable;
-  vector<vector<string>> Variable;
-    //vector<vector<vector<vector<string>>>> GenPtcl;
-  vector<vector<vector<string>>> GenPtcl;
-  //vector<vector<string>> bigbaseline;
-  //vector<vector<string>> bigbaseline_pt, bigbaseline_eta, bigbaseline_ph
-
-  
-    for (int i=0; i<Gen.size(); i++)
-      {//vector<string> baseline_pt, baseline_eta, baseline_phi;
-       for (int j=0; j<var.size();j++)
+  vector <string> Gen = {"Electron","Muon","Tau"};
+  vector<vector<string>> bigbaseline;
+  vector<string> variable = {"Pt","Eta","Phi"};
+    for (int j=0; j<Gen.size(); j++)
+      {
+       for (int k=0; k<variable.size();k++)
 	 {
-	  for (int k=0; k<selection.size();k++)
+	  for (int i=0; i<selection.size();i++)
 	    {
 	   
 	    // sprintf(hname_NHadJets,"h_NHadJets_%s",selection[i].c_str());
@@ -365,93 +356,77 @@ void overlay(string pathname)
 	    // sprintf(hname_PhoEta, "h_Pho_Eta_%s",selection[i].c_str());
 	    // sprintf(hname_PhoPhi, "h_Pho_Phi_%s",selection[i].c_str());
 
-	     sprintf(hname_Gen, "h_Gen%s_%s_%s",Gen[i].c_str(),var[j].c_str(),selection[k].c_str());
-	     histname[i][j][k] = hname_Gen;
-	     Baseline[i][j].push_back(histname[i][j][k]);
+	     sprintf(hname_GenPt, "h_Gen%s_%s_%s",Gen[j].c_str(),variable[i].cstr(),selection[i].c_str());
+	    histname1[j][k][i] = hname_GenPt; 
 	    //cout << "HISTOGram: " << histname3[i] << endl;
-	    } cout << "Yay!" << endl;
-	  Variable[i].push_back(Baseline[i][j]);
-	 }cout << "yay" << endl;
-       GenPtcl.push_back(Variable[i]);
-      }
-    cout << "yay!" << endl;    
-	  //	  vector<vector<string>> bigbaseline_pt, bigbaseline_eta, bigbaseline_phi;
-	  //vector<vector<string>> bigbaseline;
-	  //vector<string> baseline[3][3], baseline2, baseline3;
+	  }
+      
+	//vector<vector<string>> bigbaseline;
+  vector<string> baseline[3][3], baseline2, baseline3;
 
   //baseline1 = {"h_pho_pT0","h_pho_pT3","h_pho_pT4", "h_pho_pT5"};
-  //baseline[j][k] = {histname[j][k][0], histname[j][k][1], histname[j][k][2]}; 
+  baseline[j][k] = {histname1[j][k][0], histname1[j][k][1], histname1[j][k][2]}; 
   
 
   //string to be added to output file name - useful when you have different files and reading the same histograms from these
   //bigbaseline = {baseline[0], baseline[1], baseline[2]};
-  //bigbaseline_pt.push_back(baseline[j][0]);
+  bigbaseline[k].push_back(baseline[j][k]);
 	  
-   	 
-       // baseline_pt[j] = {histname[j][0][0], histname[j][0][1], histname[j][0][2]};
-       // baseline_eta[j] = {histname[j][1][0], histname[j][1][1], histname[j][1][2]};
-       // baseline_phi[j] = {histname[j][2][0], histname[j][2][1], histname[j][2][2]};
+	 }
+      }
+  for (int k=0; k < variable.size(); k++)
+  {
+    for (int bigi=0; bigi<bigbaseline[k].size(); bigi++)
+      {
+	vector<string> filetag;
+	//filetag={"TTJets_2018","TTGJets_2018", "TTJets_Leptons_2018", "WJetsToLNu_2018", "WGJets_2018", "ZJetsToNuNu_2018", "ZNuNuGJets_2018", "QCD_2018"};
+	filetag={"WJetsToLNu_2018"};
+	//luminosity for each year - depends if you want to use it or - generate1Dplot uses this number and add it on the top
+	vector<float>energyy;
+	energyy={59.74,41.529};//,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,19.5,19.5,19.5,19.5,19.5,19.5,19.5,36.0,36.0,36.0,36.0,36.0,36.0,36.0};
 
-       // bigbaseline_pt.push_back(baseline_pt[j]);
-       // bigbaseline_eta.push_back(baseline_eta[j]);
-       // bigbaseline_phi.push_back(baseline_phi[j]);
-  
-      
-
-    // //vector<vector<vector<string>>> bigbigbaseline={bigbaseline_pt,bigbaseline_eta,bigbaseline_phi};
-    // for (int k=0; k < variable.size(); k++)
-    //   {
-    // 	for (int bigi=0; bigi<bigbigbaseline[k].size(); bigi++)
-    // 	  {
-    // 	    vector<string> filetag;
-    // 	    //filetag={"TTJets_2018","TTGJets_2018", "TTJets_Leptons_2018", "WJetsToLNu_2018", "WGJets_2018", "ZJetsToNuNu_2018", "ZNuNuGJets_2018", "QCD_2018"};
-    // 	    filetag={"WJetsToLNu_2018"};
-    // 	    //luminosity for each year - depends if you want to use it or - generate1Dplot uses this number and add it on the top
-    // 	    vector<float>energyy;
-    // 	    energyy={59.74,41.529};//,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,19.5,19.5,19.5,19.5,19.5,19.5,19.5,36.0,36.0,36.0,36.0,36.0,36.0,36.0};
-	    
-    // 	    //rebin values
-    // 	    vector<int >rebin = {2,2,2,2,2,2,2,2,2}; //keep it 1 if you don't want to change hist bins
-	    
-    // 	//x axis title for all plots///
-    // 	// vector<string>xtitle = {title[bigi], title[bigi]};
-    // 	//x axis range
-    // 	    vector<int>xmax = {2000,2000,2000,2000,2000,2000,2000,2000};
-    // 	    vector<int>xmin = {0,0,0,0,0,0,0,0};
-	    
-    // 	//looping over each files///  
-    // 	    for(int i_file=0; i_file < f.size(); i_file++) //looping over each file
-    // 	      {
-    // 		TFile *root_file = new TFile(f[i_file].c_str()); 
-    // 		vector<vector<TH1F*>> hist_list;
-    // 		for(int i_cut=0; i_cut< baseline[k][bigi].size();i_cut++) //looping over different histograms which should be overlayed on the same canvas and these histograms are saved in the same file
-    // 		  {
-    // 		    //sprintf(hist_name,"%s",baseline[i_cut].c_str());
-    // 		    sprintf(hist_name,"%s",bigbigbaseline[k][bigi][i_cut].c_str());
-    // 		    cout<<"i_file "<<i_file<<"\t"<<i_cut<<"\t"<<root_file->GetName()<< "\t" << hist_name<<endl;
-    // 		    TH1F* resp = (TH1F*)root_file->Get(hist_name); //reading hist from the TFile
-    // 		    hist_list[k].push_back(resp);
-    // 		  }
-    // 		float energy=energyy[0];
-    // 		int xrange=0.0;
+	//rebin values
+	vector<int >rebin = {2,2,2,2,2,2,2,2,2}; //keep it 1 if you don't want to change hist bins
+	
+	//x axis title for all plots///
+	// vector<string>xtitle = {title[bigi], title[bigi]};
+	//x axis range
+	vector<int>xmax = {2000,2000,2000,2000,2000,2000,2000,2000};
+	vector<int>xmin = {0,0,0,0,0,0,0,0};
+	
+	//looping over each files///  
+	for(int i_file=0; i_file < f.size(); i_file++) //looping over each file
+	  {
+	    TFile *root_file = new TFile(f[i_file].c_str()); 
+	    vector<vector<TH1F*>> hist_list;
+	  for(int i_cut=0; i_cut<bigbaseline[k][bigi].size();i_cut++) //looping over different histograms which should be overlayed on the same canvas and these histograms are saved in the same file
+	    {
+	      //sprintf(hist_name,"%s",baseline[i_cut].c_str());
+	      sprintf(hist_name,"%s",bigbaseline[k][bigi][i_cut].c_str());
+	      cout<<"i_file "<<i_file<<"\t"<<i_cut<<"\t"<<root_file->GetName()<< "\t" << hist_name<<endl;
+	      TH1F* resp = (TH1F*)root_file->Get(hist_name); //reading hist from the TFile
+	      hist_list[k].push_back(resp);
+	    }
+	  float energy=energyy[0];
+	  int xrange=0.0;
 	  
-    // 		//x axis title for all plots///
-    // 		vector<string>diff_title;
-    // 		diff_title = { "electron_pT" , "Muon_pT", "Tau_pT"};
-    // 		vector<string>xtitle;
-    // 		xtitle = {diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi]};
-		
-    // 		//path to save the files a jpg or pdf
-    // 		vector<string> folder;
-    // 		//folder = {"plots/TT/", "plots/TTG/", "plots/TTL/",  "plots/WLNu/", "plots/WG/", "plots/ZNuNu/", "plots/ZGNuNu/", "plots/QCD/"};
-    // 		folder = {"plots/WLNu/gen"};
-    // 		sprintf(full_path,"%s/%s%s_MET_comparisons_%s",pathname.c_str(),folder[i_file].c_str(),diff_title[bigi].c_str(),filetag[i_file].c_str());
+	  //x axis title for all plots///
+	  vector<string>diff_title;
+	  diff_title = { "electron_pT" , "Muon_pT", "Tau_pT"};
+	  vector<string>xtitle;
+	  xtitle = {diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi], diff_title[bigi]};
 	  
-    // 		//calling generate_1Dplot which will take this vector of histograms and 
-    // 		generate_1Dplot(hist_list[k],full_path,energy,xmax[i_file],xmin[i_file],leg_head,false,true,false,true,filetag[i_file].c_str(),xtitle[i_file].c_str(),rebin[i_file]);
-    // 	      }  
-    // 	  }
-    //   }
+	  //path to save the files a jpg or pdf
+	  vector<string> folder;
+	  //folder = {"plots/TT/", "plots/TTG/", "plots/TTL/",  "plots/WLNu/", "plots/WG/", "plots/ZNuNu/", "plots/ZGNuNu/", "plots/QCD/"};
+	  folder = {"plots/WLNu/gen"};
+	  sprintf(full_path,"%s/%s%s_MET_comparisons_%s",pathname.c_str(),folder[i_file].c_str(),diff_title[bigi].c_str(),filetag[i_file].c_str());
+	  
+	  //calling generate_1Dplot which will take this vector of histograms and 
+	  generate_1Dplot(hist_list[k],full_path,energy,xmax[i_file],xmin[i_file],leg_head,false,true,false,true,filetag[i_file].c_str(),xtitle[i_file].c_str(),rebin[i_file]);
+	  }  
+      }
+  }
   
 }
 

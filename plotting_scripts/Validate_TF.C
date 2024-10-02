@@ -1,7 +1,8 @@
 const int n_pl = 4;
 bool logx = false;
 //defining the legends for each plots
-TString legend_text[10] = {"expected SR","predicted SR", "hist4", "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
+//TString legend_text[10] = {"expected SR","predicted SR", "hist4", "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
+TString legend_text[10] = {"SR","CR", "hist4", "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
 int line_width[12] = {2,2,2,2,2,2,2,2,2,2,2,2};
 int line_style[12] = {1,1,1,1,1,1,1,1,1,1,1,1};
 int line_color[9] = {kBlack, kRed, kGreen+2, kMagenta, kBlue, kAzure + 7 , kCyan + 1 , kGreen + 3 };
@@ -218,38 +219,12 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio,char const *tag_name=""
     if(hist.at(i)->GetMaximum() > ymax) ymax = hist.at(i)->GetMaximum();
     if(hist.at(i)->GetMinimum() < ymin) ymin = hist.at(i)->GetMinimum();
     
-    // legend = new TLegend(0.32,0.65,0.86,0.85);  
-    // legend->SetTextSize(0.030);
-    // legend->SetLineColor(kWhite);
-    // legend->SetNColumns(4);
-    // char* lhead = new char[100];
-    
-    // sprintf(lhead,"#bf{%s} ",title); // legend header -- for example you are plotting this for WGJets then title string can be "WGJets"
-    // legend->SetHeader(lhead);
-    // legend->SetLineColor(kWhite);
-    
-    //legend1->SetHeader(lhead);
-    //legend1->SetLineColor(kWhite);
-
-    // TLegendEntry* leg_entry[11];
-    // TLegendEntry* leg_entry1[11];
-    // float x_label_size = 0.045;
-    // double ymin = 100000.0;
-    // double ymax = 0.0;
-    // double xrange = xmax;
     
     //setting up the legend style and all
     vector <string> Intg;
     char final_label[100];
-    //int Entries = hist.at(i)->GetEntries().setprecision(1)
-    //int Entries = hist.at(i)->GetEntries();
     float Integral = hist.at(i)->Integral();
-      //sprintf(final_label,"Integral: %f",setprecision(2) << (hist.at(i)->Integral()));
     sprintf(final_label,"%s (%0.2f)",legend_text[i].Data(), Integral); 
-
-    
-    //leg_entry[i] = legend->AddEntry(hist.at(i),(hist.at(i)->Integral().c_str()),"xsl");
-
     legName.push_back(hist.at(i)->GetName());
     leg_entry[i] = legend->AddEntry(hist.at(i), final_label, "l");
     //leg_entry1[i] = legend1->AddEntry(hist.at(i),final_label,"l");
@@ -277,18 +252,8 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio,char const *tag_name=""
     else   hist.at(i)->Draw("sames"); //overlaying the histograms
 	
   }
-
-  // TLegend *legend; //legend to be drawn on the plot - shift x,ys if you want to move this on the canvas
-  // legend = new TLegend(0.72,0.70,0.86,0.85);  
-  // legend->SetTextSize(0.030);
-  // legend->SetLineColor(kWhite);
-  // legend->SetNColumns(2);
-  // char* lhead = new char[100];
-
   
   legend->Draw();
-  //legend1->Draw();
-
 
   if(log_flag) 
     gPad->SetLogy();
@@ -310,34 +275,67 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio,char const *tag_name=""
   // sprintf(en_lat,"#bf{%0.2f fb^{-1} (13 TeV)}",inlumi);
   // textOnTop->DrawLatexNDC(0.7,0.91,en_lat);
 
-  TLine *line1V7=new TLine( 8.0,0.001, 8.0,ymax*5);
-  TLine *line2V7=new TLine(14.0,0.001, 14.0,ymax*5);
-  TLine *line3V7=new TLine(19.0,0.001, 19.0,ymax*5);
-  TLine *line4V7=new TLine(24.0,0.001, 24.0,ymax*5);
-  TLine *line5V7=new TLine(29.0,0.001, 29.0,ymax*5);
+  // TLine *line1V7=new TLine( 8.0,0.001, 8.0,ymax*5);
+  // TLine *line2V7=new TLine(14.0,0.001, 14.0,ymax*5);
+  // TLine *line3V7=new TLine(19.0,0.001, 19.0,ymax*5);
+  // TLine *line4V7=new TLine(24.0,0.001, 24.0,ymax*5);
+  // TLine *line5V7=new TLine(29.0,0.001, 29.0,ymax*5);
+
+  TLine *line1V7=new TLine(2.0, 0.001, 2.0, ymax*5);
+  TLine *line2V7=new TLine(3.0, 0.001, 3.0,ymax*5);
+  TLine *line3V7=new TLine(4.0, 0.001, 4.0,ymax*5);
+  TLine *line4V7=new TLine(5.0, 0.001, 5.0,ymax*5);
+  TLine *line5V7=new TLine(6.0, 0.001, 6.0,ymax*5);
+  TLine *line6V7=new TLine(7.0, 0.001, 7.0,ymax*5);
+  TLine *line7V7=new TLine(8.0, 0.001, 8.0,ymax*5);
+  TLine *line8V7=new TLine(0.0, ymax*5, 11.0,ymax*5);
 
   
   line1V7->Draw();      line2V7->Draw();  line3V7->Draw();
-  line4V7->Draw();      line5V7->Draw(); //line6V7->Draw();          
+  line4V7->Draw();      line5V7->Draw();  line6V7->Draw();          
+  line7V7->Draw();      line8V7->Draw();    
 
-  TArrow *arrow1 = new TArrow( 1.0,ymax*5, 8.0,ymax*5,0.01,"<|>");
-  TArrow *arrow2 = new TArrow( 8.0,ymax*5, 14.0,ymax*5,0.01,"<|>");
-  TArrow *arrow3 = new TArrow(14.0,ymax*5, 19.0,ymax*5,0.01,"<|>");
-  TArrow *arrow4 = new TArrow(19.0,ymax*5, 24.0,ymax*5,0.01,"<|>");
-  TArrow *arrow5 = new TArrow(24.0,ymax*5, 29.0,ymax*5,0.01,"<|>");
-  TArrow *arrow6 = new TArrow(29.0,ymax*5, 35.0,ymax*5,0.01,"<|>");
+  // TArrow *arrow1 = new TArrow( 1.0,ymax*5, 8.0,ymax*5,0.01,"<|>");
+  // TArrow *arrow2 = new TArrow( 8.0,ymax*5, 14.0,ymax*5,0.01,"<|>");
+  // TArrow *arrow3 = new TArrow(14.0,ymax*5, 19.0,ymax*5,0.01,"<|>");
+  // TArrow *arrow4 = new TArrow(19.0,ymax*5, 24.0,ymax*5,0.01,"<|>");
+  // TArrow *arrow5 = new TArrow(24.0,ymax*5, 29.0,ymax*5,0.01,"<|>");
+  // TArrow *arrow6 = new TArrow(29.0,ymax*5, 35.0,ymax*5,0.01,"<|>");
+
+  TArrow *arrow1 = new TArrow(1.0, 0.7, 2.0, 0.7, 0.01, "<|>");
+  TArrow *arrow2 = new TArrow(2.0, 0.7, 3.0, 0.7, 0.01, "<|>");
+  TArrow *arrow3 = new TArrow(3.0, 0.7, 4.0, 0.7, 0.01, "<|>");
+  TArrow *arrow4 = new TArrow(4.0, 0.7, 5.0, 0.7, 0.01, "<|>");
+  TArrow *arrow5 = new TArrow(5.0, 0.7, 6.0, 0.7, 0.01, "<|>");
+  TArrow *arrow6 = new TArrow(6.0, 0.7, 7.0, 0.7, 0.01, "<|>");
+  TArrow *arrow7 = new TArrow(7.0, 0.7, 8.0, 0.7, 0.01, "<|>");
+  TArrow *arrow8 = new TArrow(8.0, 0.7, 9.0, 0.7, 0.01, "<|>");
+
     
   arrow1->Draw(); arrow2->Draw(); arrow3->Draw();
   arrow4->Draw(); arrow5->Draw(); arrow6->Draw();
+  arrow7->Draw(); arrow8->Draw();
   
+  // TLatex Tl;
+  // Tl.SetTextSize(0.035);
+  // Tl.DrawLatex(3.5,ymax*7.0,"N^{ 0}_{ 2-4}");
+  // Tl.DrawLatex(9.5,ymax*7.0,"N^{ 0}_{ 5-6}");
+  // Tl.DrawLatex(15.5,ymax*7.0,"N^{ 0}_{ #geq7}");
+  // Tl.DrawLatex(19.5,ymax*7.0,"N^{ #geq1}_{ 2-4}");
+  // Tl.DrawLatex(25.5,ymax*7.0,"N^{ #geq1}_{ 5-6}");
+  // Tl.DrawLatex(30.5,ymax*7.0,"N^{ #geq1}_{ #geq7}");
+
   TLatex Tl;
   Tl.SetTextSize(0.035);
-  Tl.DrawLatex(3.5,ymax*7.0,"N^{ 0}_{ 2-4}");
-  Tl.DrawLatex(9.5,ymax*7.0,"N^{ 0}_{ 5-6}");
-  Tl.DrawLatex(15.5,ymax*7.0,"N^{ 0}_{ #geq7}");
-  Tl.DrawLatex(19.5,ymax*7.0,"N^{ #geq1}_{ 2-4}");
-  Tl.DrawLatex(25.5,ymax*7.0,"N^{ #geq1}_{ 5-6}");
-  Tl.DrawLatex(30.5,ymax*7.0,"N^{ #geq1}_{ #geq7}");
+  Tl.DrawLatex(1.3,1.0,"N^{ 0}_{ 2}");
+  Tl.DrawLatex(2.3,1.0,"N^{ 0}_{ 3}");
+  Tl.DrawLatex(3.3,1.0,"N^{ 0}_{ 4}");
+  Tl.DrawLatex(4.3,1.0,"N^{ 0}_{ 5-6}");
+  Tl.DrawLatex(5.3,1.0,"N^{ 0}_{ #geq7}");
+  Tl.DrawLatex(6.3,1.0,"N^{ #geq1}_{ 2-4}");
+  Tl.DrawLatex(7.3,1.0,"N^{ #geq1}_{ 5-6}");
+  Tl.DrawLatex(8.3,1.0,"N^{ #geq1}_{ #geq7}");
+ 
   
   //gPad->Update();
  
@@ -348,6 +346,7 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio,char const *tag_name=""
   hist_ratio->SetTitle(" ");  
   hist_ratio->GetXaxis()->SetTitleSize(0.13);
   hist_ratio->GetYaxis()->SetTitle("exp/pred");//TF = #frac{N_{SR}}{N_{CR}}");//(0#mu,1#gamma)}{(1#mu,1#gamma)}");
+   // hist_ratio->GetYaxis()->SetTitle("SR/CR");//TF = #frac{N_{SR}}{N_{CR}}");//(0#mu,1#gamma)}{(1#mu,1#gamma)}");
   hist_ratio->GetXaxis()->SetLabelSize(0.1);
   hist_ratio->GetYaxis()->SetRangeUser(-0.5,2.5);
   hist_ratio->GetXaxis()->SetRangeUser(xmin,xrange+4);
@@ -417,7 +416,7 @@ const int nfiles=100,nBG=6;
 //TFile *f[nfiles];
 
 
-void new_all_combined_Bin_NB_TF(string pathname)
+void Validate_TF(string pathname)
 {
   char* hname = new char[200];
   char* hist_name  = new char[200];
@@ -471,49 +470,21 @@ void new_all_combined_Bin_NB_TF(string pathname)
 
   if (combine==4) {
     f= {"./root_files/All_combined_Summer20UL18.root"};
-    filetag={"TTG+WG"};
-    folder = {"plots/LL_plots/combined/"};
+    filetag={"TTG+WG_2018"};
+    folder = {"plots/LL_plots/All_cat_combined/combined/"};
     identifier = "Combined";
   }
   
-  //f = {"Summer20UL18_TTJets_HT.root", "Summer20UL18_TTGJets_Tune.root", "Summer20UL18_WJetsToLNu_HT.root", "Summer20UL18_WGJets_MonoPhoton.root"};
-  //f = {"./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_TTGJets_Tune.root"};
-  //define your histograms to be overlayed from here 
-  vector<string> histnames;
+  vector<string> histnames; 
+  //histnames = {"lost_mu_SR_srch_binned", "lost_mu_SR_srch_binned_pred", "lost_mu_CR_srch_binned"};
+  histnames = {"LL_SR_binned", "LL_CR_binned"};
   
-  histnames = {"lost_e_SR_srch_binned", "lost_e_SR_srch_binned_pred", "lost_e_CR_srch_binned"};
   
-  //histnames1 = {"lost_e_SR_srch_binned", "lost_e_SR_srch_binned_pred"};
-  
-  // //vector<string> baseline1;
-  // if (!store_TF){
-  //   for (int i=0; i<histnames1.size();i++){
-  //     baseline1.push_back(histnames1[i]);
-  //   }
-  // }
-  
-  // else{
-  //   for (int i=0; i< histnames2.size();i++){
-  //     baseline1.push_back(histnames2[i]);
-  //   }
-
-    //string to be added to output file name - useful when you have different files and reading the same histograms from these
-    // vector<vector<string>> bigbaseline;
-    // bigbaseline = {baseline1};
-
-    // for (int ihist =0; ihist<histname2.size(); ihist++){
-    //   sprintf(hist_name,"%s",histnames2[ihist].c_str());
-    //   TH1F* h_NB_bin = 
-    
-    // }
-    
-   	
-	//filetag={"TTGJets_Process_2018"," ", "WGJets_Process_2018", " "};
-	//luminosity for each year - depends if you want to use it or - generate1Dplot uses this number and add it on the top
+  //luminosity for each year - depends if you want to use it or - generate1Dplot uses this number and add it on the top
   vector<float>energyy;
   energyy={59.74,41.529};//,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,19.5,19.5,19.5,19.5,19.5,19.5,19.5,36.0,36.0,36.0,36.0,36.0,36.0,36.0};
-	
-	//rebin values
+  
+  //rebin values
   vector<int >rebin = {2,2,2,2,2,2,2,2,2}; //keep it 1 if you don't want to change hist bins
   
   //x axis title for all plots///
@@ -532,74 +503,28 @@ void new_all_combined_Bin_NB_TF(string pathname)
 	TH1F* resp = (TH1F*) root_file->Get(hist_name); //reading hist from the TFile
 	hist_list.push_back(resp);	      
       }
-    //hist_file.push_back(hist_list);
-  
-  
-  // if(store_TF){ 
-  //   TFile *TF_NBJet;
-  //   TF_NBJet = new TFile("root_files/TF_NBJet.root", "RECREATE"); 
-  //   TH1F* h_total_SR = (TH1F*)hist_file[0][0]-> Clone();	 
-  //   TH1F* h_total_CR = (TH1F*)hist_file[0][1]-> Clone();
-  //   for (int ifile =1; ifile < f.size(); ifile++){
-  //     cout << "SR Integral of sample" << ifile+1 << ": " << hist_file[ifile][0]->Integral() << endl;
-  //     h_total_SR ->Add(hist_file[ifile][0]);	    
-  //     h_total_CR ->Add(hist_file[ifile][1]);	    
-  //   }
-    
-  //   cout << "Total Integral: " << h_total_SR->Integral() << endl;
-    
-  //   TH1D* h_TF = (TH1D*) h_total_SR->Clone("combined_TF");
-  //   h_TF->Divide(h_total_CR);
-  //   TF_NBJet ->cd();
-  //   h_TF->Write();	
-  // }
-  
-  //if(!store_TF){            	      
-	// for (int ibkg = 0; ibkg < f.size(); ibkg ++){
-	  //vector<TH1F*> h_added;	    	    
-	  // TH1F* h_total_SR = (TH1F*)hist_file[0][0]-> Clone();	 
-	  // TH1F* h_total_CR = (TH1F*)hist_file[0][1]-> Clone();
-	  // TH1F* h_total_SR_pred = (TH1F*)hist_file[0][1]-> Clone();	 
-	  
-	  //cout << "SR_pred Integral of sample: " << f[0] << ": " << hist_file[0][2]->Integral() << endl;
-	  // cout << "SR Integral of sample: " << f[0] << ": " << h_total_SR->Integral() << endl;
-	  // for (int ifile =1; ifile < f.size(); ifile++){
-	  //   cout << "SR Integral of sample: " << f[ifile] << ": " << hist_file[ifile][0]->Integral() << endl;
-	  //   h_total_SR ->Add(hist_file[ifile][0]);	    
-	  //   h_total_CR ->Add(hist_file[ifile][1]);
-	  //   h_total_SR_pred ->Add(hist_file[ifile][1]);
-	  // }
-	  // cout << "Total SR Integral: " << h_total_SR->Integral() << endl;
-	  // cout << "Total SR_pred Integral: " << h_total_SR_pred->Integral() << endl;
-	  //h_added = {h_total_SR, h_total_SR_pred};
-	  
-	    
-	  //}
     cout << "all samples root file combine SR:" << hist_list[0]->Integral() << endl;
 	  
-	  float energy=energyy[0];
-	  int xrange=0.0;
-	  //vector<TH1D*> h_TF;
-
-	  //TH1D* h_CR = (TH1D*)hist_add[ibkg].at(1)->Clone();
-	  TH1D* h_TF = (TH1D*)hist_list.at(0)->Clone();
-	  h_TF->Divide(hist_list.at(1));
-	  cout << "working!" << endl;	  	  
-	  //x axis title for all plots///
-	  vector<string>diff_title;
-	  diff_title = {"Bin_No."};
-	  vector<string>xtitle;
-	  xtitle = {diff_title[0], diff_title[0], diff_title[0], diff_title[0]};
-	  
-	  //path to save the files a jpg or pdf
-	  //string folder;	  
-	  //folder = "plots/LL_plots/combined/";
-	  sprintf(full_path,"%s/%s%s_Validate_binned_SR_CR_overlay_%s",pathname.c_str(),folder[ibkg].c_str(),identifier.c_str(),filetag[ibkg].c_str());
-	  
-	  // 	//calling generate_1Dplot which will take this vector of histograms and 
-	  //generate_1Dplot(h_added,h_TF,full_path,energy,xmax[0],xmin[0],leg_head,false,true,false,true,filetag.c_str(),xtitle[0].c_str(),rebin[0]);
-	  generate_1Dplot(hist_list, h_TF,full_path,energy,xmax[ibkg],xmin[ibkg],leg_head,false,true,false,true,filetag[ibkg].c_str(),xtitle[ibkg].c_str(),rebin[ibkg]);
-	}
+    float energy=energyy[0];
+    int xrange=0.0;
+    //vector<TH1D*> h_TF;
+    
+    //TH1D* h_CR = (TH1D*)hist_add[ibkg].at(1)->Clone();
+    TH1D* h_TF = (TH1D*)hist_list.at(0)->Clone();
+    h_TF->Divide(hist_list.at(1));
+    //x axis title for all plots///
+    vector<string>diff_title;
+    diff_title = {"Bin_No."};
+    vector<string>xtitle;
+    xtitle = {diff_title[0], diff_title[0], diff_title[0], diff_title[0]};
+    
+    //sprintf(full_path,"%s/%s%s_Validate_binned_SR_CR_overlay_%s",pathname.c_str(),folder[ibkg].c_str(),identifier.c_str(),filetag[ibkg].c_str());
+    sprintf(full_path,"%s/%s%s_LL_binned_SR_CR_overlay_%s",pathname.c_str(),folder[ibkg].c_str(),identifier.c_str(),filetag[ibkg].c_str());
+    
+    // 	//calling generate_1Dplot which will take this vector of histograms and 
+    //generate_1Dplot(h_added,h_TF,full_path,energy,xmax[0],xmin[0],leg_head,false,true,false,true,filetag.c_str(),xtitle[0].c_str(),rebin[0]);
+    generate_1Dplot(hist_list, h_TF,full_path,energy,xmax[ibkg],xmin[ibkg],leg_head,false,true,false,true,filetag[ibkg].c_str(),xtitle[ibkg].c_str(),rebin[ibkg]);
+  }
 }
 
 

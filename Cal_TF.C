@@ -7,7 +7,9 @@ void Cal_TF()
   f = {"Summer20UL18_TTJets.root", "Summer20UL18_TTGJets_Tune.root", "Summer20UL18_WJetsToLNu_HT.root", "Summer20UL18_WGJets_MonoPhoton.root"};
 
   vector<string> histnames;
-  histnames = {"lost_e_SR_binned", "lost_e_CR_binned"};
+  //histnames = {"lost_e_SR_binned", "lost_e_CR_binned"};
+  //histnames = {"lost_mu_SR_binned", "lost_mu_CR_binned"};
+  histnames = {"LL_SR_binned", "LL_CR_binned"};
   vector<vector<TH1F*>> hist_file;
 	   
   for(int i_file=0; i_file < f.size(); i_file++){              
@@ -24,7 +26,8 @@ void Cal_TF()
   }
 
   TFile *TF_NBJet;                    //root file to store TF histogram
-  TF_NBJet = new TFile("TF_NBJet.root", "RECREATE"); 
+  TF_NBJet = new TFile("LL_TF_NBJet.root", "RECREATE"); 
+  //TF_NBJet = new TFile("mu_TF_NBJet.root", "RECREATE"); 
   TH1F* h_total_SR = (TH1F*)hist_file[0][0]-> Clone();	 
   TH1F* h_total_CR = (TH1F*)hist_file[0][1]-> Clone();
   cout << "SR Integral of sample " << f[0] << ": " << hist_file[0][0]->Integral() << endl;

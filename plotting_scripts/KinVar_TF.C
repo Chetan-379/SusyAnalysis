@@ -242,7 +242,7 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio,char const *tag_name=""
     if(!normalize) hist.at(i)->GetYaxis()->SetRangeUser(ymin*10,ymax*5);
     else
       //hist.at(i)->GetYaxis()->SetRangeUser(ymin/10,ymax*5.0);
-      hist.at(i)->GetYaxis()->SetRangeUser(0.000001,ymax*5.0);
+      hist.at(i)->GetYaxis()->SetRangeUser(ymin/1000,ymax*5);
     //    p1->SetGrid();
     
     if(!i) hist.at(i)->Draw("hist");
@@ -371,7 +371,7 @@ void KinVar_TF(string pathname)
   if (combine==0) {
     f = {"./root_files/Summer20UL18_TTJets.root", "./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_WJetsToLNu_HT.root", "./root_files/Summer20UL18_WGJets_MonoPhoton.root"};
     filetag={"TTJets_2018", "TTGJets_2018", "WJets_2018", "WGJets_2018"};
-    folder = {"plots/LL_plots/TT_/", "plots/LL_plots/TTG_/", "plots/LL_plots/WLNu_/", "plots/LL_plots/WG_/"};
+    folder = {"plots/LL_plots/Lost_mu/TT_/", "plots/LL_plots/Lost_mu/TTG_/", "plots/LL_plots/Lost_mu/WLNu_/", "plots/LL_plots/Lost_mu/WG_/"};
     identifier = "Single";
   }
 
@@ -385,16 +385,21 @@ void KinVar_TF(string pathname)
   if (combine==4) {
     f= {"./root_files/All_combined_Summer20UL18.root"};
     filetag={"TTG+WG_2018"};
-    folder = {"plots/LL_plots/combined/"};
+    folder = {"plots/LL_plots/All_cat_combined/combined/"};
     identifier = "Combined";
   }
 
   
   vector<string> histnames1, histnames2, histnames3, histnames4;
-  histnames1 = {"h_LL_SR_Pho_Pt", "h_LL_CR_Pho_Pt"};  //put the histogram names you want to overlay
-  histnames2 = {"h_LL_SR_MET", "h_LL_CR_MET"};
-  histnames3 = {"h_LL_SR_NHadJets", "h_LL_CR_NHadJets"};
-  histnames4 = {"h_LL_SR_NbJets", "h_LL_CR_NbJets"};
+  histnames1 = {"LL_SR_Pho_Pt", "LL_CR_Pho_Pt"}; 
+  histnames2 = {"LL_SR_MET", "LL_CR_MET"};
+  histnames3 = {"LL_SR_NHadJets", "LL_CR_NHadJets"};
+  histnames4 = {"LL_SR_NbJets", "LL_CR_NbJets"};
+  
+  // histnames1 = {"lost_mu_SR_Pho_Pt", "lost_mu_CR_Pho_Pt"}; 
+  // histnames2 = {"lost_mu_SR_MET", "lost_mu_CR_MET"};
+  // histnames3 = {"lost_mu_SR_NHadJets", "lost_mu_CR_NHadJets"};
+  // histnames4 = {"lost_mu_SR_NbJets", "lost_mu_CR_NbJets"};
   
   vector<vector<string>> bigbaseline;
   vector<string> baseline1, baseline2, baseline3, baseline4;
@@ -417,7 +422,7 @@ void KinVar_TF(string pathname)
       vector<int >rebin = {2,2,2,2,2,2,2,2,2}; //keep it 1 if you don't want to change hist bins
       
       //x axis range
-      vector<int>xmax = {2000,2000,46,46,2000,2000,2000,2000};
+      vector<int>xmax = {2000,2000,16,16,2000,2000,2000,2000};
       vector<int>xmin = {0,0,0,0,0,0,0,0};
 
       //looping over each files///
@@ -446,7 +451,7 @@ void KinVar_TF(string pathname)
 	xtitle = {diff_title[0], diff_title[1], diff_title[2], diff_title[3]};
 
 	//path to save the files a jpg or pdf
-	sprintf(full_path,"%s/%s%s_Normalised_%s_SR_CR_overlay_%s",pathname.c_str(),folder[ibkg].c_str(),identifier.c_str(), diff_title[bigi].c_str(),filetag[ibkg].c_str());
+	sprintf(full_path,"%s/%s%s_LL_Normalised_%s_SR_CR_overlay_%s",pathname.c_str(),folder[ibkg].c_str(),identifier.c_str(), diff_title[bigi].c_str(),filetag[ibkg].c_str());
 
 	//calling generate_1Dplot which will take this vector of histograms 
 	generate_1Dplot(hist_list_Njets,h_TF,full_path,energy,xmax[bigi],xmin[bigi],leg_head,true,true,false,true,filetag[ibkg].c_str(),xtitle[bigi].c_str(),rebin[bigi]);
