@@ -109,13 +109,9 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
   TFile *root_file3 = new TFile(src_file3.c_str());
 
   TH1F *h_TF1, *h_TF2, *h_TF3;	   
-  // if(s_sample.Contains("TTG")) h_TF = (TH1F*) root_file ->Get("h_TF_TTGJets");
-  // if(s_sample.Contains("TTJets") || s_sample.Contains("TTJets_Leptons")) h_TF = (TH1F*) root_file ->Get("h_TF_TTJets");
-  // if(s_sample.Contains("WJets")) h_TF = (TH1F*) root_file ->Get("h_TF_WJets");
-  // if(s_sample.Contains("WGJets_MonoPhoton_PtG-40to130UL")||s_sample.Contains("WGJets_MonoPhoton_PtG-130UL")) h_TF = (TH1F*) root_file ->Get("h_TF_WGJets");
   h_TF1 = (TH1F*) root_file1 ->Get("combined_TF");
   h_TF2 = (TH1F*) root_file2 ->Get("combined_TF");
-  h_TF3 = (TH1F*) root_file2 ->Get("combined_TF");
+  h_TF3 = (TH1F*) root_file3 ->Get("combined_TF");
   float TF1 = 0, TF2 = 0, TF3 = 0;
   double wt2 = 0, wt3 = 0, wt4 = 0;
   
@@ -404,12 +400,12 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	  }
 	}
 	
-	else if (GenElectrons->size() == 0 && GenMuons->size() == 0 && GenTaus->size() > 0) had_tau_SR = true;
-	//else if (GenElectrons->size() == 0 && GenMuons->size() == 0 && GenTaus->size() > 0) lost_mu_SR = true;
+	//else if (GenElectrons->size() == 0 && GenMuons->size() == 0 && GenTaus->size() > 0) had_tau_SR = true;
+	else if (GenElectrons->size() == 0 && GenMuons->size() == 0 && GenTaus->size() > 0) lost_mu_SR = true;
 	
 	else rest_SR = true;
       }
-
+      
       //selecting CR
       if (Pass_MET2) {
 	if (NElectrons==1 && NMuons==0 && isoElectronTracks && !(isoMuonTracks || isoPionTracks)){
@@ -417,7 +413,6 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	m_T_EMET = sqrt(2*((Electrons[0].Pt()*MET)-(Electrons[0].Pt()*MET*cos(DeltaPhi(Electrons[0].Phi(),METPhi)))));
 	h_mT_reco_e_G->Fill(m_T_EMET);
 	if (dR_reco_e_gamma >= 0.2 && m_T_EMET < 100) lost_elec_CR = true;
-	//if (dR_reco_e_gamma >= 0.2 && m_T_EMET < 100) lost_mu_CR = true;
 	}
 
 	else if (NElectrons == 0 && NMuons == 1 && isoMuonTracks && !(isoElectronTracks || isoPionTracks)) {
@@ -425,8 +420,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	  lost_mu_CR = true;
 	}
       }
-                  
-  	  
+                    	  
       //cout << "NbJets: " << BTags << endl;
       if (lost_elec_SR) {
 	h_Lost_e_SR_Pho_Pt->Fill(bestPhoton.Pt(),wt1);
@@ -448,19 +442,16 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	h_Lost_mu_SR_srch_binned -> Fill(SrchBins,wt1);
       }
 
-      if (lost_elec_SR || lost_mu_SR) {
-	// h_LL_SR_Pho_Pt ->Fill(bestPhoton.Pt(),wt1);
-	// h_LL_SR_MET->Fill(MET,wt1);
-	// h_LL_SR_NHadJets->Fill(NHadJets,wt1);
-	// h_LL_SR_NbJets->Fill(BTags,wt1);
-	
-	h_LL_SR_binned ->Fill(TFbins,wt1);
-	h_LL_SR_srch_binned -> Fill(SrchBins,wt1);
+       if (lost_elec_SR || lost_mu_SR) {
+	 h_LL_SR_Pho_Pt ->Fill(bestPhoton.Pt(),wt1);
+	 h_LL_SR_MET->Fill(MET,wt1);
+	 h_LL_SR_NHadJets->Fill(NHadJets,wt1);
+	 h_LL_SR_NbJets->Fill(BTags,wt1);
+	 
+	 h_LL_SR_binned ->Fill(TFbins,wt1);
+	 h_LL_SR_srch_binned -> Fill(SrchBins,wt1);
       }
-
-      
-      if (had_tau_SR) h_Had_tau_SR_NHadJets->Fill(NHadJets,wt1);     
-      
+                  
       if (FR_SR) {
 	h_FR_SR_binned -> Fill(TFbins,wt1);
 	h_FR_SR_NHadJets -> Fill(NHadJets,wt1);
@@ -504,16 +495,16 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	h_Lost_mu_CR_srch_binned -> Fill(SrchBins,wt1);
       }
 
-      if (lost_mu_CR || lost_mu_CR) {
-	// h_LL_CR_Pho_Pt ->Fill(bestPhoton.Pt(),wt1);
-	// h_LL_CR_MET->Fill(MET,wt1);
-	// h_LL_CR_NHadJets->Fill(NHadJets,wt1);
-	// h_LL_CR_NbJets->Fill(BTags,wt1);
+      if (lost_elec_CR || lost_mu_CR) {
+	 h_LL_CR_Pho_Pt ->Fill(bestPhoton.Pt(),wt1);
+	 h_LL_CR_MET->Fill(MET,wt1);
+	 h_LL_CR_NHadJets->Fill(NHadJets,wt1);
+	 h_LL_CR_NbJets->Fill(BTags,wt1);
 	
 	h_LL_CR_binned ->Fill(TFbins,wt1);
 	h_LL_CR_srch_binned -> Fill(SrchBins,wt1);
       }
-                  
+      
       //validating TF Method
       if (lost_elec_CR){
 	TF1 = h_TF1 ->GetBinContent(TFbins+1);
@@ -528,6 +519,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
       }
 
       if (lost_elec_CR || lost_mu_CR){
+      //if (false){
 	TF3 = h_TF3 ->GetBinContent(TFbins+1);
 	wt4 = TF3*wt1;
 	h_LL_SR_srch_binned_pred->Fill(SrchBins,wt4);
@@ -762,35 +754,18 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 
   } // end jentry loop
 
-  	// h_Lost_e_SR_Pho_Pt->Fill(bestPhoton.Pt(),wt1);
-	// h_Lost_e_SR_MET->Fill(MET,wt1);
-	// h_Lost_e_SR_NHadJets->Fill(NHadJets,wt1);
-	// h_Lost_e_SR_NbJets->Fill(BTags,wt1);
-	
-	// h_Lost_e_SR_binned ->Fill(TFbins,wt1);
-	// h_Lost_e_SR_srch_binned -> Fill(SrchBins,wt1);
+  // //combining lost e and lost_mu tau_had
+  // //hists for SR
+  // h_LL_SR_Pho_Pt ->Add(h_Lost_e_SR_Pho_Pt, h_Lost_mu_SR_Pho_Pt);
+  // h_LL_SR_MET ->Add(h_Lost_e_SR_MET, h_Lost_mu_SR_MET);
+  // h_LL_SR_NHadJets ->Add(h_Lost_e_SR_NHadJets, h_Lost_mu_SR_NHadJets);
+  // h_LL_SR_NbJets ->Add(h_Lost_e_SR_NbJets, h_Lost_mu_SR_NbJets);
 
-  //combining lost e and lost_mu tau_had
-  //hists for SR
-  h_LL_SR_Pho_Pt ->Add(h_Lost_e_SR_Pho_Pt, h_Lost_mu_SR_Pho_Pt);
-  h_LL_SR_MET ->Add(h_Lost_e_SR_MET, h_Lost_mu_SR_MET);
-  h_LL_SR_NHadJets ->Add(h_Lost_e_SR_NHadJets, h_Lost_mu_SR_NHadJets);
-  h_LL_SR_NbJets ->Add(h_Lost_e_SR_NbJets, h_Lost_mu_SR_NbJets);
-  
-  // h_LL_SR_binned -> Add(h_Lost_e_SR_binned, h_Lost_mu_SR_binned);
-  // h_LL_SR_srch_binned -> Add(h_Lost_e_SR_srch_binned, h_Lost_mu_SR_srch_binned);
-
-  //hists for CR
-  h_LL_CR_Pho_Pt ->Add(h_Lost_e_CR_Pho_Pt, h_Lost_mu_CR_Pho_Pt);
-  h_LL_CR_MET ->Add(h_Lost_e_CR_MET, h_Lost_mu_CR_MET);
-  h_LL_CR_NHadJets ->Add(h_Lost_e_CR_NHadJets, h_Lost_mu_CR_NHadJets);
-  h_LL_CR_NbJets ->Add(h_Lost_e_CR_NbJets, h_Lost_mu_CR_NbJets);
-  
-  // h_LL_CR_binned -> Add(h_Lost_e_CR_binned, h_Lost_mu_CR_binned);
-  // h_LL_CR_srch_binned -> Add(h_Lost_e_CR_srch_binned, h_Lost_mu_CR_srch_binned);
-
-  //  h_LL_SR_srch_binned_pred ->Add(h_Lost_e_SR_srch_binned_pred, h_Lost_mu_SR_srch_binned_pred);
-  
+  // //hists for CR
+  // h_LL_CR_Pho_Pt ->Add(h_Lost_e_CR_Pho_Pt, h_Lost_mu_CR_Pho_Pt);
+  // h_LL_CR_MET ->Add(h_Lost_e_CR_MET, h_Lost_mu_CR_MET);
+  // h_LL_CR_NHadJets ->Add(h_Lost_e_CR_NHadJets, h_Lost_mu_CR_NHadJets);
+  // h_LL_CR_NbJets ->Add(h_Lost_e_CR_NbJets, h_Lost_mu_CR_NbJets);  
   
   cout << h_NHadJets[0]->Integral() << endl;
   cout << h_NHadJets[2]->Integral() << endl;

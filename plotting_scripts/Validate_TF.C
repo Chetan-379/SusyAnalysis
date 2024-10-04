@@ -1,8 +1,7 @@
 const int n_pl = 4;
 bool logx = false;
 //defining the legends for each plots
-//TString legend_text[10] = {"expected SR","predicted SR", "hist4", "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
-TString legend_text[10] = {"SR","CR", "hist4", "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
+TString legend_text[10] = {"expected SR","predicted SR", "hist4", "pMSSM_MCMC_106_19786","pMSSM_MCMC_473_54451"};
 int line_width[12] = {2,2,2,2,2,2,2,2,2,2,2,2};
 int line_style[12] = {1,1,1,1,1,1,1,1,1,1,1,1};
 int line_color[9] = {kBlack, kRed, kGreen+2, kMagenta, kBlue, kAzure + 7 , kCyan + 1 , kGreen + 3 };
@@ -269,75 +268,40 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio,char const *tag_name=""
   //textOnTop->DrawLatexNDC(0.12,0.96,"CMS #it{#bf{Preliminary}}");
   textOnTop->DrawLatexNDC(0.12,0.91," #it{#bf{Work in Progress}}");
   
-  // char* en_lat = new char[500];
-  // textOnTop->SetTextSize(0.04);
-  // float inlumi=energy;
-  // sprintf(en_lat,"#bf{%0.2f fb^{-1} (13 TeV)}",inlumi);
-  // textOnTop->DrawLatexNDC(0.7,0.91,en_lat);
+  char* en_lat = new char[500];
+  textOnTop->SetTextSize(0.04);
+  float inlumi=energy;
+  sprintf(en_lat,"#bf{%0.2f fb^{-1} (13 TeV)}",inlumi);
+  textOnTop->DrawLatexNDC(0.7,0.91,en_lat);
 
-  // TLine *line1V7=new TLine( 8.0,0.001, 8.0,ymax*5);
-  // TLine *line2V7=new TLine(14.0,0.001, 14.0,ymax*5);
-  // TLine *line3V7=new TLine(19.0,0.001, 19.0,ymax*5);
-  // TLine *line4V7=new TLine(24.0,0.001, 24.0,ymax*5);
-  // TLine *line5V7=new TLine(29.0,0.001, 29.0,ymax*5);
-
-  TLine *line1V7=new TLine(2.0, 0.001, 2.0, ymax*5);
-  TLine *line2V7=new TLine(3.0, 0.001, 3.0,ymax*5);
-  TLine *line3V7=new TLine(4.0, 0.001, 4.0,ymax*5);
-  TLine *line4V7=new TLine(5.0, 0.001, 5.0,ymax*5);
-  TLine *line5V7=new TLine(6.0, 0.001, 6.0,ymax*5);
-  TLine *line6V7=new TLine(7.0, 0.001, 7.0,ymax*5);
-  TLine *line7V7=new TLine(8.0, 0.001, 8.0,ymax*5);
-  TLine *line8V7=new TLine(0.0, ymax*5, 11.0,ymax*5);
+  TLine *line1V7=new TLine( 8.0,0.001, 8.0,ymax*5);
+  TLine *line2V7=new TLine(14.0,0.001, 14.0,ymax*5);
+  TLine *line3V7=new TLine(19.0,0.001, 19.0,ymax*5);
+  TLine *line4V7=new TLine(24.0,0.001, 24.0,ymax*5);
+  TLine *line5V7=new TLine(29.0,0.001, 29.0,ymax*5);
 
   
   line1V7->Draw();      line2V7->Draw();  line3V7->Draw();
-  line4V7->Draw();      line5V7->Draw();  line6V7->Draw();          
-  line7V7->Draw();      line8V7->Draw();    
+  line4V7->Draw();      line5V7->Draw();           
 
-  // TArrow *arrow1 = new TArrow( 1.0,ymax*5, 8.0,ymax*5,0.01,"<|>");
-  // TArrow *arrow2 = new TArrow( 8.0,ymax*5, 14.0,ymax*5,0.01,"<|>");
-  // TArrow *arrow3 = new TArrow(14.0,ymax*5, 19.0,ymax*5,0.01,"<|>");
-  // TArrow *arrow4 = new TArrow(19.0,ymax*5, 24.0,ymax*5,0.01,"<|>");
-  // TArrow *arrow5 = new TArrow(24.0,ymax*5, 29.0,ymax*5,0.01,"<|>");
-  // TArrow *arrow6 = new TArrow(29.0,ymax*5, 35.0,ymax*5,0.01,"<|>");
-
-  TArrow *arrow1 = new TArrow(1.0, 0.7, 2.0, 0.7, 0.01, "<|>");
-  TArrow *arrow2 = new TArrow(2.0, 0.7, 3.0, 0.7, 0.01, "<|>");
-  TArrow *arrow3 = new TArrow(3.0, 0.7, 4.0, 0.7, 0.01, "<|>");
-  TArrow *arrow4 = new TArrow(4.0, 0.7, 5.0, 0.7, 0.01, "<|>");
-  TArrow *arrow5 = new TArrow(5.0, 0.7, 6.0, 0.7, 0.01, "<|>");
-  TArrow *arrow6 = new TArrow(6.0, 0.7, 7.0, 0.7, 0.01, "<|>");
-  TArrow *arrow7 = new TArrow(7.0, 0.7, 8.0, 0.7, 0.01, "<|>");
-  TArrow *arrow8 = new TArrow(8.0, 0.7, 9.0, 0.7, 0.01, "<|>");
-
+  TArrow *arrow1 = new TArrow( 1.0,ymax*5, 8.0,ymax*5,0.01,"<|>");
+  TArrow *arrow2 = new TArrow( 8.0,ymax*5, 14.0,ymax*5,0.01,"<|>");
+  TArrow *arrow3 = new TArrow(14.0,ymax*5, 19.0,ymax*5,0.01,"<|>");
+  TArrow *arrow4 = new TArrow(19.0,ymax*5, 24.0,ymax*5,0.01,"<|>");
+  TArrow *arrow5 = new TArrow(24.0,ymax*5, 29.0,ymax*5,0.01,"<|>");
+  TArrow *arrow6 = new TArrow(29.0,ymax*5, 35.0,ymax*5,0.01,"<|>");
     
   arrow1->Draw(); arrow2->Draw(); arrow3->Draw();
   arrow4->Draw(); arrow5->Draw(); arrow6->Draw();
-  arrow7->Draw(); arrow8->Draw();
   
-  // TLatex Tl;
-  // Tl.SetTextSize(0.035);
-  // Tl.DrawLatex(3.5,ymax*7.0,"N^{ 0}_{ 2-4}");
-  // Tl.DrawLatex(9.5,ymax*7.0,"N^{ 0}_{ 5-6}");
-  // Tl.DrawLatex(15.5,ymax*7.0,"N^{ 0}_{ #geq7}");
-  // Tl.DrawLatex(19.5,ymax*7.0,"N^{ #geq1}_{ 2-4}");
-  // Tl.DrawLatex(25.5,ymax*7.0,"N^{ #geq1}_{ 5-6}");
-  // Tl.DrawLatex(30.5,ymax*7.0,"N^{ #geq1}_{ #geq7}");
-
   TLatex Tl;
   Tl.SetTextSize(0.035);
-  Tl.DrawLatex(1.3,1.0,"N^{ 0}_{ 2}");
-  Tl.DrawLatex(2.3,1.0,"N^{ 0}_{ 3}");
-  Tl.DrawLatex(3.3,1.0,"N^{ 0}_{ 4}");
-  Tl.DrawLatex(4.3,1.0,"N^{ 0}_{ 5-6}");
-  Tl.DrawLatex(5.3,1.0,"N^{ 0}_{ #geq7}");
-  Tl.DrawLatex(6.3,1.0,"N^{ #geq1}_{ 2-4}");
-  Tl.DrawLatex(7.3,1.0,"N^{ #geq1}_{ 5-6}");
-  Tl.DrawLatex(8.3,1.0,"N^{ #geq1}_{ #geq7}");
- 
-  
-  //gPad->Update();
+  Tl.DrawLatex(3.5,ymax*7.0,"N^{ 0}_{ 2-4}");
+  Tl.DrawLatex(9.5,ymax*7.0,"N^{ 0}_{ 5-6}");
+  Tl.DrawLatex(15.5,ymax*7.0,"N^{ 0}_{ #geq7}");
+  Tl.DrawLatex(19.5,ymax*7.0,"N^{ #geq1}_{ 2-4}");
+  Tl.DrawLatex(25.5,ymax*7.0,"N^{ #geq1}_{ 5-6}");
+  Tl.DrawLatex(30.5,ymax*7.0,"N^{ #geq1}_{ #geq7}");
  
   hist_ratio->SetLineWidth(2);
   hist_ratio->SetLineStyle(1);
@@ -346,7 +310,6 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio,char const *tag_name=""
   hist_ratio->SetTitle(" ");  
   hist_ratio->GetXaxis()->SetTitleSize(0.13);
   hist_ratio->GetYaxis()->SetTitle("exp/pred");//TF = #frac{N_{SR}}{N_{CR}}");//(0#mu,1#gamma)}{(1#mu,1#gamma)}");
-   // hist_ratio->GetYaxis()->SetTitle("SR/CR");//TF = #frac{N_{SR}}{N_{CR}}");//(0#mu,1#gamma)}{(1#mu,1#gamma)}");
   hist_ratio->GetXaxis()->SetLabelSize(0.1);
   hist_ratio->GetYaxis()->SetRangeUser(-0.5,2.5);
   hist_ratio->GetXaxis()->SetRangeUser(xmin,xrange+4);
@@ -367,7 +330,6 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio,char const *tag_name=""
   hist_ratio->GetXaxis()->SetTitle(xtitile);
   hist_ratio->GetYaxis()->SetNdivisions(505);
   
-  //new
   hist_ratio->GetYaxis()->CenterTitle(true);
   hist_ratio->GetXaxis()->SetTitleSize(0.05);
   hist_ratio->GetXaxis()->SetLabelSize(0.12);
@@ -456,8 +418,11 @@ void Validate_TF(string pathname)
 
   if (combine==0) {
     f = {"./root_files/Summer20UL18_TTJets.root", "./root_files/Summer20UL18_TTGJets_Tune.root", "./root_files/Summer20UL18_WJetsToLNu_HT.root", "./root_files/Summer20UL18_WGJets_MonoPhoton.root"};
+    //f = {"./root_files/Summer20UL18_WGJets_MonoPhoton.root"};
     filetag={"TTJets_2018", "TTGJets_2018", "WJets_2018", "WGJets_2018"};
-    folder = {"plots/LL_plots/TT_/", "plots/LL_plots/TTG_/", "plots/LL_plots/WLNu_/", "plots/LL_plots/WG_/"};
+    //filetag={"WGJets_2018"};
+    folder = {"plots/LL_plots/Lost_mu_had_tau/TT_/", "plots/LL_plots/Lost_mu_had_tau/TTG_/", "plots/LL_plots/Lost_mu_had_tau/WLNu_/", "plots/LL_plots/Lost_mu_had_tau/WG_/"};
+    //folder = {"plots/LL_plots/Lost_mu_had_tau/WG_/"};
     identifier = "Single";
   }
 
@@ -472,14 +437,16 @@ void Validate_TF(string pathname)
     f= {"./root_files/All_combined_Summer20UL18.root"};
     filetag={"TTG+WG_2018"};
     folder = {"plots/LL_plots/All_cat_combined/combined/"};
+    //folder = {"plots/LL_plots/Lost_mu_had_tau/combined/"};
+    //folder = {"plots/LL_plots/Lost_e/combined/"};
     identifier = "Combined";
   }
   
-  vector<string> histnames; 
+  vector<string> histnames;
+  //histnames = {"lost_e_SR_srch_binned", "lost_e_SR_srch_binned_pred", "lost_e_CR_srch_binned"};
   //histnames = {"lost_mu_SR_srch_binned", "lost_mu_SR_srch_binned_pred", "lost_mu_CR_srch_binned"};
-  histnames = {"LL_SR_binned", "LL_CR_binned"};
-  
-  
+  histnames = {"LL_SR_srch_binned", "LL_SR_srch_binned_pred", "LL_CR_srch_binned_pred"};
+    
   //luminosity for each year - depends if you want to use it or - generate1Dplot uses this number and add it on the top
   vector<float>energyy;
   energyy={59.74,41.529};//,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,19.5,19.5,19.5,19.5,19.5,19.5,19.5,36.0,36.0,36.0,36.0,36.0,36.0,36.0};
@@ -518,8 +485,8 @@ void Validate_TF(string pathname)
     vector<string>xtitle;
     xtitle = {diff_title[0], diff_title[0], diff_title[0], diff_title[0]};
     
-    //sprintf(full_path,"%s/%s%s_Validate_binned_SR_CR_overlay_%s",pathname.c_str(),folder[ibkg].c_str(),identifier.c_str(),filetag[ibkg].c_str());
-    sprintf(full_path,"%s/%s%s_LL_binned_SR_CR_overlay_%s",pathname.c_str(),folder[ibkg].c_str(),identifier.c_str(),filetag[ibkg].c_str());
+    sprintf(full_path,"%s/%s%s_LL_Validate_binned_SR_CR_overlay_%s",pathname.c_str(),folder[ibkg].c_str(),identifier.c_str(),filetag[ibkg].c_str());
+    
     
     // 	//calling generate_1Dplot which will take this vector of histograms and 
     //generate_1Dplot(h_added,h_TF,full_path,energy,xmax[0],xmin[0],leg_head,false,true,false,true,filetag.c_str(),xtitle[0].c_str(),rebin[0]);

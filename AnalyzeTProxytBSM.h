@@ -78,6 +78,11 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   TH1D *h_Lost_mu_TF;
   TH1F *h_Lost_mu_SR_srch_binned, *h_Lost_mu_CR_srch_binned, *h_Lost_mu_SR_srch_binned_pred;
 
+  TH1F *h_had_tau_SR_Pho_Pt;
+  TH1F *h_had_tau_SR_MET;
+  TH1D *h_had_tau_SR_NHadJets;
+  TH1F *h_had_tau_SR_NbJets;
+  
   TH1F *h_LL_SR_Pho_Pt, *h_LL_CR_Pho_Pt;
   TH1F *h_LL_SR_MET, *h_LL_CR_MET;
   TH1D *h_LL_SR_NHadJets, *h_LL_CR_NHadJets;
@@ -238,7 +243,12 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
   h_Lost_mu_CR_srch_binned = new TH1F("lost_mu_CR_srch_binned","lost_mu_CR_srch_binned",35,0,35);
   h_Lost_mu_SR_srch_binned_pred = new TH1F("lost_mu_SR_srch_binned_pred","lost_mu_SR_srch_binned_pred",35,0,35);
 
+  h_had_tau_SR_Pho_Pt = new TH1F("had_tau_SR_Pho_Pt","had_tau_SR_Pho_Pt",50,0.0,1000.0); 
+  h_had_tau_SR_MET = new TH1F("had_tau_SR_MET","had_tau_SR_MET",50,0.0,1000.0); 
+  h_had_tau_SR_NHadJets = new TH1D("had_tau_SR_NHadJets","had_tau_SR_NHadJets",20,0.0,20.0); 
+  h_had_tau_SR_NbJets = new TH1F("had_tau_SR_NbJets","had_tau_SR_NbJets",10,0.0,10.0); 
 
+  //all cat combined
   h_LL_SR_Pho_Pt = new TH1F("LL_SR_Pho_Pt","LL_SR_Pho_Pt",50,0.0,1000.0); 
   h_LL_CR_Pho_Pt = new TH1F("LL_CR_Pho_Pt","LL_CR_Pho_Pt",50,0.0,1000.0);
   h_LL_SR_MET = new TH1F("LL_SR_MET","LL_SR_MET",50,0.0,1000.0); 

@@ -386,6 +386,7 @@ void KinVar_TF(string pathname)
     f= {"./root_files/All_combined_Summer20UL18.root"};
     filetag={"TTG+WG_2018"};
     folder = {"plots/LL_plots/All_cat_combined/combined/"};
+    //folder = {"plots/LL_plots/Lost_mu_had_tau/combined/"};
     identifier = "Combined";
   }
 
