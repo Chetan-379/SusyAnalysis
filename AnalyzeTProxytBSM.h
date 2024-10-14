@@ -78,10 +78,10 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   TH1D *h_Lost_mu_TF;
   TH1F *h_Lost_mu_SR_srch_binned, *h_Lost_mu_CR_srch_binned, *h_Lost_mu_SR_srch_binned_pred;
 
-  TH1F *h_had_tau_SR_Pho_Pt;
-  TH1F *h_had_tau_SR_MET;
-  TH1D *h_had_tau_SR_NHadJets;
-  TH1F *h_had_tau_SR_NbJets;
+  TH1F *h_Had_tau_SR_Pho_Pt;
+  TH1F *h_Had_tau_SR_MET;
+  TH1D *h_Had_tau_SR_NHadJets;
+  TH1F *h_Had_tau_SR_NbJets;
   
   TH1F *h_LL_SR_Pho_Pt, *h_LL_CR_Pho_Pt;
   TH1F *h_LL_SR_MET, *h_LL_CR_MET;
@@ -90,9 +90,7 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   TH1F *h_LL_CR_binned, *h_LL_SR_binned;
   TH1D *h_LL_TF;
   TH1F *h_LL_SR_srch_binned, *h_LL_CR_srch_binned, *h_LL_SR_srch_binned_pred;
-
-  TH1D *h_Had_tau_SR_NHadJets;
-
+  
   TH1F *h_FR_SR_binned;
   TH1D *h_FR_SR_NHadJets;
 
@@ -109,6 +107,7 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   TH1I *h_Gen_taus_size;
   TH1I *h_ptcl_W_rest;
   TH1F *h_Pho_Pt_rest, *h_MET_rest, *h_NHadJets_rest, *h_NbJets_rest, *h_dhi_JetMET1_rest, *h_dhi_JetMET2_rest;
+  //TH1F *h_pu;
   
   //==========================================
 
@@ -123,7 +122,6 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
 
   oFile = new TFile(outFileName, "recreate");
   oFile->cd();
-
   TH1::SetDefaultSumw2(1);
   char hname_NHadJets[100], hname_NbJets[100], hname_Jet_Pt[100], hname_Jet_Eta[100], hname_Jet_Phi[100], hname_Met[100], hname_PhoPt[100], hname_PhoEta[100], hname_PhoPhi[100], hname_GenPt[100], hname_GenEta[100], hname_GenPhi[100], hname_RecoPt[100], hname_RecoEta[100], hname_RecoPhi[100]; 
   // Book your histograms & summary counters here 
@@ -187,18 +185,18 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
   h_GenRecoE->SetXTitle("Gen");
   h_GenRecoE->SetYTitle("Reco");
   
-  h_EFakePho_eta = new TH1F("h_EFakePho_Eta","hname_EFakePho_Eta",50, -10.0, 10.0);
-  h_LostElectron_eta = new TH1F("h_LostElectron_Eta","hname_LostElectron_Eta",50, -10.0, 10.0);
-  h_LostMuon_eta = new TH1F("h_LostMuon_Eta","hname_LostMuon_Eta",50, -10.0, 10.0);
-  h_HadTau_eta = new TH1F("h_HadTau_Eta", "h_HadTau_Eta",50,-10.0,10.0);
-  h_Rest_eta = new TH1F ("h_Rest_Eta", "h_Rest_Eta", 50,-10.0,10.0);
+  // h_EFakePho_eta = new TH1F("h_EFakePho_Eta","hname_EFakePho_Eta",50, -10.0, 10.0);
+  // h_LostElectron_eta = new TH1F("h_LostElectron_Eta","hname_LostElectron_Eta",50, -10.0, 10.0);
+  // h_LostMuon_eta = new TH1F("h_LostMuon_Eta","hname_LostMuon_Eta",50, -10.0, 10.0);
+  // h_HadTau_eta = new TH1F("h_HadTau_Eta", "h_HadTau_Eta",50,-10.0,10.0);
+  // h_Rest_eta = new TH1F ("h_Rest_Eta", "h_Rest_Eta", 50,-10.0,10.0);
 
-  h_Gen_MET = new TH1F("h_Gen_MET", "h_Gen_MET", 100,0,5000);
-  h_EFakePho_MET = new TH1F("h_EFakePho_MET","hname_EFakePho_MET",100, 0.0, 5000.0);
-  h_LostElectron_MET = new TH1F("h_LostElectron_MET","hname_LostElectron_MET",100, 0.0, 5000.0);
-  h_LostMuon_MET = new TH1F("h_LostMuon_MET","hname_LostMuon_MET",100, 0.0, 5000.0);
-  h_HadTau_MET = new TH1F("h_HadTau_MET", "h_HadTau_MET",100, 0.0, 5000.0);
-  h_Rest_MET = new TH1F ("h_Rest_MET", "h_Rest_MET", 100, 0.0, 5000.0);
+  // h_Gen_MET = new TH1F("h_Gen_MET", "h_Gen_MET", 100,0,5000);
+  // h_EFakePho_MET = new TH1F("h_EFakePho_MET","hname_EFakePho_MET",100, 0.0, 5000.0);
+  // h_LostElectron_MET = new TH1F("h_LostElectron_MET","hname_LostElectron_MET",100, 0.0, 5000.0);
+  // h_LostMuon_MET = new TH1F("h_LostMuon_MET","hname_LostMuon_MET",100, 0.0, 5000.0);
+  // h_HadTau_MET = new TH1F("h_HadTau_MET", "h_HadTau_MET",100, 0.0, 5000.0);
+  // h_Rest_MET = new TH1F ("h_Rest_MET", "h_Rest_MET", 100, 0.0, 5000.0);
  
   h_mindR_pho_gen_lep_Ovrlp=new TH1F("h_mindR_pho_gen_lep_Ovrlp","h_mindR_pho_gen_lep_Ovrlp",100,0.0,5.0);
   h_mindR_pho_qg_Ovrlp=new TH1F("h_mindR_pho_qg_Ovrlp","h_mindR_pho_qg_Ovrlp",100,0.0,5.0);
@@ -243,10 +241,10 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
   h_Lost_mu_CR_srch_binned = new TH1F("lost_mu_CR_srch_binned","lost_mu_CR_srch_binned",35,0,35);
   h_Lost_mu_SR_srch_binned_pred = new TH1F("lost_mu_SR_srch_binned_pred","lost_mu_SR_srch_binned_pred",35,0,35);
 
-  h_had_tau_SR_Pho_Pt = new TH1F("had_tau_SR_Pho_Pt","had_tau_SR_Pho_Pt",50,0.0,1000.0); 
-  h_had_tau_SR_MET = new TH1F("had_tau_SR_MET","had_tau_SR_MET",50,0.0,1000.0); 
-  h_had_tau_SR_NHadJets = new TH1D("had_tau_SR_NHadJets","had_tau_SR_NHadJets",20,0.0,20.0); 
-  h_had_tau_SR_NbJets = new TH1F("had_tau_SR_NbJets","had_tau_SR_NbJets",10,0.0,10.0); 
+  h_Had_tau_SR_Pho_Pt = new TH1F("had_tau_SR_Pho_Pt","had_tau_SR_Pho_Pt",50,0.0,1000.0); 
+  h_Had_tau_SR_MET = new TH1F("had_tau_SR_MET","had_tau_SR_MET",50,0.0,1000.0); 
+  h_Had_tau_SR_NHadJets = new TH1D("had_tau_SR_NHadJets","had_tau_SR_NHadJets",20,0.0,20.0); 
+  h_Had_tau_SR_NbJets = new TH1F("had_tau_SR_NbJets","had_tau_SR_NbJets",10,0.0,10.0); 
 
   //all cat combined
   h_LL_SR_Pho_Pt = new TH1F("LL_SR_Pho_Pt","LL_SR_Pho_Pt",50,0.0,1000.0); 
@@ -267,7 +265,7 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
 
 
  
-  h_Had_tau_SR_NHadJets = new TH1D("had_tau_SR_NHadJets","had_tau_SR_NHadJets",20,0.0,20.0);
+  //h_Had_tau_SR_NHadJets = new TH1D("had_tau_SR_NHadJets","had_tau_SR_NHadJets",20,0.0,20.0);
     
   h_FR_SR_binned = new TH1F("FR_SR_binned","h_FR_SR_binned",10,0.0,10);
   h_FR_SR_NHadJets = new TH1D("FR_SR_NHadJets","FR_SR_NHadJets",20,0.0,20.0);
@@ -283,10 +281,11 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
   h_ptcl_W_rest = new TH1I("h_ptcls_W","h_ptcls_W",20,-10,10);
   h_Pho_Pt_rest = new TH1F("rest_Pho_Pt","rest_Pho_Pt",50,0.0,1000.0); 
   h_MET_rest = new TH1F("rest_MET","rest_MET",50,0.0,1000.0); 
-  h_NHadJets_rest = new TH1F("rest_NHadJets","rest_NHadJets",20,0.0,20.0); 
+  //h_NHadJets_rest = new TH1F("rest_NHadJets","rest_NHadJets",20,0.0,20.0); 
   h_NbJets_rest = new TH1F("rest_NbJets","rest_NbJets",10,0.0,10.0);
   h_dhi_JetMET1_rest = new TH1F("rest_dphi_JetMET1","rest_dPhi_JetMET1",100,0.0,5.0);
   h_dhi_JetMET2_rest = new TH1F("rest_dphi_JetMET2","rest_dPhi_JetMET2",100,0.0,5.0);
+  //h_pu = new TH1F("puWeight","puWeight",1000,0,2);
 }
 
 AnalyzeTProxytBSM::AnalyzeTProxytBSM(const TString &inputFileList, const char *outFileName,const char *dataset, const char *sample, const char* LostlepFlag, const char* phoID) {

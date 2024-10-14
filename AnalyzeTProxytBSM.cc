@@ -84,6 +84,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
   std::string s_process = s_cross;
   TString s_Process = s_process;
   TString s_sample= sample;
+  TString s_data= data;
   double cross_section = getCrossSection(s_process);
   //double wt = getEventWeight(s_process, cross_section);
   double wt = 0;
@@ -130,7 +131,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
       bool Debug=false;
       vector<int> jetMatchindx;
       int bJet1Idx=-100;
-      double deepCSVvalue = 0.4148,p0=1.787e+02,p1=6.657e+01,p2=9.47e-01;
+      double deepCSVvalue = 0.4168,p0=1.787e+02,p1=6.657e+01,p2=9.47e-01;
       double minDR=99999;
       int phoMatchingJetIndx = -100; 
       int minDRindx=-100;
@@ -143,10 +144,39 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
       float ST=0;
       int NEMu;
       double dPhi_METjet1, dPhi_METjet2;
+      bool applyHEMveto=true;
       
       NEMu = NElectrons + NMuons;
-
+      //if (jentry < 1000) cout << puWeight << endl;
+      //h_pu->Fill(puWeight);
       wt = getEventWeight(s_process, cross_section);
+      wt = wt*puWeight;
+
+      //applying hemveto                                                                  
+      bool HEMaffected=false;
+      if(s_data.Contains("2018") && applyHEMveto){
+	for(int i=0; i<Electrons->size();i++){
+	  if(Electrons[i].Pt() >30 && Electrons[i].Eta() > -3.0 && Electrons[i].Eta() < -1.4 && Electrons[i].Phi() > -1.57 && Electrons[i].Phi() < -0.87) {HEMaffected = true; break;}
+	}
+	for(int i=0; i<Jets->size();i++){
+	  if(Jets[i].Pt() > 30 && Jets[i].Eta() > -3.2 && Jets[i].Eta() < -1.2 && Jets[i].Phi() > -1.77 && Jets[i].Phi() < -0.67 && DeltaPhi(Jets[i].Pt(),METPhi)<0.5) {HEMaffected = true; break;}
+	}
+	if(HEMaffected == true) continue;           
+      }
+
+      //adding l1trigger prefire issue probability
+      if(applyL1TrigFire_prob && (s_data.Contains("2016") ||  s_data.Contains("2017") ))
+	{
+	  wt =wt*NonPrefiringProb;
+      }
+      
+
+      // //adding l1trigger prefire issue probability
+      // if(applyL1TrigFire_prob && (s_data.Contains("2016") ||  s_data.Contains("2017") ))
+      // 	{
+      // 	  wt =wt*NonPrefiringProb;
+      // 	}
+      
       //selecting Hadronic and b jets
       for(int i=0;i<Jets->size();i++){
 	if( (Jets[i].Pt() > 30.0) && (abs(Jets[i].Eta()) <= 2.4) ){
@@ -382,27 +412,38 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
       
       bool lost_elec_CR = false, lost_elec_SR = false, had_tau_SR= false, lost_mu_CR = false, lost_mu_SR = false, FR_SR = false, FR_CR = false, rest_SR = false;      
       float m_T_EMET = 0, m_T_MuMET = 0;
+      TLorentzVector GenE_LV;
+      vector<TLorentzVector> GenElectrons_v1;
 
       //selecting different SR
       if (Pass_Iso_trk_veto){	
-	if (GenElectrons->size()>0 && GenMuons->size() == 0){         
-	  double dR_gen_e_gamma = DeltaR(GenElectrons[0].Eta(),GenElectrons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
-	  if (dR_gen_e_gamma < 0.2 && !((GenElectrons[0].Pt()/bestPhoton.Pt())<=0.8 || (GenElectrons[0].Pt()/bestPhoton.Pt())>=1.2)) FR_SR = true;
-	  else lost_elec_SR = true;	 
+	if (GenElectrons ->size() > 0 && GenMuons->size() == 0){
+	  for (int i = 0; i < GenElectrons->size(); i++){
+	    GenE_LV.SetPtEtaPhiE(GenElectrons[i].Pt(), GenElectrons[i].Eta(), GenElectrons[i].Phi(), GenElectrons[i].E());
+	    GenElectrons_v1.push_back(GenE_LV);
+	  }
+
+	  sortTLorVec(&GenElectrons_v1);
+	  double dR_gen_e_gamma1 = DeltaR(GenElectrons_v1[0].Eta(),GenElectrons_v1[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
+	  if (GenElectrons->size() == 1 && dR_gen_e_gamma1 < 0.2 && (bestPhoton.Pt()/GenElectrons_v1[0].Pt()) > 0.8 || (bestPhoton.Pt()/GenElectrons_v1[0].Pt()) < 1.2) FR_SR = true;
+	  
+	  if (GenElectrons -> size() > 1){
+	    double dR_gen_e_gamma2 = DeltaR(GenElectrons_v1[0].Eta(),GenElectrons_v1[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
+	    if ((dR_gen_e_gamma1 < 0.2 && (bestPhoton.Pt()/GenElectrons_v1[0].Pt()) > 0.8 || (bestPhoton.Pt()/GenElectrons_v1[0].Pt()) < 1.2) || (dR_gen_e_gamma2 < 0.2 && (bestPhoton.Pt()/GenElectrons_v1[1].Pt()) > 0.8 || (bestPhoton.Pt()/GenElectrons_v1[1].Pt()) < 1.2)) FR_SR = true;}
+	  
+	  if (!FR_SR) lost_elec_SR = true;
 	}
 	
 	else if (GenMuons->size()>0) {
 	  if (GenElectrons->size() == 0) lost_mu_SR = true;	  
 	  else {
-	    double dR_gen_e_gamma = DeltaR(GenElectrons[0].Eta(),GenElectrons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
-	    if (dR_gen_e_gamma < 0.2 && (GenElectrons[0].Pt()/bestPhoton.Pt()) > 0.8 && (GenElectrons[0].Pt()/bestPhoton.Pt()) < 1.2) FR_SR = true;
+	    double dR_gen_mu_gamma = DeltaR(GenElectrons[0].Eta(),GenElectrons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
+	    if (dR_gen_mu_gamma < 0.2 && (bestPhoton.Pt()/GenElectrons[0].Pt()) > 0.8 && (bestPhoton.Pt()/GenElectrons[0].Pt()) < 1.2) FR_SR = true;
 	    else lost_mu_SR = true; 
 	  }
 	}
-	
-	//else if (GenElectrons->size() == 0 && GenMuons->size() == 0 && GenTaus->size() > 0) had_tau_SR = true;
-	else if (GenElectrons->size() == 0 && GenMuons->size() == 0 && GenTaus->size() > 0) lost_mu_SR = true;
-	
+			
+	else if (GenElectrons->size() == 0 && GenMuons->size() == 0 && GenTaus->size() > 0) lost_mu_SR = true;	//making tau_had SR true.
 	else rest_SR = true;
       }
       
@@ -412,12 +453,13 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	double dR_reco_e_gamma = DeltaR(Electrons[0].Eta(),Electrons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
 	m_T_EMET = sqrt(2*((Electrons[0].Pt()*MET)-(Electrons[0].Pt()*MET*cos(DeltaPhi(Electrons[0].Phi(),METPhi)))));
 	h_mT_reco_e_G->Fill(m_T_EMET);
-	if (dR_reco_e_gamma >= 0.2 && m_T_EMET < 100) lost_elec_CR = true;
+	if (dR_reco_e_gamma > 0.2 && m_T_EMET <= 100) lost_elec_CR = true;
 	}
 
 	else if (NElectrons == 0 && NMuons == 1 && isoMuonTracks && !(isoElectronTracks || isoPionTracks)) {
+	  double dR_reco_mu_gamma = DeltaR(Muons[0].Eta(),Muons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
 	  m_T_MuMET = sqrt(2*((Muons[0].Pt()*MET)-(Muons[0].Pt()*MET*cos(DeltaPhi(Muons[0].Phi(),METPhi)))));
-	  lost_mu_CR = true;
+	  if (dR_reco_mu_gamma > 0.2 && m_T_MuMET <= 100) lost_mu_CR = true;
 	}
       }
                     	  
@@ -468,7 +510,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 
 	h_Pho_Pt_rest ->Fill(bestPhoton.Pt(),wt1);
 	h_MET_rest ->Fill(MET,wt1);
-	h_NHadJets_rest ->Fill(NHadJets,wt1);
+	h_rest_NHadJets ->Fill(NHadJets,wt1);
 	h_NbJets_rest ->Fill(BTags,wt1);
 	h_dhi_JetMET1_rest ->Fill(dPhi_METjet1,wt1);
 	h_dhi_JetMET2_rest ->Fill(dPhi_METjet2,wt1);		
@@ -496,10 +538,6 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
       }
 
       if (lost_elec_CR || lost_mu_CR) {
-	 h_LL_CR_Pho_Pt ->Fill(bestPhoton.Pt(),wt1);
-	 h_LL_CR_MET->Fill(MET,wt1);
-	 h_LL_CR_NHadJets->Fill(NHadJets,wt1);
-	 h_LL_CR_NbJets->Fill(BTags,wt1);
 	
 	h_LL_CR_binned ->Fill(TFbins,wt1);
 	h_LL_CR_srch_binned -> Fill(SrchBins,wt1);
@@ -519,7 +557,6 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
       }
 
       if (lost_elec_CR || lost_mu_CR){
-      //if (false){
 	TF3 = h_TF3 ->GetBinContent(TFbins+1);
 	wt4 = TF3*wt1;
 	h_LL_SR_srch_binned_pred->Fill(SrchBins,wt4);
@@ -754,18 +791,18 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 
   } // end jentry loop
 
-  // //combining lost e and lost_mu tau_had
-  // //hists for SR
-  // h_LL_SR_Pho_Pt ->Add(h_Lost_e_SR_Pho_Pt, h_Lost_mu_SR_Pho_Pt);
-  // h_LL_SR_MET ->Add(h_Lost_e_SR_MET, h_Lost_mu_SR_MET);
-  // h_LL_SR_NHadJets ->Add(h_Lost_e_SR_NHadJets, h_Lost_mu_SR_NHadJets);
-  // h_LL_SR_NbJets ->Add(h_Lost_e_SR_NbJets, h_Lost_mu_SR_NbJets);
+  //combining lost e and lost_mu tau_had
+  //hists for SR
+  h_LL_SR_Pho_Pt ->Add(h_Lost_e_SR_Pho_Pt, h_Lost_mu_SR_Pho_Pt);
+  h_LL_SR_MET ->Add(h_Lost_e_SR_MET, h_Lost_mu_SR_MET);
+  h_LL_SR_NHadJets ->Add(h_Lost_e_SR_NHadJets, h_Lost_mu_SR_NHadJets);
+  h_LL_SR_NbJets ->Add(h_Lost_e_SR_NbJets, h_Lost_mu_SR_NbJets);
 
-  // //hists for CR
-  // h_LL_CR_Pho_Pt ->Add(h_Lost_e_CR_Pho_Pt, h_Lost_mu_CR_Pho_Pt);
-  // h_LL_CR_MET ->Add(h_Lost_e_CR_MET, h_Lost_mu_CR_MET);
-  // h_LL_CR_NHadJets ->Add(h_Lost_e_CR_NHadJets, h_Lost_mu_CR_NHadJets);
-  // h_LL_CR_NbJets ->Add(h_Lost_e_CR_NbJets, h_Lost_mu_CR_NbJets);  
+  //hists for CR
+  h_LL_CR_Pho_Pt ->Add(h_Lost_e_CR_Pho_Pt, h_Lost_mu_CR_Pho_Pt);
+  h_LL_CR_MET ->Add(h_Lost_e_CR_MET, h_Lost_mu_CR_MET);
+  h_LL_CR_NHadJets ->Add(h_Lost_e_CR_NHadJets, h_Lost_mu_CR_NHadJets);
+  h_LL_CR_NbJets ->Add(h_Lost_e_CR_NbJets, h_Lost_mu_CR_NbJets);  
   
   cout << h_NHadJets[0]->Integral() << endl;
   cout << h_NHadJets[2]->Integral() << endl;
