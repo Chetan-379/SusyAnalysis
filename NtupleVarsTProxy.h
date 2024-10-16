@@ -39,7 +39,7 @@ public :
    TTree          *fChain;         //!pointer to the analyzed TTree or TChain
    TBranchProxyDirector fDirector; //!Manages the proxys
   double getCrossSection(std::string process_name);
-  double getEventWeight(TString process_name, double xsec);           
+  double getEventWeight(TString process_name, double LumiInfo, double xsec);           
   std::map<std::string,float> cross_sectionValues;
   
    // Optional User methods

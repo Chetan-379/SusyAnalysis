@@ -8,6 +8,7 @@ HEADERS = NtupleVarsTProxy.h AnalyzeTProxytBSM.h
 #LinkDef.h
 OBJECTS = $(SOURCES:.cc=.o)
 
+#EXECUTABLE = test_analyzeTProxytBSM
 EXECUTABLE = analyzeTProxytBSM
 
 all: $(SOURCES) $(EXECUTABLE)
