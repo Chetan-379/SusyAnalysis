@@ -18,3 +18,7 @@ myTTJets_HT-all_2018.txt
 myTTJets-oneFile.txt
 
 debug_script
+
+condor/root_files_condor*
+
+condor/condor_output*
