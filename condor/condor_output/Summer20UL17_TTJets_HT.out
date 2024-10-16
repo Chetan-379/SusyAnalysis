@@ -1,0 +1,166 @@
+/afs/cern.ch/user/c/cagrawal/public/MyAnalysis/CMSSW_14_0_2/src/SusySoft2023Ana
+/afs/cern.ch/user/c/cagrawal/public/MyAnalysis/CMSSW_14_0_2/src/SusySoft2023Ana/condor/root_files_condor/Summer20UL17_TTJets_HT.root
+Treating the input files as BG for setting tree branches
+AnalyzeLightBSM::BookHistogram 
+File name = ./map_crosssection_SMprocess_v1.txt
+values: 19.77 entries: 4.7646e+06
+values: 0.8092 entries: 4.96626e+06
+values: 19.77 entries: 3.59877e+06
+values: 0.8092 entries: 3.60963e+06
+values: 19.77 entries: 1.38616e+06
+values: 0.8092 entries: 1.33067e+06
+values: 19.77 entries: 1.60326e+06
+values: 0.8092 entries: 1.45734e+06
+values: 0.2984 entries: 890062
+values: 3.757 entries: 1.6096e+06
+===========================================================================
+iFile 1  Analyzing tree from /eos/user/s/seema/SUSYGMSB2023/SkimsUL_June2023/skimmed_Summer20UL17_TTJets_HT-1200to2500_TuneCP5_13TeV-madgraphMLM-pythia8.root
+===========================================================================
+main(): chain->GetEntries() 134122
+NtupleVarsTProxy::Init(TTree *tree) tree->GetEntries()134122
+NtupleVarsTProxy::Init(TTree *tree) fChain->GetEntries() 134122
+AnalyzeTProxytBSM::EventLoop() 
+Analyzing /eos/user/s/seema/SUSYGMSB2023/SkimsUL_June2023/skimmed_Summer20UL17_TTJets_HT-1200to2500_TuneCP5_13TeV-madgraphMLM-pythia8.root nentries 134122
+0	analyzed process	2017.TTJets_HT
+10 %
+20 %
+30 %
+40 %
+50 %
+60 %
+70 %
+80 %
+90 %
+443.749
+48.6507
+48.6507
+48.6412
+48.6412
+26.6096
+25.2977
+18.1336
+14.0454
+11.3352
+4.8406
+2.90165
+
+
+Lost electron: 0.292049
+Lost muon: 1.21171
+Hadronic tau: 0
+e fake photon: 1.30125
+Rest: 0.0966394
+===========================================================================
+iFile 2  Analyzing tree from /eos/user/s/seema/SUSYGMSB2023/SkimsUL_June2023/skimmed_Summer20UL17_TTJets_HT-2500toInf_TuneCP5_13TeV-madgraphMLM-pythia8.root
+===========================================================================
+main(): chain->GetEntries() 75339
+NtupleVarsTProxy::Init(TTree *tree) tree->GetEntries()75339
+NtupleVarsTProxy::Init(TTree *tree) fChain->GetEntries() 75339
+AnalyzeTProxytBSM::EventLoop() 
+Analyzing /eos/user/s/seema/SUSYGMSB2023/SkimsUL_June2023/skimmed_Summer20UL17_TTJets_HT-2500toInf_TuneCP5_13TeV-madgraphMLM-pythia8.root nentries 75339
+0	analyzed process	2017.TTJets_HT
+10 %
+20 %
+30 %
+40 %
+50 %
+60 %
+70 %
+80 %
+90 %
+449.829
+49.4149
+49.4149
+49.4054
+49.4054
+27.0278
+25.6853
+18.3981
+14.2464
+11.4962
+4.90978
+2.94845
+
+
+Lost electron: 0.298896
+Lost muon: 1.22953
+Hadronic tau: 0
+e fake photon: 1.3179
+Rest: 0.102117
+===========================================================================
+iFile 3  Analyzing tree from /eos/user/s/seema/SUSYGMSB2023/SkimsUL_June2023/skimmed_Summer20UL17_TTJets_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8.root
+===========================================================================
+main(): chain->GetEntries() 847050
+NtupleVarsTProxy::Init(TTree *tree) tree->GetEntries()847050
+NtupleVarsTProxy::Init(TTree *tree) fChain->GetEntries() 847050
+AnalyzeTProxytBSM::EventLoop() 
+Analyzing /eos/user/s/seema/SUSYGMSB2023/SkimsUL_June2023/skimmed_Summer20UL17_TTJets_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8.root nentries 847050
+0	analyzed process	2017.TTJets_HT
+10 %
+20 %
+30 %
+40 %
+50 %
+60 %
+70 %
+80 %
+90 %
+5513.93
+560.558
+560.558
+560.033
+559.862
+269.13
+261.034
+204.792
+161.621
+121.87
+53.0226
+30.7479
+
+
+Lost electron: 2.93733
+Lost muon: 11.7883
+Hadronic tau: 0
+e fake photon: 15.7202
+Rest: 0.302055
+===========================================================================
+iFile 4  Analyzing tree from /eos/user/s/seema/SUSYGMSB2023/SkimsUL_June2023/skimmed_Summer20UL17_TTJets_HT-800to1200_TuneCP5_13TeV-madgraphMLM-pythia8.root
+===========================================================================
+main(): chain->GetEntries() 632297
+NtupleVarsTProxy::Init(TTree *tree) tree->GetEntries()632297
+NtupleVarsTProxy::Init(TTree *tree) fChain->GetEntries() 632297
+AnalyzeTProxytBSM::EventLoop() 
+Analyzing /eos/user/s/seema/SUSYGMSB2023/SkimsUL_June2023/skimmed_Summer20UL17_TTJets_HT-800to1200_TuneCP5_13TeV-madgraphMLM-pythia8.root nentries 632297
+0	analyzed process	2017.TTJets_HT
+10 %
+20 %
+30 %
+40 %
+50 %
+60 %
+70 %
+80 %
+90 %
+7825.6
+800.566
+800.566
+799.926
+799.746
+393.63
+381.06
+294.828
+233.035
+177.978
+77.1517
+44.9324
+
+
+Lost electron: 4.37015
+Lost muon: 17.1516
+Hadronic tau: 0
+e fake photon: 22.9455
+Rest: 0.465087
+dataset 2017 
+If analyzing the lost electron estimation ?   LL
+Which pho_ID: 	MVA

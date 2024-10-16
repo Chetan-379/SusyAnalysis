@@ -1,0 +1,92 @@
+/afs/cern.ch/user/c/cagrawal/public/MyAnalysis/CMSSW_14_0_2/src/SusySoft2023Ana
+/afs/cern.ch/user/c/cagrawal/public/MyAnalysis/CMSSW_14_0_2/src/SusySoft2023Ana/Summer20UL16_ZNuNuGJets_MonoPhoton.root
+Treating the input files as BG for setting tree branches
+AnalyzeLightBSM::BookHistogram 
+File name = ./map_crosssection_SMprocess_v1.txt
+values: 19.77 entries: 4.7646e+06
+values: 0.8092 entries: 4.96626e+06
+values: 19.77 entries: 3.59877e+06
+values: 0.8092 entries: 3.60963e+06
+values: 19.77 entries: 1.38616e+06
+values: 0.8092 entries: 1.33067e+06
+values: 19.77 entries: 1.60326e+06
+values: 0.8092 entries: 1.45734e+06
+values: 0.2984 entries: 890062
+values: 3.757 entries: 1.6096e+06
+===========================================================================
+iFile 1  Analyzing tree from /eos/user/s/seema/SUSYGMSB2023/SkimsUL_June2023/skimmed_Summer20UL16_ZNuNuGJets_MonoPhoton_PtG-130_TuneCP5_13TeV-amcatnloFXFX-pythia8.root
+===========================================================================
+main(): chain->GetEntries() 44673
+NtupleVarsTProxy::Init(TTree *tree) tree->GetEntries()44673
+NtupleVarsTProxy::Init(TTree *tree) fChain->GetEntries() 44673
+AnalyzeTProxytBSM::EventLoop() 
+Analyzing /eos/user/s/seema/SUSYGMSB2023/SkimsUL_June2023/skimmed_Summer20UL16_ZNuNuGJets_MonoPhoton_PtG-130_TuneCP5_13TeV-amcatnloFXFX-pythia8.root nentries 44673
+0	analyzed process	2016.ZG
+10 %
+20 %
+30 %
+40 %
+50 %
+60 %
+70 %
+80 %
+90 %
+1827.58
+1562.46
+1562.46
+1542.68
+1198.09
+615.443
+609.788
+534.334
+526.095
+387.742
+385.242
+377.059
+
+
+Lost electron: 0
+Lost muon: 0
+Hadronic tau: 0
+e fake photon: 0
+Rest: 377.059
+===========================================================================
+iFile 2  Analyzing tree from /eos/user/s/seema/SUSYGMSB2023/SkimsUL_June2023/skimmed_Summer20UL16_ZNuNuGJets_MonoPhoton_PtG-40to130_TuneCP5_13TeV-amcatnloFXFX-pythia8.root
+===========================================================================
+main(): chain->GetEntries() 69773
+NtupleVarsTProxy::Init(TTree *tree) tree->GetEntries()69773
+NtupleVarsTProxy::Init(TTree *tree) fChain->GetEntries() 69773
+AnalyzeTProxytBSM::EventLoop() 
+Analyzing /eos/user/s/seema/SUSYGMSB2023/SkimsUL_June2023/skimmed_Summer20UL16_ZNuNuGJets_MonoPhoton_PtG-40to130_TuneCP5_13TeV-amcatnloFXFX-pythia8.root nentries 69773
+0	analyzed process	2016.ZG
+10 %
+20 %
+30 %
+40 %
+50 %
+60 %
+70 %
+80 %
+90 %
+8666.94
+7057.75
+7057.75
+6963.18
+3043.62
+1546.74
+1519.62
+1366.44
+1347.74
+983.968
+976.544
+957.151
+
+
+Lost electron: 0
+Lost muon: 0
+Hadronic tau: 0
+e fake photon: 0
+Rest: 957.151
+dataset 2016 
+If analyzing the lost electron estimation ?   LL
+Which pho_ID: 	MVA

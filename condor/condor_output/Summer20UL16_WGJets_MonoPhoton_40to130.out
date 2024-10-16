@@ -1,0 +1,55 @@
+/afs/cern.ch/user/c/cagrawal/public/MyAnalysis/CMSSW_14_0_2/src/SusySoft2023Ana
+/afs/cern.ch/user/c/cagrawal/public/MyAnalysis/CMSSW_14_0_2/src/SusySoft2023Ana/condor/root_files_condor/Summer20UL16_WGJets_MonoPhoton_40to130.root
+Treating the input files as BG for setting tree branches
+AnalyzeLightBSM::BookHistogram 
+File name = ./map_crosssection_SMprocess_v1.txt
+values: 19.77 entries: 4.7646e+06
+values: 0.8092 entries: 4.96626e+06
+values: 19.77 entries: 3.59877e+06
+values: 0.8092 entries: 3.60963e+06
+values: 19.77 entries: 1.38616e+06
+values: 0.8092 entries: 1.33067e+06
+values: 19.77 entries: 1.60326e+06
+values: 0.8092 entries: 1.45734e+06
+values: 0.2984 entries: 890062
+values: 3.757 entries: 1.6096e+06
+===========================================================================
+iFile 1  Analyzing tree from /eos/user/s/seema/SUSYGMSB2023/SkimsUL_June2023/skimmed_Summer20UL16_WGJets_MonoPhoton_PtG-40to130_TuneCP5_13TeV-madgraph-pythia8.root
+===========================================================================
+main(): chain->GetEntries() 35487
+NtupleVarsTProxy::Init(TTree *tree) tree->GetEntries()35487
+NtupleVarsTProxy::Init(TTree *tree) fChain->GetEntries() 35487
+AnalyzeTProxytBSM::EventLoop() 
+Analyzing /eos/user/s/seema/SUSYGMSB2023/SkimsUL_June2023/skimmed_Summer20UL16_WGJets_MonoPhoton_PtG-40to130_TuneCP5_13TeV-madgraph-pythia8.root nentries 35487
+1.42624e-05	analyzed process	2016postVFP.WGJets_MonoPhoton_PtG-40to130UL
+10 %
+20 %
+30 %
+40 %
+50 %
+60 %
+70 %
+80 %
+90 %
+8194.06
+6621.8
+6621.8
+5511.74
+2896.96
+1402.62
+1375.73
+1213.28
+938.991
+476.644
+247.307
+164.629
+
+
+Lost electron: 39.1693
+Lost muon: 117.059
+Hadronic tau: 0
+e fake photon: 0
+Rest: 8.40065
+dataset 2016postVFP 
+If analyzing the lost electron estimation ?   LL
+Which pho_ID: 	MVA
