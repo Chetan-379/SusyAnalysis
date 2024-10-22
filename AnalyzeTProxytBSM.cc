@@ -98,30 +98,35 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 
   string src_file1, src_file2, src_file3;
    
-  if(s_data.Contains("2016preVFP")){
-   src_file1 = "2016APV_lost_e_TF_NBJet.root";
-   src_file2 = "2016APV_lost_mu_TF_NBJet.root";
-   src_file3 = "2016APV_LL_TF_NBJet.root";
-  }
+  // if(s_data.Contains("2016preVFP")){
+  //  src_file1 = "2016APV_lost_e_TF_NBJet.root";
+  //  src_file2 = "2016APV_lost_mu_TF_NBJet.root";
+  //  src_file3 = "2016APV_LL_TF_NBJet.root";
+  // }
   
-  if(s_data.Contains("2016postVFP")){
-    src_file1 = "2016_lost_e_TF_NBJet.root";
-    src_file2 = "2016_lost_mu_TF_NBJet.root";
-    src_file3 = "2016_LL_TF_NBJet.root";
-  }
+  // if(s_data.Contains("2016postVFP")){
+  //   src_file1 = "2016_lost_e_TF_NBJet.root";
+  //   src_file2 = "2016_lost_mu_TF_NBJet.root";
+  //   src_file3 = "2016_LL_TF_NBJet.root";
+  // }
 
-  if(s_data.Contains("2017")){
-    src_file1 = "2017_lost_e_TF_NBJet.root";
-    src_file2 = "2017_lost_mu_TF_NBJet.root";
-    src_file3 = "2017_LL_TF_NBJet.root";
-  }
+  // if(s_data.Contains("2017")){
+  //   src_file1 = "2017_lost_e_TF_NBJet.root";
+  //   src_file2 = "2017_lost_mu_TF_NBJet.root";
+  //   src_file3 = "2017_LL_TF_NBJet.root";
+  // }
   
-  if(s_data.Contains("2018")){
-    src_file1 = "2018_lost_e_TF_NBJet.root";
-    src_file2 = "2018_lost_mu_TF_NBJet.root";
-    src_file3 = "2018_LL_TF_NBJet.root";
-  }
-
+  // if(s_data.Contains("2018")){
+  //   src_file1 = "final_2018_lost_e_TF_NBJet.root";
+  //   src_file2 = "final_2018_lost_mu_TF_NBJet.root";
+  //   src_file3 = "final_2018_LL_TF_NBJet.root";
+  // }
+  
+  src_file1 = "year_avg_lost_e_TF_NBJet.root";
+  src_file2 = "year_avg_lost_mu_TF_NBJet.root";
+  src_file3 = "year_avg_LL_TF_NBJet.root";
+  
+  
   TFile *root_file1 = new TFile(src_file1.c_str());
   TFile *root_file2 = new TFile(src_file2.c_str());
   TFile *root_file3 = new TFile(src_file3.c_str());
@@ -425,23 +430,75 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
       }
     }
       
+    //sorting Gen_e vector
+    TLorentzVector GenE_LV;
+    vector<TLorentzVector> GenElectrons_v1;
+    for (int i = 0; i < GenElectrons->size(); i++){
+      GenE_LV.SetPtEtaPhiE(GenElectrons[i].Pt(), GenElectrons[i].Eta(), GenElectrons[i].Phi(), GenElectrons[i].E());
+      GenElectrons_v1.push_back(GenE_LV);
+    }
+    sortTLorVec(&GenElectrons_v1);
+
+    //selecting good reco electrons for Electrons vector
+    bool Elec_passAccep =false, Elec_passEtacut =false, Elec_passpTcut =false, Elec_passIso =false;
+    int e_index = -1;
+    for(int i=0; i<Electrons->size(); i++){
+	//if(nelec_reco>0) continue;
+	if((Electrons[i].Pt()>10) && abs(Electrons[i].Eta()) < 2.5){
+	  Elec_passAccep = true;
+	  Elec_passEtacut = true; Elec_passpTcut = true;
+	  if( (*Electrons_passIso)[i]==1)
+    	    {	      
+    	      //pass_isoElec++; Elec_passIso = true; nelec_reco++; nlep++; e_index=i; recElec=Electrons_v1[i]; v_recEle.push_back(Electrons_v1[i]);
+	      Elec_passIso = true; e_index=i;
+    	      // h_recoElec_pT->Fill(recElec.Pt(),wt);  h_recoElec_Eta->Fill(recElec.Eta(),wt);	     h_recoElec_Eta->Fill(recElec.Eta(),wt);
+    	      // h_recoElec_Phi->Fill(recElec.Phi(),wt);
+    	    }	    
+    	  // else if((*Electrons_passIso)[i]!=1)
+    	//     {fail_isoElec++; Elec_passIso = false;}
+	// }
+	// else
+	//   {
+	//     if((Electrons_v1[i].Pt()<10) )       	 Elec_passpTcut = false;
+	//     if(abs(Electrons_v1[i].Eta()>2.5))		Elec_passEtacut=false;
+	//   }
+	}
+    }
+
+    //selecting for good reco muons
+    bool Mu_passAccep =false, Mu_passEtacut = false, Mu_passpTcut =false, Mu_passIso =false;
+    int mu_index = -1; 
+    for(int i=0; i<Muons->size(); i++){
+	//if(nmu_reco>0) continue;
+	if((Muons[i].Pt()>10) && abs(Muons[i].Eta()) < 2.5){
+	  Mu_passAccep = true;
+	  Mu_passEtacut =true; Mu_passpTcut =true;
+	  if((*Muons_passIso)[i]==1){
+    	    //pass_isoMu++; Mu_passIso = true;nmu_reco++; nlep++; mu_index=i; recMu=Muons_v1[i]; v_recMu.push_back(Muons_v1[i]);
+	    Mu_passIso = true; mu_index=i;
+	    // h_recoMu_pT->Fill(recMu.Pt(),wt);   	      h_recoMu_Eta->Fill(recMu.Eta(),wt);
+	    // h_recoMu_Eta->Fill(recMu.Eta(),wt);    	      h_recoMu_Phi->Fill(recMu.Phi(),wt);
+	  }
+    	  // else if((*Muons_passIso)[i]!=1)
+	  //     { 	fail_isoMu++; Mu_passIso = false;}
+	  // }
+	  // else{
+	  //   if((Muons_v1[i].Pt()<10) )             Mu_passpTcut = false;
+	  //   if(abs(Muons_v1[i].Eta()>=2.5))                Mu_passEtacut=false;
+	  // }
+	}  
+    }
+	
+    
+    //selecting different SR
     int TFbins = getBinNoV1_le(NHadJets,BTags);
     int SrchBins = getBinNoV6_WithOnlyBLSelec(NHadJets,BTags);
       
     bool lost_elec_CR = false, lost_elec_SR = false, had_tau_SR= false, lost_mu_CR = false, lost_mu_SR = false, FR_SR = false, FR_CR = false, rest_SR = false;      
     float m_T_EMET = 0, m_T_MuMET = 0;
-    TLorentzVector GenE_LV;
-    vector<TLorentzVector> GenElectrons_v1;
-
-    //selecting different SR
+    
     if (Pass_Iso_trk_veto){	
-      if (GenElectrons ->size() > 0 && GenMuons->size() == 0){
-	for (int i = 0; i < GenElectrons->size(); i++){
-	  GenE_LV.SetPtEtaPhiE(GenElectrons[i].Pt(), GenElectrons[i].Eta(), GenElectrons[i].Phi(), GenElectrons[i].E());
-	  GenElectrons_v1.push_back(GenE_LV);
-	}
-
-	sortTLorVec(&GenElectrons_v1);
+      if (GenElectrons ->size() > 0 && GenMuons->size() == 0){	
 	double dR_gen_e_gamma1 = DeltaR(GenElectrons_v1[0].Eta(),GenElectrons_v1[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
 	if (GenElectrons->size() == 1 && dR_gen_e_gamma1 < 0.2 && (bestPhoton.Pt()/GenElectrons_v1[0].Pt()) > 0.8 && (bestPhoton.Pt()/GenElectrons_v1[0].Pt()) < 1.2) FR_SR = true;
 	  
@@ -468,15 +525,15 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
     //selecting CR
     if (Pass_MET2) {
       if (NElectrons==1 && NMuons==0 && isoElectronTracks && !(isoMuonTracks || isoPionTracks)){
-	double dR_reco_e_gamma = DeltaR(Electrons[0].Eta(),Electrons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
-	m_T_EMET = sqrt(2*((Electrons[0].Pt()*MET)-(Electrons[0].Pt()*MET*cos(DeltaPhi(Electrons[0].Phi(),METPhi)))));
+	double dR_reco_e_gamma = DeltaR(Electrons[e_index].Eta(),Electrons[e_index].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
+	m_T_EMET = sqrt(2*((Electrons[e_index].Pt()*MET)-(Electrons[e_index].Pt()*MET*cos(DeltaPhi(Electrons[0].Phi(),METPhi)))));
 	h_mT_reco_e_G->Fill(m_T_EMET);
 	if (dR_reco_e_gamma > 0.2 && m_T_EMET <= 100) lost_elec_CR = true;
       }
 
       else if (NElectrons == 0 && NMuons == 1 && isoMuonTracks && !(isoElectronTracks || isoPionTracks)) {
-	double dR_reco_mu_gamma = DeltaR(Muons[0].Eta(),Muons[0].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
-	m_T_MuMET = sqrt(2*((Muons[0].Pt()*MET)-(Muons[0].Pt()*MET*cos(DeltaPhi(Muons[0].Phi(),METPhi)))));
+	double dR_reco_mu_gamma = DeltaR(Muons[mu_index].Eta(),Muons[mu_index].Phi(),bestPhoton.Eta(),bestPhoton.Phi());
+	m_T_MuMET = sqrt(2*((Muons[mu_index].Pt()*MET)-(Muons[mu_index].Pt()*MET*cos(DeltaPhi(Muons[mu_index].Phi(),METPhi)))));
 	if (dR_reco_mu_gamma > 0.2 && m_T_MuMET <= 100) lost_mu_CR = true;
       }
     }
@@ -563,18 +620,24 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
     //validating TF Method
     if (lost_elec_CR){
 	TF1 = h_TF1 ->GetBinContent(TFbins+1);
+	if(TFbins == 1) cout << "1bin loste TF:" << TF1 << endl;
+	if(TFbins == 2) cout << "2 bin loste TF:" << TF1 << endl;
 	wt2 = TF1*wt1;
 	h_Lost_e_SR_srch_binned_pred->Fill(SrchBins,wt2);
     }
-      
+    //cout << "\n\n";
     if (lost_mu_CR){
 	TF2 = h_TF2 ->GetBinContent(TFbins+1);
+	if(TFbins == 1) cout << "1bin lostmu TF:" << TF2 << endl;
+	if(TFbins == 2) cout << "2 bin lostmu TF:" << TF2 << endl;
 	wt3 = TF2*wt1;
 	h_Lost_mu_SR_srch_binned_pred->Fill(SrchBins,wt3);
     }
 
     if (lost_elec_CR || lost_mu_CR){
 	TF3 = h_TF3 ->GetBinContent(TFbins+1);
+	if(TFbins == 1) cout << "1bin LL TF:" << TF3 << endl;
+	if(TFbins == 2) cout << "2 bin LL TF:" << TF3 << endl;
 	wt4 = TF3*wt1;
 	h_LL_SR_srch_binned_pred->Fill(SrchBins,wt4);
     }
