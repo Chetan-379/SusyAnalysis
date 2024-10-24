@@ -97,7 +97,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
   int nEvents=0, NGenL=0, NLostElectrons=0, NLostMuons=0, NEFakePho=0;
 
   string src_file1, src_file2, src_file3;
-   
+  //if (s_data.Contains("20")) cout << "half detected!" << endl; 
   // if(s_data.Contains("2016preVFP")){
   //  src_file1 = "2016APV_lost_e_TF_NBJet.root";
   //  src_file2 = "2016APV_lost_mu_TF_NBJet.root";
@@ -177,25 +177,25 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 
     wt = getEventWeight(s_process, lumiInfb, cross_section);
   
-    wt = wt*puWeight;
+    //wt = wt*puWeight;
   
-    //applying hemveto                                                                  
-    bool HEMaffected=false;
-    if(s_data.Contains("2018") && applyHEMveto){
-      for(int i=0; i<Electrons->size();i++){
-	if(Electrons[i].Pt() >30 && Electrons[i].Eta() > -3.0 && Electrons[i].Eta() < -1.4 && Electrons[i].Phi() > -1.57 && Electrons[i].Phi() < -0.87) {HEMaffected = true; break;}
-      }
-      for(int i=0; i<Jets->size();i++){
-	if(Jets[i].Pt() > 30 && Jets[i].Eta() > -3.2 && Jets[i].Eta() < -1.2 && Jets[i].Phi() > -1.77 && Jets[i].Phi() < -0.67 && DeltaPhi(Jets[i].Pt(),METPhi)<0.5) {HEMaffected = true; break;}
-      }
-      if(HEMaffected == true) continue;           
-    }
+    // //applying hemveto                                                                  
+    // bool HEMaffected=false;
+    // if(s_data.Contains("2018") && applyHEMveto){
+    //   for(int i=0; i<Electrons->size();i++){
+    // 	if(Electrons[i].Pt() >30 && Electrons[i].Eta() > -3.0 && Electrons[i].Eta() < -1.4 && Electrons[i].Phi() > -1.57 && Electrons[i].Phi() < -0.87) {HEMaffected = true; break;}
+    //   }
+    //   for(int i=0; i<Jets->size();i++){
+    // 	if(Jets[i].Pt() > 30 && Jets[i].Eta() > -3.2 && Jets[i].Eta() < -1.2 && Jets[i].Phi() > -1.77 && Jets[i].Phi() < -0.67 && DeltaPhi(Jets[i].Pt(),METPhi)<0.5) {HEMaffected = true; break;}
+    //   }
+    //   if(HEMaffected == true) continue;           
+    // }
     
-    //adding l1trigger prefire issue probability
-    if(applyL1TrigFire_prob && (s_data.Contains("2016postVFP") ||  s_data.Contains("2017") ))
-      {
-	wt =wt*NonPrefiringProb;
-      }
+    // //adding l1trigger prefire issue probability
+    // if(applyL1TrigFire_prob && (s_data.Contains("2016postVFP") ||  s_data.Contains("2017") ))
+    //   {
+    // 	wt =wt*NonPrefiringProb;
+    //   }
     
     
     //selecting Hadronic and b jets
@@ -218,18 +218,18 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	    hadJetID= (*Jets_ID)[i];
 	    if(hadJetID)
 	      {
-		  hadJets.push_back(Jets[i]);
-		  if((*Jets_bJetTagDeepCSVBvsAll)[i] > deepCSVvalue){
-		    bjets.push_back(Jets[i]); bJet1Idx = i;}		  
-		  jetMatchindx.push_back(i);
+		hadJets.push_back(Jets[i]);
+		if((*Jets_bJetTagDeepCSVBvsAll)[i] > deepCSVvalue){
+		  bjets.push_back(Jets[i]); bJet1Idx = i;}		  
+		jetMatchindx.push_back(i);
 	      }
-	    }
+	  }
       }
     }
     
     BTags = bjets.size();
     
-    if(hadJets.size()==0) continue;
+    //if(hadJets.size()==0) continue;
     
     for(int i=0;i<hadJets.size();i++){
       
@@ -249,33 +249,44 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
     if(NHadJets>=2)
       dPhi_METjet2 = abs(DeltaPhi(METPhi,hadJets[1].Phi()));
     
-    NEMu = NElectrons + NMuons;  
+    NEMu = NElectrons + NMuons;
+
+    bool EvtCln_18 =false, EvtCln_17 =false, EvtCln_16 = false;
+    if ((s_data.Contains("2017") || s_data.Contains("2018")) && PrimaryVertexFilter==1 && globalSuperTightHalo2016Filter==1 && HBHENoiseFilter==1 &&HBHEIsoNoiseFilter==1 && EcalDeadCellTriggerPrimitiveFilter == 1 && BadPFMuonFilter==1 && BadPFMuonDzFilter==1 && eeBadScFilter==1 && ecalBadCalibFilter==1 && NVtx>0 && PFCaloMETRatio < 5){
+      if((!(phoMatchingJetIndx>=0 && (Jets[phoMatchingJetIndx].Pt())/(bestPhoton.Pt()) < 1.0)) && phoMatchingJetIndx >= 0) {
+	EvtCln_17 = true;
+	EvtCln_18 = true;}
+    }
+
+    if (s_data.Contains("2016") && PrimaryVertexFilter==1 && globalSuperTightHalo2016Filter==1 && HBHENoiseFilter==1 &&HBHEIsoNoiseFilter==1 &&EcalDeadCellTriggerPrimitiveFilter == 1 && BadPFMuonFilter==1 && BadPFMuonDzFilter==1 && eeBadScFilter==1 && PFCaloMETRatio < 5){
+      if((!(phoMatchingJetIndx>=0 && (Jets[phoMatchingJetIndx].Pt())/(bestPhoton.Pt()) < 1.0)) && phoMatchingJetIndx >= 0) EvtCln_16 = true;}
+
+      
+    
     //defining flags for applying baseline selections
     bool Pass_EMu_veto=false, Pass_Iso_trk_veto=false, Pass_Pho_pT=false, Pass_MET=false, Pass_NHadJets=false, Pass_ST=false, applyTrgEff = false, EvtCln=false,JetMetPhi=false,rmOvrlp=false, Pass_MET2=false;
-    
-    if (bestPhoton.Pt() >40){
-      Pass_Pho_pT = true;
-      if (MET > 100){
-	Pass_MET = true;
-	if (NHadJets >=2){
-	  Pass_NHadJets = true;		
-	  if (ST > 300){
-	    Pass_ST = true;		      	
-	    applyTrgEff = true;
-	    if(PrimaryVertexFilter==1 && globalSuperTightHalo2016Filter==1 && HBHENoiseFilter==1 &&HBHEIsoNoiseFilter==1 && EcalDeadCellTriggerPrimitiveFilter == 1 && BadPFMuonFilter==1 && BadPFMuonDzFilter==1 && eeBadScFilter==1 && ecalBadCalibFilter==1 && NVtx>0 && PFCaloMETRatio < 5){
-	      if((!(phoMatchingJetIndx>=0 && (Jets[phoMatchingJetIndx].Pt())/(bestPhoton.Pt()) < 1.0)) && phoMatchingJetIndx >= 0){
-		EvtCln = true;			  
-		if(dPhi_METjet1 > 0.3 && dPhi_METjet2 > 0.3){
-		  JetMetPhi = true;						  
-		  if(RemoveSampleOverlap(s_sample, bestPhoton)){
-		    rmOvrlp = true;
-		    if(MET>200) {
-		      Pass_MET2=true;
-		      if (NEMu == 0) {
-			Pass_EMu_veto = true;	
-			if (!(isoElectronTracks || isoMuonTracks || isoPionTracks)){
-			  Pass_Iso_trk_veto = true;			  	    							    
-			}
+    if (NEMu == 0) {
+      Pass_EMu_veto = true;	
+      if (!(isoElectronTracks || isoMuonTracks || isoPionTracks)){
+	Pass_Iso_trk_veto = true;			
+	if (bestPhoton.Pt() >40){
+	  Pass_Pho_pT = true;
+	  if (MET > 100){
+	    Pass_MET = true;
+	    if (NHadJets >=2){
+	      Pass_NHadJets = true;		
+	      if (ST > 300){
+		Pass_ST = true;		      	
+		applyTrgEff = true;
+		if (EvtCln_18 || EvtCln_17 || EvtCln_16){
+		  EvtCln = true;
+		  if(dPhi_METjet1 > 0.3 && dPhi_METjet2 > 0.3){
+		    JetMetPhi = true;						  
+		    if(RemoveSampleOverlap(s_sample, bestPhoton)){
+		      rmOvrlp = true;
+		      if(MET>200) {
+			Pass_MET2=true;
+			
 		      }
 		    }
 		  }
@@ -384,21 +395,21 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
       }
 	  
     if (Pass_EMu_veto) {
-      h_MET[5] ->Fill(MET,wt1);
-      h_Pho_pT[5] ->Fill(bestPhoton.Pt(),wt1);
-      h_Pho_eta[5] -> Fill(bestPhoton.Eta(),wt1);
-      h_Pho_phi[5] -> Fill(bestPhoton.Phi(),wt1);
-      h_NHadJets[5]-> Fill(NHadJets,wt1);
-      h_NbJets[5]->Fill(BTags,wt1);
+      h_MET[5] ->Fill(MET,wt);
+      h_Pho_pT[5] ->Fill(bestPhoton.Pt(),wt);
+      h_Pho_eta[5] -> Fill(bestPhoton.Eta(),wt);
+      h_Pho_phi[5] -> Fill(bestPhoton.Phi(),wt);
+      h_NHadJets[5]-> Fill(NHadJets,wt);
+      h_NbJets[5]->Fill(BTags,wt);
     }
 	  
     if (Pass_Iso_trk_veto){
-      h_MET[6] ->Fill(MET,wt1);
-      h_Pho_pT[6] ->Fill(bestPhoton.Pt(),wt1);
-      h_Pho_eta[6] -> Fill(bestPhoton.Eta(),wt1);
-      h_Pho_phi[6] -> Fill(bestPhoton.Phi(),wt1);
-      h_NHadJets[6] -> Fill(NHadJets,wt1);
-      h_NbJets[6]->Fill(BTags,wt1);	    
+      h_MET[6] ->Fill(MET,wt);
+      h_Pho_pT[6] ->Fill(bestPhoton.Pt(),wt);
+      h_Pho_eta[6] -> Fill(bestPhoton.Eta(),wt);
+      h_Pho_phi[6] -> Fill(bestPhoton.Phi(),wt);
+      h_NHadJets[6] -> Fill(NHadJets,wt);
+      h_NbJets[6]->Fill(BTags,wt);	    
     }
 	 
 
@@ -441,7 +452,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 
     //selecting good reco electrons for Electrons vector
     bool Elec_passAccep =false, Elec_passEtacut =false, Elec_passpTcut =false, Elec_passIso =false;
-    int e_index = -1;
+    int e_index = -1, nelec_reco =0;
     for(int i=0; i<Electrons->size(); i++){
 	//if(nelec_reco>0) continue;
 	if((Electrons[i].Pt()>10) && abs(Electrons[i].Eta()) < 2.5){
@@ -450,7 +461,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	  if( (*Electrons_passIso)[i]==1)
     	    {	      
     	      //pass_isoElec++; Elec_passIso = true; nelec_reco++; nlep++; e_index=i; recElec=Electrons_v1[i]; v_recEle.push_back(Electrons_v1[i]);
-	      Elec_passIso = true; e_index=i;
+	      Elec_passIso = true; e_index=i; nelec_reco++;
     	      // h_recoElec_pT->Fill(recElec.Pt(),wt);  h_recoElec_Eta->Fill(recElec.Eta(),wt);	     h_recoElec_Eta->Fill(recElec.Eta(),wt);
     	      // h_recoElec_Phi->Fill(recElec.Phi(),wt);
     	    }	    
@@ -467,7 +478,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 
     //selecting for good reco muons
     bool Mu_passAccep =false, Mu_passEtacut = false, Mu_passpTcut =false, Mu_passIso =false;
-    int mu_index = -1; 
+    int mu_index = -1, nmu_reco =0; 
     for(int i=0; i<Muons->size(); i++){
 	//if(nmu_reco>0) continue;
 	if((Muons[i].Pt()>10) && abs(Muons[i].Eta()) < 2.5){
@@ -475,7 +486,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	  Mu_passEtacut =true; Mu_passpTcut =true;
 	  if((*Muons_passIso)[i]==1){
     	    //pass_isoMu++; Mu_passIso = true;nmu_reco++; nlep++; mu_index=i; recMu=Muons_v1[i]; v_recMu.push_back(Muons_v1[i]);
-	    Mu_passIso = true; mu_index=i;
+	    Mu_passIso = true; mu_index=i; nmu_reco++;
 	    // h_recoMu_pT->Fill(recMu.Pt(),wt);   	      h_recoMu_Eta->Fill(recMu.Eta(),wt);
 	    // h_recoMu_Eta->Fill(recMu.Eta(),wt);    	      h_recoMu_Phi->Fill(recMu.Phi(),wt);
 	  }
@@ -521,7 +532,35 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
       else if (GenElectrons->size() == 0 && GenMuons->size() == 0 && GenTaus->size() > 0) lost_mu_SR = true;	//making tau_had SR true.
       else rest_SR = true;
     }
+
+        //====================Alpana's CR Conditions======================================================================================
+    bool eCR_stop1=true, eCR_stop2=true, eCR_stop3=true;
+    bool muCR_stop1=true, muCR_stop2=true, muCR_stop3=true;
+    if (Pass_MET2 && nelec_reco == 1 && nmu_reco == 0){
+      if(isoMuonTracks !=0 || isoPionTracks!=0) eCR_stop1 =false; // veto muon/pions from 1 electron CR
+
+      double dr2 = DeltaR(Electrons[e_index].Eta(),Electrons[e_index].Phi(),bestPhoton.Eta(),bestPhoton.Phi()); 
+      if(dr2<=0.2) eCR_stop2 = false;
       
+      double mTElecMET=sqrt(2*(Electrons[e_index].Pt())*MET*(1-cos(DeltaPhi(METPhi,Electrons[e_index].Phi()))));
+      if(mTElecMET>100) { eCR_stop3 =false;}
+      if (eCR_stop1 && eCR_stop2 && eCR_stop3) lost_elec_CR = true;            
+    }
+    
+    if (Pass_MET2 && nelec_reco == 0 && nmu_reco == 1){      
+      if(isoElectronTracks !=0 || isoPionTracks!=0) muCR_stop1=false; // veto muon/pions from 1 electron CR                                                 
+
+      double mTElecMET=sqrt(2*(Muons[mu_index].Pt())*MET*(1-cos(DeltaPhi(METPhi,Muons[mu_index].Phi()))));
+      if(mTElecMET>100) muCR_stop2=false;
+      double dr2 = DeltaR(Muons[mu_index].Eta(),Muons[mu_index].Phi(),bestPhoton.Eta(),bestPhoton.Phi()); 
+      if(dr2<=0.2) muCR_stop3=false;
+      if (muCR_stop1 && muCR_stop2 && muCR_stop3) lost_mu_CR = true;      
+    }         
+//=============================================================================================================================
+
+    
+
+    //=====================My CR=============================================================     
     //selecting CR
     if (Pass_MET2) {
       if (NElectrons==1 && NMuons==0 && isoElectronTracks && !(isoMuonTracks || isoPionTracks)){
@@ -537,7 +576,9 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	if (dR_reco_mu_gamma > 0.2 && m_T_MuMET <= 100) lost_mu_CR = true;
       }
     }
-                    	  
+    //==========================================================================================
+
+
     //cout << "NbJets: " << BTags << endl;
     if (lost_elec_SR) {
       h_Lost_e_SR_Pho_Pt->Fill(bestPhoton.Pt(),wt1);
@@ -620,24 +661,24 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
     //validating TF Method
     if (lost_elec_CR){
 	TF1 = h_TF1 ->GetBinContent(TFbins+1);
-	if(TFbins == 1) cout << "1bin loste TF:" << TF1 << endl;
-	if(TFbins == 2) cout << "2 bin loste TF:" << TF1 << endl;
+	// if(TFbins == 1) cout << "1bin loste TF:" << TF1 << endl;
+	// if(TFbins == 2) cout << "2 bin loste TF:" << TF1 << endl;
 	wt2 = TF1*wt1;
 	h_Lost_e_SR_srch_binned_pred->Fill(SrchBins,wt2);
     }
     //cout << "\n\n";
     if (lost_mu_CR){
 	TF2 = h_TF2 ->GetBinContent(TFbins+1);
-	if(TFbins == 1) cout << "1bin lostmu TF:" << TF2 << endl;
-	if(TFbins == 2) cout << "2 bin lostmu TF:" << TF2 << endl;
+	// if(TFbins == 1) cout << "1bin lostmu TF:" << TF2 << endl;
+	// if(TFbins == 2) cout << "2 bin lostmu TF:" << TF2 << endl;
 	wt3 = TF2*wt1;
 	h_Lost_mu_SR_srch_binned_pred->Fill(SrchBins,wt3);
     }
 
     if (lost_elec_CR || lost_mu_CR){
 	TF3 = h_TF3 ->GetBinContent(TFbins+1);
-	if(TFbins == 1) cout << "1bin LL TF:" << TF3 << endl;
-	if(TFbins == 2) cout << "2 bin LL TF:" << TF3 << endl;
+	// if(TFbins == 1) cout << "1bin LL TF:" << TF3 << endl;
+	// if(TFbins == 2) cout << "2 bin LL TF:" << TF3 << endl;
 	wt4 = TF3*wt1;
 	h_LL_SR_srch_binned_pred->Fill(SrchBins,wt4);
     }
@@ -882,8 +923,11 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
   h_LL_CR_MET ->Add(h_Lost_e_CR_MET, h_Lost_mu_CR_MET);
   h_LL_CR_NHadJets ->Add(h_Lost_e_CR_NHadJets, h_Lost_mu_CR_NHadJets);
   h_LL_CR_NbJets ->Add(h_Lost_e_CR_NbJets, h_Lost_mu_CR_NbJets);  
-  
+
+  cout << "Cutflows for the year: " << s_data << endl;
   cout << h_NHadJets[0]->Integral() << endl;
+  cout << h_NHadJets[5]->Integral() << endl;
+  cout << h_NHadJets[6]->Integral() << endl;
   cout << h_NHadJets[2]->Integral() << endl;
   cout << h_NHadJets[1]->Integral() << endl;
   cout << h_NHadJets[3]->Integral() << endl; 
@@ -893,9 +937,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
   cout << h_NHadJets[9]->Integral()<< endl;
   cout << h_NHadJets[10]->Integral()<< endl;
   cout << h_NHadJets[11]->Integral()<< endl;
-  cout << h_NHadJets[5]->Integral() << endl;
-  cout << h_NHadJets[6]->Integral() << "\n\n\n";
-
+  
   cout << "Lost electron: " << h_Lost_e_SR_NHadJets->Integral() << endl;
   cout << "Lost muon: " << h_Lost_mu_SR_NHadJets->Integral() << endl;
   cout << "Hadronic tau: " << h_Had_tau_SR_NHadJets->Integral() << endl;
