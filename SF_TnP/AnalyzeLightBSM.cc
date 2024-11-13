@@ -1,4 +1,4 @@
- #define AnalyzeLightBSM_cxx
+#define AnalyzeLightBSM_cxx //alpana
  #include "AnalyzeLightBSM.h"
  #include <TH2.h>
  #include <TStyle.h>
@@ -90,6 +90,8 @@
    bool applyPUwt=true;
    bool apply_pixelveto=true;
    bool check_flag_wBL =false;
+   bool apply_purity = false;
+
    if(s_sample.Contains("UL")){
    if(s_data.Contains("2016preVFP")){ lumiInfb=19.5;deepCSVvalue = 0.6001; p0=1.586e+02; p1=6.83e+01; p2=9.28e-01;}// APV
    if(s_data.Contains("2016postVFP")) { lumiInfb=16.5; deepCSVvalue = 0.5847; p0=1.586e+02; p1=6.83e+01; p2=9.28e-01;} //2016
@@ -147,6 +149,25 @@
   //  // reader1->AddVariable("dPhi_Met_Jet",&dPhi_MetJet);
   //  // reader1->AddVariable( "ST", &st );
   //  // reader1->BookMVA( "BDT_100trees_2maxdepth method", "TMVAClassification_BDT_100trees_2maxdepth.weights.xml");
+    char *year_string = new char[200];
+  if(s_data.Contains("2016preVFP")) {sprintf(year_string,"2016preVFP");}
+  if(s_data.Contains("2016postVFP")) {sprintf(year_string,"2016postVFP");}
+
+  if(s_data.Contains("2017")) {sprintf(year_string,"2017");}
+  if(s_data.Contains("2018")) {sprintf(year_string,"2018");}
+
+  //  // counters for events yields after each selection/rejection                                                                                                    
+   char* hname = new char [200];
+   sprintf(hname, "out_purity_MC_Default.root");
+   TFile* f_PuriFact= new TFile(hname);
+   char* histname = new char[2000];
+   TH1F* h_PF;
+   sprintf(histname,"FR_nbtagBins_Elec_CR_FullRun2");//,year_string);                                                                                                
+   cout<<"Reading MC purity factor:  "<<"\t"<<histname<<endl;
+   h_PF = (TH1F*)f_PuriFact->Get(histname);
+   for(int i=0; i<h_PF->GetNbinsX();i++)
+     {cout<<"Nbitags bins_v0"<<"\t"<<i<<"\t"<<h_PF->GetBinContent(i)<<endl;}
+
    float nsurVived=0.0;
    int searchBin=0, Tfbins=0;
    float nCR_elec =0,nCR_mu=0,nCR_Tau=0,nSR_elec =0,nSR_mu=0,nSR_Tau=0, FailIso_Elec=0,FailIso_Mu=0, FailAccept_Elec=0,FailAccept_Mu=0, FailId_Elec=0,FailId_Mu=0, PassIso_Elec=0,PassIso_Mu=0, PassAccept_Elec=0,PassAccept_Mu=0, PassId_Elec=0,PassId_Mu=0, nfakeRatePho=0,wt_LL=0.0;
@@ -355,7 +376,7 @@
             hasPho=0;
           }
       }
-
+      if(hasPho)  h_selectBaselineYields_v1->Fill("hasPho ",wt);
       double mindr_Pho_genlep=getGenLep(bestPhoton);
 
       if(!s_sample.Contains("data")){
@@ -431,6 +452,12 @@
 	      if(!(madMinPhotonDeltaR<=0.5 || mindr_Pho_genlep<=0.5) ) continue;
 
 	    }
+	  if(hasGenPromptPhoton && (s_sample.Contains("ZLLG")))
+            {
+	      if(!(madMinPhotonDeltaR>0.5 && mindr_Pho_genlep>0.5)) continue;//if(!(madMinPhotonDeltaR<=0.5 || mindr_Pho_genlep<=0.5) ) continue;
+
+            }
+
 	  genphomatch_after++;
 	}
 	h_madminPhotonDeltaR_preSelection->Fill(madMinPhotonDeltaR,wt);
@@ -505,7 +532,7 @@
       else if(nlep>2 || nlep==0) continue;
       h_selectBaselineYields_v1->Fill("NElectrons = 1 or 2 ",wt);
       h_nRecoElec->Fill(NElectrons,wt);
-      h_ngenE->Fill(v_genEle2.size(),wt);
+      //      h_ngenE->Fill(v_genz.size(),wt);
       //     if(tmp2.DeltaR(tmp)<0.2)continue;                                                                                                                       
       //if(nlep==0) continue;
       //      h_selectBaselineYields_v1->Fill("NElectrons = 1 or 2 ",wt);
@@ -602,10 +629,12 @@
 	for(int i=0;i<GenElectrons_v1.size();i++){
 	  v_genz.push_back(GenElectrons_v1[i]);
 	}
+	h_ngenE->Fill(v_genz.size(),wt);
+
 	if(v_genz.size()==0 || nlep==0) continue;
 	h_selectBaselineYields_v1->Fill("gen e!=0 ",wt);
       }
-
+      
       float ratio =0.0, ratio1=0.0, mindr_genElecPho=-999, mindr_=-9999;
       int count_genEle=0,count_recEle=0;
       vector<TLorentzVector> goodPho_n;
@@ -646,13 +675,13 @@
 	    }
 	  h_nHLTE->Fill(HLTElectronObjects_,wt);
           //h_selectBaselineYields_v1->Fill("NHLT- Electrons != 0 ",wt);
-	  if(!s_data.Contains("2018")){
+	  //if(!s_data.Contains("2018")){
 	    if(v_hlt.size()==0 || nlep==0) continue;                                                                                                                              h_selectBaselineYields_v1->Fill("gen e!=0 ",wt);                          
-	  }
+	    //}
 	  //          h_selectBaselineYields_v1->Fill("NHLT- Electrons != 0 ",wt);
 	}
             
-      if(!s_data.Contains("2018")&& s_sample.Contains("data")) {  if (v_hlt.size()==0) continue;}
+      if( s_sample.Contains("data")) {  if (v_hlt.size()==0) continue;}
      if(Debug)  cout<<" printing before nlep ==1 loop "<<"\t"<<nlep<<endl;
       //      if(Debug
       // 0 index for tag object and 1 index for probe                                                                                                      
@@ -666,15 +695,16 @@
 	      //    mindr=MinDr(tmp,*HLTElectronObjects);                                                                                                         
 	      if(Debug)  cout<<" printing in nlep ==1 loop "<<"\t"<<nlep<<endl;
 
-	      if(s_data.Contains("2018"))mindr=0.1;
-	      else mindr=MinDr(tmp,HLTElectronObjects_v1);//v_hlt);//tmp.DeltaR(v_hlt[0]);//MinDr(tmp,v_hlt);//tmp.DeltaR(v_hlt[0]);	      
+	      ///     if(s_data.Contains("2018"))mindr=0.1;
+	      //else
+		mindr=MinDr(tmp,HLTElectronObjects_v1);//v_hlt);//tmp.DeltaR(v_hlt[0]);//MinDr(tmp,v_hlt);//tmp.DeltaR(v_hlt[0]);	      
 	      // if(v_hlt.size()>1)
 	      // 	mindr2=bestPhoton.DeltaR(v_hlt[1]);//0.1; // this should be checked wrt v_hlt[1] if exist Think about it
 	      // else
 		mindr2=0.1;
 	    }
-	  if(s_data.Contains("2018"))
-	    { mindr=0.1, mindr2=0.1;} // should be removed once you have updated data samples
+	  // if(s_data.Contains("2018"))
+	  //   { mindr=0.1, mindr2=0.1;} // should be removed once you have updated data samples
 	  h_dR_HLTvsRecoElec1->Fill(mindr,wt);
 	  h_dR_HLTvsRecoElec2->Fill(mindr2,wt);
 	  h_dR_HLTvsRecoElec1_categ3->Fill(mindr2,wt);
@@ -690,7 +720,7 @@
 	      v_lep2=tmp; //tag                                                                                                                                      
 	      if(hasPho==1)v_lep1=bestPhoton; //probe                                                                                                                
 	      if(!s_sample.Contains("data")) v_genz_=v_genz[0];
-	      if(s_sample.Contains("data") && !s_data.Contains("2018")) v_hlt_=v_hlt[0];
+	      if(s_sample.Contains("data")) v_hlt_=v_hlt[0];
 	      one_e2++;
 	    }
 	  // if(s_data.Contains("data"))h_minDr_bestphoremEle->Fill(mindr,wt);
@@ -725,19 +755,19 @@
 	    }
 	  if(s_sample.Contains("data"))
 	    {
-	      if(!s_data.Contains("2018")){
+	      //if(!s_data.Contains("2018")){
 	      // mindr2=tmp.DeltaR(v_hlt[0]);
 	      // mindr=tmp2.DeltaR(v_hlt[1]);
 		mindr2=MinDr(tmp,HLTElectronObjects_v1);mindr = MinDr(tmp2,HLTElectronObjects_v1);//v_hlt); mindr=MinDr(tmp2,v_hlt);
 		// mindr2=tmp.DeltaR(v_hlt[0]);
 		// mindr=tmp2.DeltaR(v_hlt[1]);
 
-	      }
-	      else
-		{
-		  mindr2=0.1;
-		  mindr=0.1;
-		}
+	      // }
+	      // else
+	      // 	{
+	      // 	  mindr2=0.1;
+	      // 	  mindr=0.1;
+	      // 	}
 	      mindr3=0.1;
 	      mindr4=0.1;
 	      //h_minDr_bestphoremEle->Fill(mindr2,wt);
@@ -758,8 +788,8 @@
 	    {
 	      //      v_lep1=tmp; v_lep2=tmp2; hasEle=2;wt=2*wt;a++;                                                                                                    
 	      h_selectBaselineYields_v1->Fill("lep==2 & pass two tight e ",wt);
-	      if(jentry%2==0){v_lep1=tmp; v_lep2=tmp2; hasEle=2;wt=2*wt; if(s_sample.Contains("data") && !s_data.Contains("2018") ) v_hlt_=v_hlt[1]; if(!s_sample.Contains("data"))  v_genz_=v_genz[1];a++;}
-	      else{v_lep2=tmp; v_lep1=tmp2; hasEle=2;wt=2*wt; if(s_sample.Contains("data") && !s_data.Contains("2018")) v_hlt_=v_hlt[0]; if(!s_sample.Contains("data"))  v_genz_=v_genz[0]; a++; }
+	      if(jentry%2==0){v_lep1=tmp; v_lep2=tmp2; hasEle=2;wt=2*wt; if(s_sample.Contains("data") ) v_hlt_=v_hlt[1]; if(!s_sample.Contains("data"))  v_genz_=v_genz[1];a++;}
+	      else{v_lep2=tmp; v_lep1=tmp2; hasEle=2;wt=2*wt; if(s_sample.Contains("data")) v_hlt_=v_hlt[0]; if(!s_sample.Contains("data"))  v_genz_=v_genz[0]; a++; }
 	      two_e2++;
 	      //            two_e3++;                                                                                                                                   
 	      //if(jentry==18163)                                                                                                                                       
@@ -776,7 +806,7 @@
 	      h_selectBaselineYields_v1->Fill("lep==2 & pass only tight e ",wt);
 
 	      if(!s_sample.Contains("data")) v_genz_=v_genz[1];
-	      if(s_sample.Contains("data") && !s_data.Contains("2018")) v_hlt_=v_hlt[1];
+	      if(s_sample.Contains("data")) v_hlt_=v_hlt[1];
 	      two_e2++;
 	      h_dR_HLTvsRecoElec1_categ2->Fill(mindr2,wt);
 	      h_dR_HLTvsRecoElec2_categ2->Fill(mindr,wt);
@@ -791,7 +821,7 @@
 	      a++;
 	      h_selectBaselineYields_v1->Fill("lep==2 & pass only tight e ",wt);
 	      if(!s_sample.Contains("data")) v_genz_=v_genz[0];
-	      if(s_sample.Contains("data")&& !s_data.Contains("2018")) v_hlt_=v_hlt[0];
+	      if(s_sample.Contains("data")) v_hlt_=v_hlt[0];
 	      two_e3++;
 	      two_e2++;
 	      // h_dR_HLTvsRecoElec1_categ3->Fill(mindr2,wt);
@@ -1063,7 +1093,18 @@
     
     bool elec_CR= false; 
     bool pho_SR= false; 
-    
+
+     double pure_MC = 1.0;
+     if(BTags==0)
+       pure_MC = h_PF->GetBinContent(2);
+     else
+       pure_MC = h_PF->GetBinContent(3);
+     double wt_pf=0.0;
+     if(s_sample.Contains("data") && apply_purity)
+       {
+          wt  = wt*pure_MC;
+        }
+     
     if(bestEMobj && bestEMObjIsEle && !hasPho ){
       if(isoMuonTracks !=0 || isoPionTracks!=0) continue; // veto muon/pions from 1 electron CR
       if(NMuons!=0 || NElectrons==0) continue;     
@@ -1102,9 +1143,9 @@
 	h_tagEle_PtVsPhi_Elec_CR->Fill(tagEMObj.Pt(),tagEMObj.Phi(),wt);
 	h_tagEle_PtVsPhi_Elec_CR->Fill(tagEMObj.Pt(),tagEMObj.Eta(),wt);
 	
-	h_tagEle_EtaVsPhi_Elec_CR->Fill(TAPElectronTracks_v1[track_idx].Eta(),TAPElectronTracks_v1[track_idx].Phi(),wt);
-	h_tagEle_PtVsPhi_Elec_CR->Fill(TAPElectronTracks_v1[track_idx].Pt(),TAPElectronTracks_v1[track_idx].Phi(),wt);
-	h_tagEle_PtVsPhi_Elec_CR->Fill(TAPElectronTracks_v1[track_idx].Pt(),TAPElectronTracks_v1[track_idx].Eta(),wt);
+	h_trackEle_EtaVsPhi_Elec_CR->Fill(TAPElectronTracks_v1[track_idx].Eta(),TAPElectronTracks_v1[track_idx].Phi(),wt);
+	h_trackEle_PtVsPhi_Elec_CR->Fill(TAPElectronTracks_v1[track_idx].Pt(),TAPElectronTracks_v1[track_idx].Phi(),wt);
+	h_trackEle_PtVsPhi_Elec_CR->Fill(TAPElectronTracks_v1[track_idx].Pt(),TAPElectronTracks_v1[track_idx].Eta(),wt);
 	h_ZpT[2]->Fill(zvec.Pt(),wt);
 	// h2_minDr_tagEle_pt[2]->Fill();
 	// h_minDr_bestphovsTagEle[2]->Fill();
@@ -1199,9 +1240,9 @@
 	h_tagEle_PtVsPhi_Pho_SR->Fill(tagEMObj.Pt(),tagEMObj.Phi(),wt);
         h_tagEle_PtVsPhi_Pho_SR->Fill(tagEMObj.Pt(),tagEMObj.Eta(),wt);
 
-        h_tagEle_EtaVsPhi_Pho_SR->Fill(TAPElectronTracks_v1[track_idx].Eta(),TAPElectronTracks_v1[track_idx].Phi(),wt);
-        h_tagEle_PtVsPhi_Pho_SR->Fill(TAPElectronTracks_v1[track_idx].Pt(),TAPElectronTracks_v1[track_idx].Phi(),wt);
-        h_tagEle_PtVsPhi_Pho_SR->Fill(TAPElectronTracks_v1[track_idx].Pt(),TAPElectronTracks_v1[track_idx].Eta(),wt);
+        h_trackEle_EtaVsPhi_Pho_SR->Fill(TAPElectronTracks_v1[track_idx].Eta(),TAPElectronTracks_v1[track_idx].Phi(),wt);
+        h_trackEle_PtVsPhi_Pho_SR->Fill(TAPElectronTracks_v1[track_idx].Pt(),TAPElectronTracks_v1[track_idx].Phi(),wt);
+        h_trackEle_PtVsPhi_Pho_SR->Fill(TAPElectronTracks_v1[track_idx].Pt(),TAPElectronTracks_v1[track_idx].Eta(),wt);
 	h_ZpT[3]->Fill(zvec.Pt(),wt);
         if(BTags==0)
           FR_nbtagBins[3]->Fill(1,wt);

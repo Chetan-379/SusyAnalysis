@@ -1,5 +1,5 @@
 #!/bin/sh
-
+65;6003;1c
 executable=$1
 inputFileTag=$2
 outputFileTag=$3
@@ -14,9 +14,13 @@ currDir=$(pwd)
 ######################################
 
 source /cvmfs/cms.cern.ch/cmsset_default.sh
-export SCRAM_ARCH=slc7_amd64_gcc820
-scram p CMSSW CMSSW_11_1_0_pre3
-cd CMSSW_11_1_0_pre3/src
+export SCRAM_ARCH=el9_amd64_gcc12
+scram p CMSSW CMSSW_14_0_0_pre0
+cd CMSSW_14_0_0_pre0/src
+
+# export SCRAM_ARCH=slc7_amd64_gcc820
+# scram p CMSSW CMSSW_11_1_0_pre3
+# cd CMSSW_14_0_0_pre0/src
 
 eval `scramv1 runtime -sh`
 pwd

@@ -168,7 +168,9 @@ void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, cons
   // char* hname1 = new char [200];
   // sprintf(hname1, "Lepton_LL_TFbins_v2_nJetsBjets_PhoPt_phoID_loose_09Jan24.root");//"TF_Electron_LLEstimation_binsV0_phoID_%s_08Aug23.root",phoID);
    char* hname2 = new char [200];
-   sprintf(hname2, "Electron_FR_TFbins_v1_phopT_qmulti_phoID_loose_09Jan24.root");//Electron_FR_TFbins_v2_qmulti_nJetsBjets_phoID_loose_09Jan24.root");// "TF_allin1_LLEstimation_binsV0_phoID_%s_08Aug23.root",phoID);
+   //   char* year_string = new char[2000];
+  
+ sprintf(hname2, "Electron_FR_TFbins_v1_phopT_qmulti_phoID_loose_09Jan24.root");//Electron_FR_TFbins_v2_qmulti_nJetsBjets_phoID_loose_09Jan24.root");// "TF_allin1_LLEstimation_binsV0_phoID_%s_08Aug23.root",phoID);
   TFile* f_TFbins= new TFile(hname);
   TFile* f_TFbins_v1 =new TFile(hname2);
   char* hname3 = new char[200];
@@ -185,12 +187,22 @@ void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, cons
  // else
  //   sample1 = sample;
   
-  sprintf(histname,"h_TFbins_LL_W+TTBar_FullRun2");//%s",data);//FullRun2");//h_TFbins_LL_W+TTBar_FullRun2");//2018",data);                                                                  
+  char *year_string = new char[200];
+  if(s_data.Contains("2016preVFP")) {sprintf(year_string,"2016preVFP");}
+  if(s_data.Contains("2016postVFP")) {sprintf(year_string,"2016postVFP");}
+
+  if(s_data.Contains("2017")) {sprintf(year_string,"2017");}
+  if(s_data.Contains("2018")) {sprintf(year_string,"2018");}
+
+
+  sprintf(histname,"h_TFbins_LL_W+TTBar_FullRun2");//%s",year_string);//FullRun2");//h_TFbins_LL_W+TTBar_FullRun2");//2018",data);                                                       
+ cout<<"Reading MC FR:  "<<"\t"<<histname<<endl;
+           
  h_TF = (TH1F*)f_TFbins->Get(histname);
  h_TF1 = (TH1F*)f_TFbins_v1->Get(histname);
- sprintf(histname,"FR_nbtagBins_Elec_CR_%s",data);
+ sprintf(histname,"FR_nbtagBins_Elec_CR_%s",year_string);
  h_SF_Data = (TH1F*)f_SF->Get(histname);
- cout<<"Reading TF for lost electron estimation:  "<<"\t"<<histname<<endl;
+ cout<<"Reading SF:  "<<"\t"<<histname<<endl;
  for(int i=0; i<h_TF->GetNbinsX();i++)
    {cout<<"TFBIns_v0"<<"\t"<<i<<"\t"<<h_TF->GetBinContent(i)<<endl;}
 
@@ -291,7 +303,7 @@ void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, cons
 	  cout<<"Event "<<jentry<<" event weight"<<"\t"<<wt<<"\t"<<cross_section<<"\t"<<Weight<<"lumiInfb  "<<lumiInfb<<endl;
 	  cout<<"Event "<<jentry<<"\t"<<wt<<"\t"<<"MET  "<<MET<<"\t"<<(((TMath::Erf((MET - p0)/p1)+1)/2.0)*p2)<<endl;
 	}
-      //      h_selectBaselineYields_->Fill("No cuts, evt in 1/fb",wt);
+      h_selectBaselineYields->Fill("No cuts, evt in 1/fb",wt);
       nocut++;
       if(Debug)
     	cout<<"Before filling lorentz vectors"<<endl;
@@ -738,14 +750,15 @@ int hasEle=0;
     	if (bestPhoton.Pt()<=100)continue;
     	if(MET<=200) continue;                                                                                              
       }
-    //apply pixelveto                                                                                                                                               
+    //apply pixelveto
+    bool pixelVeto =false;
     if(apply_pixelveto){
 
       if(s_data.Contains("2017") && ((bestEMObj.Eta() > 0.0 && bestEMObj.Eta() < 1.5 && bestEMObj.Phi() > 2.7))) continue;
       if(s_data.Contains("2018") && ((bestEMObj.Eta() > 0.0 && bestEMObj.Eta() < 1.5 && bestEMObj.Phi() > 0.4 && bestEMObj.Phi() < 0.8))) continue;
     }
+    h_selectBaselineYields_v1->Fill("after pixelveto",wt);
 
-     
     //    FillHistogram_Kinematics(2,nHadJets,BTags,bestPhoton.Pt(),mTPhoMET,dPhi_PhoMET,ST,1);
     double mindr_Pho_genlep=getGenLep(bestPhoton);
     
@@ -843,6 +856,7 @@ int hasEle=0;
     bool pho_SR= false; 
     
     if(bestEMobj && bestEMObjIsEle && !hasPho ){
+      h_selectBaselineYields_v1->Fill("Enter Elec CR",wt);
       if(isoMuonTracks !=0 || isoPionTracks!=0) continue; // veto muon/pions from 1 electron CR
       if(NMuons!=0 || NElectrons>1) continue;     
       if(Debug)
@@ -850,7 +864,8 @@ int hasEle=0;
       mt_ele=sqrt(2*bestEMObj.Pt()*MET*(1-cos(DeltaPhi(METPhi,bestEMObj.Phi()))));
       //double mTElecMET=sqrt(2*(Electrons_v1[e_index].Pt())*MET*(1-cos(DeltaPhi(METPhi,Electrons_v1[e_index].Phi()))));
       if(mt_ele>100) { continue;}//h_selectBaselineYields_CR->Fill("e-CR: mT<100",wt);continue;} // remove signal contamination 
-      elec_CR = true;      
+      elec_CR = true;
+      h_selectBaselineYields_v1->Fill("After Elec CR",wt);
       int searchBin = getBinNoV6_WithOnlyBLSelec(nHadJets,BTags);
       if(nHadJets>=7 && Debug)
 	cout<<"Entry: "<<jentry<<"\t"<<searchBin<<"\t"<<nHadJets<<"\t"<<BTags<<"\t"<<MET<<"\t"<<bestPhoton.Pt()<<"\t"<<wt<<endl;
@@ -1197,6 +1212,7 @@ int hasEle=0;
     /////////////////////////////////////////////////////////////////////////////////// 
     bool fakeElectron=false, proc=false, proc1=false;
     if(hasPho && bestEMobj && !bestEMObjIsEle && !s_sample.Contains("data")){
+      h_selectBaselineYields_v1->Fill("Enter Pho SR",wt);
       if(isoMuonTracks !=0 || isoPionTracks!=0 || isoElectronTracks!=0) continue; // veto muon/pions/electrons 
       if(NMuons!=0 || NElectrons!=0) continue;
       if(nGenMu1==0 && nGenEle1==0 && v_genTau2.size()==0) continue; //reject w->qq events or all hadronic decay of TTbar                                                    
@@ -1211,6 +1227,8 @@ int hasEle=0;
       
       if(fakeElectron) pho_SR= true;
       else continue;
+       h_selectBaselineYields_v1->Fill("After Pho SR",wt);
+
       if(bestEMObj.Pt()<=40) continue;
       //cout<<" Debugging SR "<<"\t"<<hasPho<<"\t"<<"\t"<<bestEMObj.Pt()<<"\t"<<MET<<"\t"<<nHadJets<<"\t"<<ST<<"\t"<<bestPhoton.Pt()<<"\t"<<hasPho_px<<"\t"<<isoPionTracks<<"\t"<<isoMuonTracks<<"\t"<<NMuons<<"\t"<<NElectrons<<"\t"<<isoElectronTracks<<"\t"<<mt_ele<<"\t"<<endl;
       
@@ -1438,6 +1456,468 @@ int hasEle=0;
 
      
 }
+
+int AnalyzeLightBSM::getBinNoV3_ST_MET_bjets(double Met, double ST, int bjets){
+  int sBin=0, m_i=1,sBin1=0,n_i=0;
+  //  Treating MET as ST and ST as MET
+  if(bjets==0){
+   for(int i=0;i<ST_bins.size()-1;i++){
+    if(i!=0)
+      m_i++;
+    if(Met >= ST_bins[i] && Met < ST_bins[i+1])
+      {
+        sBin = sBin+((m_i-1)*5);
+        break;
+      }
+    else if(Met >= ST_bins[ST_bins.size()-1])
+      {
+       	sBin = 20;
+        break;
+      }
+  }
+   //   cout<<"sBin "<<sBin<<"\t"<<m_i<<"\t"<<Met<<"\t"<<ST<<"\t"<<METLowEdge_v3_1.size()<<"\t"<<METLowEdge_v3_1[METLowEdge_v3_1.size()-1]<<"\t"<< METLowEdge_v3_1[0]<<endl;
+   if(sBin%5==0)
+    {
+      for(int i=0;i<METLowEdge_v3_1.size()-1;i++){
+	n_i++;
+        if(ST>=METLowEdge_v3_1[i] && ST<METLowEdge_v3_1[i+1]) {sBin1=sBin+n_i; break;}
+        else if(ST>=METLowEdge_v3_1[METLowEdge_v3_1.size()-1]){sBin1=sBin+(METLowEdge_v3_1.size()-1); break;}
+      }
+    }
+  }
+
+  else {
+    m_i=6;
+    for(int i=0;i<ST_bins.size()-1;i++){
+      if(i!=0)
+	m_i++;
+    if(Met >= ST_bins[i] && Met < ST_bins[i+1])
+        {
+          sBin = sBin+((m_i-1)*5);
+          break;
+        }
+      else if(Met >= ST_bins[ST_bins.size()-1])
+        {
+          sBin = 45;
+          break;
+        }
+    }
+    //cout<<"sBin "<<sBin<<"\t"<<m_i<<"\t"<<n_i<<"\t"<<Met<<"\t"<<ST<<"\t"<<METLowEdge_v3_1.size()<<"\t"<<METLowEdge_v3_1[METLowEdge_v3_1.size()-1]<<"\t"<< METLowEdge_v3_1[0]<<endl;                                                
+    if(sBin%5==0)
+      {
+        for(int i=0;i<METLowEdge_v3_1.size()-1;i++){
+          n_i++;
+          if(ST>=METLowEdge_v3_1[i] && ST<METLowEdge_v3_1[i+1]) {sBin1=sBin+n_i; break;}
+          else if(ST>=METLowEdge_v3_1[METLowEdge_v3_1.size()-1]){sBin1=sBin+(METLowEdge_v3_1.size()-1); break;}
+        }
+      }
+
+  }
+  return sBin1;
+}
+
+int AnalyzeLightBSM::getBinNoV7_ST_MET_bjets_phopT(double Met, double ST, int bjets, double pho_pt){
+  int sBin=0, m_i=1,sBin1=0,n_i=0;
+  //treating MET as ST and ST as MET 
+  if(pho_pt<=100){
+  if(bjets==0){
+   for(int i=0;i<ST_bins.size()-1;i++){
+    if(i!=0)
+      m_i++;
+    if(Met >= ST_bins[i] && Met < ST_bins[i+1])
+      {
+        sBin = sBin+((m_i-1)*5);
+        break;
+      }
+    else if(Met >= ST_bins[ST_bins.size()-1])
+      {
+        sBin = 20;
+        break;
+      }
+  }                                                                                                           
+   if(sBin%5==0)
+     {
+       for(int i=0;i<METLowEdge_v3_1.size()-1;i++){
+	 n_i++;
+        if(ST>=METLowEdge_v3_1[i] && ST<METLowEdge_v3_1[i+1]) {sBin1=sBin+n_i; break;}
+        else if(ST>=METLowEdge_v3_1[METLowEdge_v3_1.size()-1]){sBin1=sBin+(METLowEdge_v3_1.size()-1); break;}
+       }
+    }
+  }
+  
+  else {
+    m_i=6;
+    for(int i=0;i<ST_bins.size()-1;i++){
+      if(i!=0)
+        m_i++;
+    if(Met >= ST_bins[i] && Met < ST_bins[i+1])
+        {
+          sBin = sBin+((m_i-1)*5);
+          break;
+        }
+      else if(Met >= ST_bins[ST_bins.size()-1])
+        {
+          sBin = 45;
+          break;
+        }
+    }
+    if(sBin%5==0)
+      {
+        for(int i=0;i<METLowEdge_v3_1.size()-1;i++){
+          n_i++;
+          if(ST>=METLowEdge_v3_1[i] && ST<METLowEdge_v3_1[i+1]) {sBin1=sBin+n_i; break;}
+       	  else if(ST>=METLowEdge_v3_1[METLowEdge_v3_1.size()-1]){sBin1=sBin+(METLowEdge_v3_1.size()-1); break;}
+        }
+      }
+
+  }
+
+  }
+  else {
+    m_i=11;
+    if(bjets==0){
+      for(int i=0;i<ST_bins.size()-1;i++){
+	if(i!=0)
+	  m_i++;
+	if(Met >= ST_bins[i] && Met < ST_bins[i+1])
+	  {
+	    sBin = sBin+((m_i-1)*5);
+	    break;
+	  }
+	else if(Met >= ST_bins[ST_bins.size()-1])
+	  {
+	    sBin = 70;
+        break;
+      }
+  }
+   if(sBin%5==0)
+     {
+       for(int i=0;i<METLowEdge_v3_1.size()-1;i++){
+         n_i++;
+        if(ST>=METLowEdge_v3_1[i] && ST<METLowEdge_v3_1[i+1]) {sBin1=sBin+n_i; break;}
+        else if(ST>=METLowEdge_v3_1[METLowEdge_v3_1.size()-1]){sBin1=sBin+(METLowEdge_v3_1.size()-1); break;}
+       }
+    }
+  }
+
+  else {
+    m_i=16;
+    for(int i=0;i<ST_bins.size()-1;i++){
+      if(i!=0)
+        m_i++;
+    if(Met >= ST_bins[i] && Met < ST_bins[i+1])
+        {
+          sBin = sBin+((m_i-1)*5);
+          break;
+        }
+      else if(Met >= ST_bins[ST_bins.size()-1])
+        {
+          sBin = 95;
+          break;
+        }
+    }
+    if(sBin%5==0)
+      {
+        for(int i=0;i<METLowEdge_v3_1.size()-1;i++){
+          n_i++;
+          if(ST>=METLowEdge_v3_1[i] && ST<METLowEdge_v3_1[i+1]) {sBin1=sBin+n_i; break;}
+          else if(ST>=METLowEdge_v3_1[METLowEdge_v3_1.size()-1]){sBin1=sBin+(METLowEdge_v3_1.size()-1); break;}
+        }
+      }
+
+  }
+    
+  }
+
+  return sBin1;
+}
+// int AnalyzeLightBSM::getBinNoV3_ST_MET_bjets(double Met, double ST, int bjets){
+//   int sBin=0, m_i=1,sBin1=0,n_i=0;
+//   if(bjets==0){
+//    for(int i=0;i<METLowEdge_v3_1.size()-1;i++){
+//     if(i!=0)
+//       m_i++;
+//     if(Met >= METLowEdge_v3_1[i] && Met < METLowEdge_v3_1[i+1])
+//       {
+//         sBin = sBin+((m_i-1)*5);
+//         break;
+//       }
+//     else if(Met >= METLowEdge_v3_1[METLowEdge_v3_1.size()-1])
+//       {
+//         sBin = 20;
+//         break;
+//       }
+//   }
+//    if(sBin%5==0)
+//     {
+//       for(int i=0;i<ST_bins.size()-1;i++){
+//         n_i++;
+//         if(ST>=ST_bins[i] && ST<ST_bins[i+1]) {sBin1=sBin+n_i; break;}
+//         else if(ST>=ST_bins[ST_bins.size()-1]){sBin1=sBin+(ST_bins.size()-1); break;}
+//       }
+//     }
+//   }
+
+//   else {
+//     m_i=6;
+//     for(int i=0;i<METLowEdge_v3_1.size()-1;i++){
+//       if(i!=0)
+//         m_i++;
+//       if(Met >= METLowEdge_v3_1[i] && Met < METLowEdge_v3_1[i+1])
+//         {
+//           sBin = sBin+((m_i-1)*5);
+//           break;
+//         }
+//     else if(Met >= METLowEdge_v3_1[METLowEdge_v3_1.size()-1])
+//         {
+//           sBin = 45;
+//           break;
+//         }
+//     }
+//  if(sBin%5==0)
+//    {
+//         for(int i=0;i<ST_bins.size()-1;i++){
+//           n_i++;
+//           if(ST>=ST_bins[i] && ST<ST_bins[i+1]) {sBin1=sBin+n_i; break;}
+//           else if(ST>=ST_bins[ST_bins.size()-1]){sBin1=sBin+(ST_bins.size()-1); break;}
+//         }
+//       }
+
+//   }
+//   return sBin1;
+// }
+
+
+// int AnalyzeLightBSM::getBinNoV7_ST_MET_bjets_phopT(double Met, double ST, int bjets, double pho_pt){
+//   int sBin=0, m_i=1,sBin1=0,n_i=0;
+//   if(pho_pt<=100){
+//   if(bjets==0){
+//    for(int i=0;i<METLowEdge_v3_1.size()-1;i++){
+//     if(i!=0)
+//       m_i++;
+//     if(Met >= METLowEdge_v3_1[i] && Met < METLowEdge_v3_1[i+1])
+//       {
+//         sBin = sBin+((m_i-1)*5);
+//         break;
+//       }
+//     else if(Met >= METLowEdge_v3_1[METLowEdge_v3_1.size()-1])
+//       {
+//         sBin = 20;
+//         break;
+//       }
+//    }
+//    if(sBin%5==0)
+//      {
+//        for(int i=0;i<ST_bins.size()-1;i++){
+//          n_i++;
+//         if(ST>=ST_bins[i] && ST<ST_bins[i+1]) {sBin1=sBin+n_i; break;}
+//         else if(ST>=ST_bins[ST_bins.size()-1]){sBin1=sBin+(ST_bins.size()-1); break;}
+//        }
+//      }
+//   }
+// else {
+//     m_i=6;
+//     for(int i=0;i<METLowEdge_v3_1.size()-1;i++){
+//       if(i!=0)
+//         m_i++;
+//     if(Met >= METLowEdge_v3_1[i] && Met < METLowEdge_v3_1[i+1])
+//         {
+//           sBin = sBin+((m_i-1)*5);
+//           break;
+//         }
+//       else if(Met >= METLowEdge_v3_1[METLowEdge_v3_1.size()-1])
+//         {
+//           sBin = 45;
+//           break;
+//         }
+//     }
+//     if(sBin%5==0)
+//       {
+//         for(int i=0;i<ST_bins.size()-1;i++){
+//           n_i++;
+//           if(ST>=ST_bins[i] && ST<ST_bins[i+1]) {sBin1=sBin+n_i; break;}
+//           else if(ST>=ST_bins[ST_bins.size()-1]){sBin1=sBin+(ST_bins.size()-1); break;}
+//         }
+//       }
+
+//  }
+
+//   }
+  
+//   else {
+//     m_i=11;
+//     if(bjets==0){
+//       for(int i=0;i<METLowEdge_v3_1.size()-1;i++){
+//         if(i!=0)
+//           m_i++;
+//         if(Met >= METLowEdge_v3_1[i] && Met < METLowEdge_v3_1[i+1])
+//           {
+//             sBin = sBin+((m_i-1)*5);
+//             break;
+//           }
+//         else if(Met >= METLowEdge_v3_1[METLowEdge_v3_1.size()-1])
+//           {
+//             sBin = 70;
+// 	    break;
+// 	  }
+//       }
+    
+//       if(sBin%5==0)
+// 	{
+// 	  for(int i=0;i<ST_bins.size()-1;i++){
+// 	    n_i++;
+// 	    if(ST>=ST_bins[i] && ST<ST_bins[i+1]) {sBin1=sBin+n_i; break;}
+// 	    else if(ST>=ST_bins[ST_bins.size()-1]){sBin1=sBin+(ST_bins.size()-1); break;}
+// 	  }
+// 	}
+//     }
+
+//   else {
+//     m_i=16;
+//     for(int i=0;i<METLowEdge_v3_1.size()-1;i++){
+//       if(i!=0)
+//         m_i++;
+//       if(Met >= METLowEdge_v3_1[i] && Met < METLowEdge_v3_1[i+1])
+//         {
+//           sBin = sBin+((m_i-1)*5);
+//           break;
+//         }
+//       else if(Met >= METLowEdge_v3_1[METLowEdge_v3_1.size()-1])
+//         {
+//           sBin = 95;
+//           break;
+//         }
+//     }
+//     if(sBin%5==0)
+//       {
+//         for(int i=0;i<ST_bins.size()-1;i++){
+//           n_i++;
+//           if(ST>=ST_bins[i] && ST<ST_bins[i+1]) {sBin1=sBin+n_i; break;}
+//           else if(ST>=ST_bins[ST_bins.size()-1]){sBin1=sBin+(ST_bins.size()-1); break;}
+//         }
+//       }
+
+//   }
+    
+//   }
+//   return sBin1;
+// }
+int AnalyzeLightBSM::getBin_ST_MET_bjets_phopT_merge(double Met, double ST, int bjets, double pho_pt){
+  int sBin=0, m_i=1,sBin1=0,n_i=0;
+  if(pho_pt<=100){
+  if(bjets==0){
+   for(int i=0;i<METLowEdge_v3_merge.size()-1;i++){
+    if(i!=0)
+      m_i++;
+    if(Met >= METLowEdge_v3_merge[i] && Met < METLowEdge_v3_merge[i+1])
+      {
+        sBin = sBin+((m_i-1)*5);
+        break;
+      }
+    else if(Met >= METLowEdge_v3_merge[METLowEdge_v3_merge.size()-1])
+      {
+        sBin = 15;
+        break;
+      }
+  }
+   if(sBin%5==0)
+     {
+       for(int i=0;i<ST_bins.size()-1;i++){
+         n_i++;
+        if(ST>=ST_bins[i] && ST<ST_bins[i+1]) {sBin1=sBin+n_i; break;}
+        else if(ST>=ST_bins[ST_bins.size()-1]){sBin1=sBin+(ST_bins.size()-1); break;}
+       }
+    }
+  }
+
+  else {
+    m_i=5;
+    for(int i=0;i<METLowEdge_v3_merge.size()-1;i++){
+      if(i!=0)
+        m_i++;
+    if(Met >= METLowEdge_v3_merge[i] && Met < METLowEdge_v3_merge[i+1])
+        {
+          sBin = sBin+((m_i-1)*5);
+          break;
+        }
+      else if(Met >= METLowEdge_v3_merge[METLowEdge_v3_merge.size()-1])
+        {
+          sBin = 35;
+          break;
+        }
+    }
+    if(sBin%5==0)
+      {
+        for(int i=0;i<ST_bins.size()-1;i++){
+          n_i++;
+          if(ST>=ST_bins[i] && ST<ST_bins[i+1]) {sBin1=sBin+n_i; break;}
+          else if(ST>=ST_bins[ST_bins.size()-1]){sBin1=sBin+(ST_bins.size()-1); break;}
+        }
+      }
+
+  }
+
+  }
+else {
+    m_i=9;
+    if(bjets==0){
+      for(int i=0;i<METLowEdge_v3_merge.size()-1;i++){
+        if(i!=0)
+          m_i++;
+        if(Met >= METLowEdge_v3_merge[i] && Met < METLowEdge_v3_merge[i+1])
+          {
+            sBin = sBin+((m_i-1)*5);
+            break;
+          }
+        else if(Met >= METLowEdge_v3_merge[METLowEdge_v3_merge.size()-1])
+          {
+            sBin = 55;
+        break;
+      }
+  }
+   if(sBin%5==0)
+     {
+       for(int i=0;i<ST_bins.size()-1;i++){
+         n_i++;
+        if(ST>=ST_bins[i] && ST<ST_bins[i+1]) {sBin1=sBin+n_i; break;}
+        else if(ST>=ST_bins[ST_bins.size()-1]){sBin1=sBin+(ST_bins.size()-1); break;}
+       }
+    }
+  }
+
+  else {
+    m_i=13;
+    for(int i=0;i<METLowEdge_v3_merge.size()-1;i++){
+      if(i!=0)
+        m_i++;
+    if(Met >= METLowEdge_v3_merge[i] && Met < METLowEdge_v3_merge[i+1])
+        {
+          sBin = sBin+((m_i-1)*5);
+          break;
+        }
+      else if(Met >= METLowEdge_v3_merge[METLowEdge_v3_merge.size()-1])
+        {
+          sBin = 75;
+          break;
+        }
+    }
+    if(sBin%5==0)
+      {
+        for(int i=0;i<ST_bins.size()-1;i++){
+          n_i++;
+          if(ST>=ST_bins[i] && ST<ST_bins[i+1]) {sBin1=sBin+n_i; break;}
+          else if(ST>=ST_bins[ST_bins.size()-1]){sBin1=sBin+(ST_bins.size()-1); break;}
+        }
+      }
+
+  }
+
+  }
+
+  return sBin1;
+}
+
+
 int AnalyzeLightBSM::getBinNo_v0FR(double pho_pt,double qmulti, double minDRindx){
   int sBin=0,m_i=1,sBin1=0,n_i=0; 
   for(int i=0;i<BestPhotonPtBinLowEdge.size()-1;i++){
@@ -2124,7 +2604,14 @@ void AnalyzeLightBSM::FillHistogram_Kinematics(int i, int Njets, int btags, doub
   h_TFbins_LL_v6[i]->Fill(TFbins_v6,wt);
   h_TFbins_LL_v7[i]->Fill(TFbins_v7,wt);
   
+  
+  searchBin = getBinNoV3_ST_MET_bjets(ST,MET,btags);
+  h_Sbins_LL_newSbins_v3[i]->Fill(searchBin,wt);
 
+  searchBin = getBinNoV7_ST_MET_bjets_phopT(ST,MET,btags,pho_Pt);
+  h_Sbins_LL_newSbins_v7[i]->Fill(searchBin,wt);
+  searchBin = getBin_ST_MET_bjets_phopT_merge(MET,ST,btags,pho_Pt);
+  h_Sbins_LL_newSbins_v7_merge[i]->Fill(searchBin,wt);
   
   //cout<<"Alps "<<i<<"\t"<<"TFbins_v1  "<<TFbins_v1<<" TFbins_v2 "<< TFbins_v2<<"\t MET "<<MET<<"\t NJets  "<<Njets<<"  btags "<<btags<<"\t"<<h_TFbins_LL_v1[i]->GetBinContent(TFbins_v1)<<"\t"<<wt<<"\t"<<searchBin<<endl;
   //cout<<h_Njets[i]->GetMean()<<endl;
@@ -2168,7 +2655,7 @@ void AnalyzeLightBSM::FillTFBins_Valid(int i, int Njets, int btags, double pho_P
   //
   h_Mt_PhoMET_validation_TFbins_v2[i]->Fill(mt_phoMET,wt1);
   h_dPhi_PhoMET_validation_TFbins_v2[i]->Fill(dPhi,wt1);
-  h_St_validation_TFbins_v2[i]->Fill(ST,wt1);
+  //  h_St_validation_TFbins_v2[i]->Fill(ST,wt1);
   h_Photon_Eta_validation_TFbins_v2[i]->Fill(Eta,wt1);
   h_Photon_Phi_validation_TFbins_v2[i]->Fill(Phi,wt1);
 
@@ -2211,7 +2698,7 @@ void AnalyzeLightBSM::FillTFBins_Valid(int i, int Njets, int btags, double pho_P
   h_Nbjets_validation[i]->Fill(btags,wt);
   h_MET_validation[i]->Fill(MET,wt);
   h_PhotonPt_validation[i]->Fill(pho_Pt,wt);
-  h_St_validation[i]->Fill(ST,wt);
+  ///  h_St_validation[i]->Fill(ST,wt);
 
   h_TFbins_ElecLL_validation_TFbins_v2[i]->Fill(TFbins_v3,wt1);
   h_TFbins_ElecLL_validation_TFbins_v2_v1[i]->Fill(TFbins_v3,wt1);
@@ -2230,8 +2717,19 @@ void AnalyzeLightBSM::FillTFBins_Valid(int i, int Njets, int btags, double pho_P
   h_MET_validation_TFbins_v3[i]->Fill(MET,wt2);
   h_PhotonPt_validation_TFbins_v3[i]->Fill(pho_Pt,wt2);
   h_St_validation_TFbins_v3[i]->Fill(ST,wt2);
-
   
+  searchBin = getBinNoV3_ST_MET_bjets (ST,MET,btags);
+  h_Sbins_LL_newSbins_Validation_v3[i]->Fill(searchBin,wt);
+  h_Sbins_LL_v2_newSbins_Validation_v3[i]->Fill(searchBin,wt1);
+  h_Sbins_LL_v3_newSbins_Validation_v3[i]->Fill(searchBin,wt2);
+  searchBin = getBinNoV7_ST_MET_bjets_phopT(ST,MET,btags,pho_Pt);
+  h_Sbins_LL_newSbins_Validation_v7[i]->Fill(searchBin,wt);
+  h_Sbins_LL_v2_newSbins_Validation_v7[i]->Fill(searchBin,wt1);
+  h_Sbins_LL_v3_newSbins_Validation_v7[i]->Fill(searchBin,wt2);
+  searchBin = getBin_ST_MET_bjets_phopT_merge(MET,ST,btags,pho_Pt);
+  h_Sbins_LL_newSbins_Validation_v7_merge[i]->Fill(searchBin,wt);
+  h_Sbins_LL_v2_newSbins_Validation_v7_merge[i]->Fill(searchBin,wt1);
+  h_Sbins_LL_v3_newSbins_Validation_v7_merge[i]->Fill(searchBin,wt2);  
 }
 void AnalyzeLightBSM::FillHistogram_Kinematics_varBin(int i, int Njets, int btags, double pho_Pt, double ST,double qmulti, double wt){
   //cout<<"Alps "<<i<<"\t"<<Njets<<"\t"<<btags<<"\t"<<pho_Pt<<"\t"<<mt_phoMET<<"\t"<<dPhi<<"\t"<<ST<<endl;                                        

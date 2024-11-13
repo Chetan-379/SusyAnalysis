@@ -14,9 +14,9 @@ currDir=$(pwd)
 ######################################
 
 source /cvmfs/cms.cern.ch/cmsset_default.sh
-export SCRAM_ARCH=slc7_amd64_gcc820
-scram p CMSSW CMSSW_11_1_0_pre3
-cd CMSSW_11_1_0_pre3/src
+export SCRAM_ARCH=el9_amd64_gcc12
+scram p CMSSW CMSSW_14_0_0_pre0
+cd CMSSW_14_0_0_pre0/src
 
 eval `scramv1 runtime -sh`
 pwd
@@ -38,7 +38,7 @@ ls
 echo "COPYING OUTPUT"
 
 #xrdcp -f skimmed_ntuple_$datasetName'_'$process'.root' root://cmseos.fnal.gov//store/user/kalpana/Susy_phoMet/SkimmedNtuples/
-xrdcp -f $outputFileTag root://cmseos.fnal.gov//store/user/kalpana/ul_rootop_Analys_May2/FR 
+xrdcp -f $outputFileTag root://cmseos.fnal.gov//store/user/kalpana/FR_UL_Oct24 
 
 #xrdcp -f ${datasetName}'_'${outputFileTag} root://cmseos.fnal.gov//store/group/lpcsusyhad/SusyPhotonMET/Run2ProductionV17/background/skims/${outputFileTag}
 rm $outputFileTag

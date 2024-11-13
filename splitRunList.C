@@ -11,7 +11,7 @@ void splitRunList(string infile,int nfPerJob, string datasetAna, string process,
   string exeCondor  = "worker2.sh";
   string exeAna     = "analyzeLightBSM";
   //  string datasetAna = "SR";
-  string filesToTransfer = "map_crosssection_SMprocess_v1.txt";//, Lepton_LL_TFbins_v1_nJetsBjets_phoID_loose_09Jan24.root,Lepton_LL_TFbins_v2_nJetsBjets_PhoPt_phoID_loose_09Jan24.root,Lepton_LL_TFbins_v3_nJetsBjets_MET_phoID_loose_09Jan24.root" ;//,TF_allin1_LLEstimation_binsV0_phoID_mva_wp90_08Aug23.root,TF_allin1_LLEstimation_binsV0_phoID_loose_08Aug23.root";//, TF_allin1_LLEstimation_electron_newTFbins.root, TF_allin1_LLEstimation_muon_newTFbins.root, TMVAClassification_BDT_100trees_2maxdepth.weights.xml";
+  string filesToTransfer = "map_crosssection_SMprocess_v1.txt, Electron_FR_TFbins_v3_phopt_qmulti_phoID_loose_09Jan24.root,Electron_FR_TFbins_v2_qmulti_nJetsBjets_phoID_loose_09Jan24.root,out_SF_FR_Data_MC_Default.root,Electron_FR_TFbins_v1_phopT_qmulti_phoID_loose_09Jan24.root";//, Lepton_LL_TFbins_v1_nJetsBjets_phoID_loose_09Jan24.root,Lepton_LL_TFbins_v2_nJetsBjets_PhoPt_phoID_loose_09Jan24.root,Lepton_LL_TFbins_v3_nJetsBjets_MET_phoID_loose_09Jan24.root" ;//,TF_allin1_LLEstimation_binsV0_phoID_mva_wp90_08Aug23.root,TF_allin1_LLEstimation_binsV0_phoID_loose_08Aug23.root";//, TF_allin1_LLEstimation_electron_newTFbins.root, TF_allin1_LLEstimation_muon_newTFbins.root, TMVAClassification_BDT_100trees_2maxdepth.weights.xml";
   //---------------------------------------------------
   cout<<"executable at worker node : "<<exeCondor<<endl
       <<"Analysis executable : "<<exeAna<<endl
@@ -53,7 +53,7 @@ void splitRunList(string infile,int nfPerJob, string datasetAna, string process,
 	<<"Executable = "<<exeCondor<<endl
 	<<"request_disk = 1000000"<<endl
 	<<"request_cpus = 1"<<endl
-	<<"request_memory = 2GB"<<endl
+	<<"request_memory = 1.5GB"<<endl
 	<<"Should_Transfer_Files = YES"<<endl
 	<<"WhenToTransferOutput = ON_EXIT_OR_EVICT"<<endl
 	<<"Transfer_Input_Files = "<<filesToTransfer<<","<<exeAna<<","<<fileListName<<","<<endl
