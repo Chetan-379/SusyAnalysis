@@ -313,7 +313,7 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
     if(i<4)
       hs_var->Add(hist.at(i));
     hs_var->SetMinimum(ymin);
-    hs_var->SetMaximum(ymax*50);
+    hs_var->SetMaximum(ymax*100);
   }
     // 	if(!i) hist.at(i)->Draw("");
     // else   hist.at(i)->Draw(" sames");
@@ -369,7 +369,7 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
  
   TLatex* textOnTop = new TLatex();
   textOnTop->SetTextSize(0.045);
-  textOnTop->DrawLatexNDC(0.12,0.94,"CMS #it{#bf{Preliminary}}");
+  //  textOnTop->DrawLatexNDC(0.12,0.94,"CMS #it{#bf{Preliminary}}");
   
   char* en_lat = new char[500];
   textOnTop->SetTextSize(0.045);

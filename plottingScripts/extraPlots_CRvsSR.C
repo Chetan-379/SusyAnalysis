@@ -473,7 +473,7 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
   TLatex* textOnTop = new TLatex();
   //new
     textOnTop->SetTextSize(0.054);
-  textOnTop->DrawLatexNDC(0.146,0.925,"CMS #it{#bf{Simulation Preliminary}}");
+    //  textOnTop->DrawLatexNDC(0.146,0.925,"CMS #it{#bf{Simulation Preliminary}}");
 
   char* en_lat = new char[500];
   textOnTop->SetTextSize(0.054);

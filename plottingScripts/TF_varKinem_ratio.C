@@ -398,7 +398,9 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
   for(int i = 0;i<(int)hist.size(); i++) {
     if(!normalize) hist.at(i)->GetYaxis()->SetRangeUser(0.001,10000.0*ymax);
     else
-      {  hist.at(i)->GetYaxis()->SetRangeUser(0.001,ymax*10000.0);
+      {
+	cout<<ymax<<"\t"<<ymin<<endl;
+	hist.at(i)->GetYaxis()->SetRangeUser(0.0000001,100.0);
 	//	hist.at(i)->GetXaxis()->SetRangeUser(0,xmax_[i]);
       }
     //    p1->SetGrid();
@@ -473,7 +475,7 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
   TLatex* textOnTop = new TLatex();
   //new
     textOnTop->SetTextSize(0.054);
-  textOnTop->DrawLatexNDC(0.146,0.925,"CMS #it{#bf{Simulation Preliminary}}");
+    //  textOnTop->DrawLatexNDC(0.146,0.925,"CMS #it{#bf{Simulation Preliminary}}");
 
   char* en_lat = new char[500];
   textOnTop->SetTextSize(0.054);
@@ -678,7 +680,14 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
 
 
   gPad->Modified();
-                                                                                       
+  if(normalize){
+    TH1D* hNjets_total =(TH1D*)hist.at(1)->Clone();
+    TH1D* hNjets_ratio = (TH1D*)hist.at(0)->Clone();
+    hNjets_ratio->Divide(hNjets_total);
+    
+    hist_ratio = (TH1D*)hNjets_ratio->Clone();//hNjets_ratio;
+    
+  }
     hist_ratio->SetLineWidth(2);
     hist_ratio->SetLineStyle(1);
     hist_ratio->SetMarkerSize(0.2);
@@ -688,6 +697,8 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
     hist_ratio->GetYaxis()->SetTitle("SR/CR");//TF = #frac{N_{SR}}{N_{CR}}");//(0#mu,1#gamma)}{(1#mu,1#gamma)}");
     hist_ratio->GetXaxis()->SetLabelSize(0.1);
     hist_ratio->GetYaxis()->SetRangeUser(-0.001,0.03);
+    if(normalize)
+      hist_ratio->GetYaxis()->SetRangeUser(0.0,2);
     //hist_ratio->GetXaxis()->SetRangeUser(xmin,xmax+4);
     // hist_ratio= setMyRange(hist_ratio,xmin,xmax+6);
     // setLastBinAsOverFlow(hist_ratio);
@@ -717,12 +728,12 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
     hist_ratio->GetXaxis()->SetTitleOffset(1);
     hist_ratio->GetYaxis()->SetTitleOffset(0.51);
     hist_ratio->GetXaxis()->SetTitleSize(0.14);
-
+    
     hist_ratio->GetYaxis()->SetLabelSize(0.12);
-
+    hist_ratio->GetXaxis()->SetLabelOffset(0);
     //    hist_ratio->GetYaxis()->SetLabelSize(x_label_size);
    pad_1->cd();
-   //   pad_1->SetGrid();
+   //      pad_1->SetGrid();
    // if(which_TFbins==1){
    // TLine *l =new TLine(0,1.0,10,1.0);   
    // hist_ratio->Draw("");
@@ -749,6 +760,9 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
 
    // l2->Draw("sames");
    // }
+      //      xmin = xmin+;
+      xrange = xmax+4;
+   if(!normalize){
    TLine *l =new TLine(xmin,.01,xrange,.01);
    hist_ratio->Draw("");
    l->Draw("sames");
@@ -759,7 +773,20 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
    l2->SetLineStyle(7);
 
    l2->Draw("sames");
+   }
 
+   else {
+     TLine *l =new TLine(xmin,1,xrange,1);
+     hist_ratio->Draw("");
+     l->Draw("sames");
+     TLine *l1 =new TLine(xmin,1.5,xrange,1.5);
+     l1->SetLineStyle(7);
+     l1->Draw("sames");
+     TLine *l2 =new TLine(xmin,0.5,xrange,0.5);
+     l2->SetLineStyle(7);
+     l2->Draw("sames");
+
+   }
   char* canvas_name = new char[1000];
   //c->Print(canvas_name);
   
@@ -937,7 +964,7 @@ void TF_varKinem_ratio(string pathname, int which_plots)
   vector<double> ymin ={1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
   vector<double> ymax={100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000};
   vector<double> xmin ={300,300,2,0,100,20,0,-10,-10,-10,0,0,0,0,0,-5,-5,0,0,-5,-5,0,0,-5,-5,0,0,-5,-5,0,0,-5,-5,0,0.9,0,0};
-  vector<double> xmax={1500,1500,11,8,1000,800,100,10,10,10,100,1000,1,50,0.5,5,5,1000,1,5,5,1000,1,5,5,1000,1,5,5,1000,1,5,5,1000,2,400,3};
+  vector<double> xmax={1500,1500,11,8,1000,800,40,10,10,10,100,1000,1,50,0.5,5,5,1000,1,5,5,1000,1,5,5,1000,1,5,5,1000,1,5,5,1000,2,400,3};
 
   cout<<"different vector sizes "<<endl;
   cout<<varName.size()<<"\t"<<varName2.size()<<"\t"<<xLabel.size()<<"\t"<<rebin.size()<<"\t"<<xmax.size()<<"\t"<<xmin.size()<<endl;
@@ -988,7 +1015,7 @@ void TF_varKinem_ratio(string pathname, int which_plots)
       vector<TH1D*> hist_list_MET;
       vector<TH1D*> hist_list_PhoPt;
       vector<TH1D*> hist_list_ST;
-      for(int i_cut=0; i_cut<varName.size();i_cut++)
+      for(int i_cut=6; i_cut<7;i_cut++)
 	{
 	  //if(i_cut==1) continue;
 	  vector<TH1D*> hist_list_Njets;
@@ -1011,6 +1038,8 @@ void TF_varKinem_ratio(string pathname, int which_plots)
 	  //path to save the png file
 	  float energy=energyy[i_file];
 	  int xrange=0.0;
+	  // hist_list_Njets.at(1)->Scale(1.0/hist_list_Njets.at(1)->Integral());
+	  // hist_list_Njets.at(0)->Scale(1.0/hist_list_Njets.at(0)->Integral());
 	  TH1D* hNjets_total =(TH1D*)hist_list_Njets.at(1)->Clone();
 	  TH1D* hNjets_ratio = (TH1D*)hist_list_Njets.at(0)->Clone();
 	  hNjets_ratio->Divide(hNjets_total);
@@ -1020,7 +1049,13 @@ void TF_varKinem_ratio(string pathname, int which_plots)
 	    generate_1Dplot(hist_list_Njets,hNjets_ratio,full_path,xLabel[i_cut].c_str(),"Entries",energy,rebin[i_cut],ymin[i_cut],ymax[i_cut],xmin[i_cut],xmax[i_cut],leg_head,false,true,false,true,filetag[i_file].c_str(),legend_texts,which_TFBins, which_Lept);
 	  else
 	    generate_1Dplot(hist_list_Njets,hNjets_ratio,full_path,xLabel[i_cut].c_str(),"Entries",energy,rebin[i_cut],ymin[i_cut],ymax[i_cut],xmin[i_cut],xmax[i_cut],leg_head,false,true,false,true,filetag[i_file].c_str(),legend_texts,which_TFBins, which_Lept);
-	  
+
+	  sprintf(full_path,"%s/%s_%s_%s_norm",pathname.c_str(),string_png,varName[i_cut].c_str(),filetag[i_file].c_str());
+	  if(i_cut==2 || i_cut==3)
+            generate_1Dplot(hist_list_Njets,hNjets_ratio,full_path,xLabel[i_cut].c_str(),"Normalized",energy,rebin[i_cut],ymin[i_cut],ymax[i_cut],xmin[i_cut],xmax[i_cut],leg_head,true,true,false,true,filetag[i_file].c_str(),legend_texts,which_TFBins, which_Lept);
+	  else
+            generate_1Dplot(hist_list_Njets,hNjets_ratio,full_path,xLabel[i_cut].c_str(),"Normalized",energy,rebin[i_cut],ymin[i_cut],ymax[i_cut],xmin[i_cut],xmax[i_cut],leg_head,true,true,false,true,filetag[i_file].c_str(),legend_texts,which_TFBins, which_Lept);
+
 	}
       //fout->Close();
       

@@ -10,7 +10,7 @@ int line_style[12] = {1,1,1,1,1,1,1,1,1,1,1,1};
 // /int line_color[n_pl+1] = {kBlack, kRed, kGreen+2, kBlue, kRed};
 // /int line_color[n_pl+1] = {kBlack, kRed, kGreen+2, kBlue, kRed};                                                                               
 int line_color[9] = {kBlue,kRed,kGreen+2,kViolet+2,kGreen-2,kYellow+1,kGray+2,kMagenta,kBlue+2};//{9,kCyan+2,45,kMagenta,kGray+1,kRed,kBlue+2,kMagenta,kCyan};
-int line_color1[9]= {kBlue,kGreen+2,kGray+1,kViolet+2,kGreen-2,kYellow+1,kGray+2,kMagenta,kBlue+2};
+int line_color1[9]= {kMagenta,kGreen+2,kGray+1,kViolet+2,kGreen-2,kYellow+1,kGray+2,kMagenta,kBlue+2};
 int line_color2[9] = {kGreen+2,kBlue,kViolet,kGray,kViolet+2,kGreen-2,kYellow+1,kGray+2,kMagenta};
 //int line_color[9] = {kMagenta+2, kGray+2, kRed, kGreen+2, kMagenta, kRed - 3, kBlue + 2 , kCyan + 1 , kGreen + 3 };
 vector<int> col={kGreen+2,kBlue,kViolet,kGray,kViolet+2,kGreen-2,kYellow+1,kGray+2,kMagenta,kBlue+2,kMagenta,kCyan};
@@ -266,7 +266,7 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
   double y = 0.90;
   TLegend *legend;
   //legend = new TLegend(0.60,0.88,0.98,0.72);  
-  legend = new TLegend(0.2,0.75,0.75,0.88);  
+  legend = new TLegend(0.2,0.75,0.8,0.88);  
   legend->SetTextSize(0.055);
   legend->SetLineColor(kWhite);
   legend->SetNColumns(4);
@@ -307,12 +307,16 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
       	hist.at(i)->GetYaxis()->SetTitle("Normalized");
     }
     else {
-      hist.at(i)->GetYaxis()->SetTitle("Entries");
+      hist.at(i)->GetYaxis()->SetTitle("Misid. rate (f)");
     }
     //   hist.at(i)->GetXaxis()->SetRangeUser(xmin,xrange+4);
     hist.at(i)->SetLineWidth(line_width[i]);
     hist.at(i)->SetLineStyle(line_style[i]);
-    hist.at(i)->SetLineColor(line_color[i]);
+    if(which_Lept==0)
+      hist.at(i)->SetLineColor(line_color[i]);
+    else
+      hist.at(i)->SetLineColor(line_color1[i]);
+
     hist.at(i)->SetTitle(" ");
     hist.at(i)->GetXaxis()->SetTitleSize(0.05);
     hist.at(i)->GetXaxis()->SetLabelSize(x_label_size);
@@ -324,7 +328,7 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
     //    decorate(hist.at(i),i,whi);
     // if(i<5){
     // legName.push_back(hist.at(i)->GetName());
-    hist.at(i)->SetLineColor(line_color[i]);
+    //hist.at(i)->SetLineColor(line_color[i]);
     hist.at(i)->SetTitle(" ");
     //setLastBinAsOverFlow(hist.at(i),0);
     //
@@ -340,7 +344,7 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
     decorate(hist.at(i),i, which_Lept);
     hist.at(i)->SetMarkerSize(0.8);
     hist.at(i)->SetMarkerStyle(20);
-    hist.at(i)->SetMarkerColor(line_color[i]);
+    //    hist.at(i)->SetMarkerColor(line_color[i]);
     //new ones
     hist.at(i)->GetXaxis()->SetTitleSize(0.08);
     hist.at(i)->GetXaxis()->SetLabelSize(0.06);
@@ -356,7 +360,7 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
     decorate(hist.at(i),i, which_Lept);
     hist.at(i)->GetYaxis()->SetNdivisions(506);
 
-
+    hist.at(i)->SetMarkerColor(line_color[i]);
     // if(DoRebin) {
     //  hist.at(i)->Rebin(2);
     //   //hist.at(i)->Rebin(1);
@@ -396,7 +400,14 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
   if(ymin<0.0) ymin = 1e-4;
   //  if(ymax<=10) ymax=10;
   for(int i = 0;i<(int)hist.size(); i++) {
-    if(!normalize) hist.at(i)->GetYaxis()->SetRangeUser(0.001,10000.0*ymax);
+    ymax = hist.at(i)->GetMaximum();
+    ymin = hist.at(i)->GetMinimum();
+    
+    if(!normalize) {
+      if(ymax>0.05)
+	hist.at(i)->GetYaxis()->SetRangeUser(ymin,0.1);
+      else
+	 hist.at(i)->GetYaxis()->SetRangeUser(ymin,1.4*ymax);}//10000.0*ymax);
     else
       {  hist.at(i)->GetYaxis()->SetRangeUser(0.001,ymax*10000.0);
 	//	hist.at(i)->GetXaxis()->SetRangeUser(0,xmax_[i]);
@@ -465,7 +476,7 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
 
 
   if(log_flag) {
-      gPad->SetLogy();
+    //    gPad->SetLogy();
     }
   // if(logx)
   //   gPad->SetLogx();
@@ -480,8 +491,6 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
   float inlumi=energy;
   sprintf(en_lat,"#bf{%0.2f fb^{-1} (13 TeV)}",inlumi);
   textOnTop->DrawLatexNDC(0.72,0.925,en_lat);
-
-
   // textOnTop->SetTextSize(0.04);
   // textOnTop->DrawLatexNDC(0.15,0.96,"CMS #it{#bf{Preliminary}}");
   
@@ -685,9 +694,9 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
     hist_ratio->SetLineColor(kBlack);
     hist_ratio->SetTitle(" ");
     hist_ratio->GetXaxis()->SetTitleSize(0.13);
-    hist_ratio->GetYaxis()->SetTitle("SR/CR");//TF = #frac{N_{SR}}{N_{CR}}");//(0#mu,1#gamma)}{(1#mu,1#gamma)}");
+    hist_ratio->GetYaxis()->SetTitle("#beta = #frac{f(DY)}{f(DY+ttbar)}");//TF = #frac{N_{SR}}{N_{CR}}");//(0#mu,1#gamma)}{(1#mu,1#gamma)}");
     hist_ratio->GetXaxis()->SetLabelSize(0.1);
-    hist_ratio->GetYaxis()->SetRangeUser(0,2);
+    hist_ratio->GetYaxis()->SetRangeUser(0.8,1.2);
     //hist_ratio->GetXaxis()->SetRangeUser(xmin,xmax+4);
     // hist_ratio= setMyRange(hist_ratio,xmin,xmax+6);
     // setLastBinAsOverFlow(hist_ratio);
@@ -715,7 +724,7 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
     hist_ratio->GetYaxis()->SetNdivisions(505);
 
     hist_ratio->GetXaxis()->SetTitleOffset(1);
-    hist_ratio->GetYaxis()->SetTitleOffset(0.51);
+    hist_ratio->GetYaxis()->SetTitleOffset(0.41);
     hist_ratio->GetXaxis()->SetTitleSize(0.14);
 
     hist_ratio->GetYaxis()->SetLabelSize(0.12);
@@ -749,13 +758,13 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
 
    // l2->Draw("sames");
    // }
-   TLine *l =new TLine(xmin,1,xrange,1);
+   TLine *l =new TLine(xmin,1.,xrange,1.);
    hist_ratio->Draw("");
    l->Draw("sames");
-   TLine *l1 =new TLine(xmin,1.5,xrange,1.5);
+   TLine *l1 =new TLine(xmin,1.1,xrange,1.1);
    l1->SetLineStyle(7);
    l1->Draw("sames");
-   TLine *l2 =new TLine(xmin,0.5,xrange,0.5);
+   TLine *l2 =new TLine(xmin,0.9,xrange,0.9);
    l2->SetLineStyle(7);
 
    l2->Draw("sames");
@@ -777,7 +786,7 @@ TFile *f[nfiles];
 TFile *f1[nfiles];
 
 
-void extraPlots_valid(string pathname, int which_plots)
+void v1_purityCalc(string pathname, int which_Lept)
 {
   char* hname = new char[200];
   char* hname1 = new char[200];
@@ -790,7 +799,7 @@ void extraPlots_valid(string pathname, int which_plots)
   char* hist_name5 = new char[200];
   char* hist_name6 = new char[200];
   char* hist_name7 = new char[200];
-  char* full_path = new char[2000];
+  char* full_path = new char[10000];
   char* full_path1 = new char[2000];
   char* full_path2 = new char[2000];
   char* path2 = new char[2000];
@@ -811,12 +820,12 @@ void extraPlots_valid(string pathname, int which_plots)
   char *dataset=new char[200];
   char *year =new char[200];
   //  float energyy[2]={};
-  int n_files=6;
+  int n_files=24;
   char *string_png = new char[200];
   vector<string>baseline1;
   vector<string> legend_texts;
   char *TFbins_str= new char[2000];
-  int which_Lept=1;
+  // int which_Lept=1;
   int which_TFBins=1;
 
   // if(which_TFBins==1)
@@ -829,12 +838,18 @@ void extraPlots_valid(string pathname, int which_plots)
     //    sprintf(string_png,"Electron_LL");
     baseline1={"Pho_SR","Elec_CR"};//,"TauHad_SR","Mu_SR","Elec_SR","FailAcep_ElecSR","FailId_ElecSR","FailIso_ElecSR","Elec_SR","Elec_"};//
     
-    //    legend_texts ={"(0e,1#gamma) SR","(1e,0#gamma) CR"};//,"#tau-had SR","lost #mu SR","lost e SR","(1l,1#gamma) CR","Failed Iso"};
-    legend_texts = {"Exp:(0e,1#gamma)","Pred: TF x (1e,0#gamma)"};    
+    legend_texts ={"f(DY)","f(DY+ttbar)"};//,"#tau-had SR","lost #mu SR","lost e SR","(1l,1#gamma) CR","Failed Iso"};
+    
     //sprintf(hname,"");
-    sprintf(string_png,"FR_validMC_%s",TFbins_str);
+    if(which_Lept==0){
+    sprintf(string_png,"purity_MC_%s",TFbins_str);
     sprintf(hname,"%s_phoID_loose_29Jan24",string_png);
-
+    }
+    else if (which_Lept==1){
+      sprintf(string_png,"purity_CRvsSR_%s",TFbins_str);
+      sprintf(hname,"%s_phoID_loose_29Jan24",string_png);
+    }
+    
     // }
   // if(which_Lept==2){
   //   sprintf(string_png,"Muon_LL_Sbins_Valid_%s",TFbins_str);
@@ -860,12 +875,67 @@ void extraPlots_valid(string pathname, int which_plots)
   // cout<<string_png<<"\t"<<TFbins_str<<"\t"<<which_TFBins<<endl;
   // if(which_Lept==1)
   //   {
-      f[0]= new TFile("Summer20UL18_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
-      f[1]= new TFile("Summer20UL17_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
-      f[2]= new TFile("Summer20UL16_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
-      f[5]= new TFile("FullRun2_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
-      f[3]= new TFile("Summer20UL16APV_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
-      f[4]= new TFile("Summer20UL_total2016_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+      // f[0] = new TFile("Summer20UL18_TTGJets_PhoIdloose_phopt40_MET200.root");
+      // f[1] = new TFile("Summer20UL17_TTGJets_PhoIdloose_phopt40_MET200.root");
+      // f[2] = new TFile("Summer20UL16_TTGJets_PhoIdloose_phopt40_MET200.root");
+      // f[3]= new TFile("FullRun2_TTGJets_PhoIdloose_phopt40_MET200.root");
+
+      // f[4] = new TFile("Summer20UL18_WGJets_PhoIdloose_phopt40_MET200.root");
+      // f[5] = new TFile("Summer20UL17_WGJets_PhoIdloose_phopt40_MET200.root");
+      // f[6] = new TFile("Summer20UL16_WGJets_PhoIdloose_phopt40_MET200.root");
+      // f[7]= new TFile("FullRun2_WGJets_PhoIdloose_phopt40_MET200.root");
+      // f[8] = new TFile("Summer20UL18_TTJets_PhoIdloose_phopt40_MET200.root");
+      // f[9] = new TFile("Summer20UL17_TTJets_PhoIdloose_phopt40_MET200.root");
+      // f[10] = new TFile("Summer20UL16_TTJets_PhoIdloose_phopt40_MET200.root");
+      // f[11]= new TFile("FullRun2_TTJets_PhoIdloose_phopt40_MET200.root");
+      // f[12] = new TFile("Summer20UL18_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
+      // f[13] = new TFile("Summer20UL17_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
+      // f[14] = new TFile("Summer20UL16_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
+      // f[15]= new TFile("FullRun2_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
+    // if(which_Lept==0){
+    //   f[0] = new TFile("Summer20UL18_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
+    //   f[1] = new TFile("Summer20UL17_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
+    //   f[2] = new TFile("Summer20UL16_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
+    //   f[3] = new TFile("FullRun2_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
+    //   f[4] = new TFile("Summer20UL18_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
+    //   f[5] = new TFile("Summer20UL17_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
+    //   f[6] = new TFile("Summer20UL16_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
+    //   f[7] = new TFile("FullRun2_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
+    //   f[8]= new TFile("Summer20UL18_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+    //   f[9]= new TFile("Summer20UL17_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+    //   f[10]= new TFile("Summer20UL16_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+    //   f[11]= new TFile("FullRun2_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+    //   f[12] = new TFile("Summer20UL16APV_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
+    //   f[13] = new TFile("Summer20UL16APV_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
+    //   f[14]= new TFile("Summer20UL16APV_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+    //   f[15] = new TFile("Summer20UL_total2016_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
+    //   f[16] = new TFile("Summer20UL_total2016_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
+    //   f[17]= new TFile("Summer20UL_total2016_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+    //   f[18] = new TFile("Summer20UL16_DYJets_Mt50_PhoIdloose_phopt40_MET200.root");
+    //   f[19] = new TFile("Summer20UL16APV_DYJets_Mt50_PhoIdloose_phopt40_MET200.root");
+    //   f[20] = new TFile("Summer20UL17_DYJets_Mt50_PhoIdloose_phopt40_MET200.root");
+    //   f[21] = new TFile("Summer20UL18_DYJets_Mt50_PhoIdloose_phopt40_MET200.root");
+    //   f[22] = new TFile("Summer20UL_total2016_DYJets_Mt50_PhoIdloose_phopt40_MET200.root");
+    //   f[23] = new TFile("FullRun2_DYJets_Mt50_PhoIdloose_phopt40_MET200.root");
+
+    //   f[24] = new TFile("Summer20UL17_ZLLGJets_MonoPhoton_PhoIdloose_phopt40_MET200.root");
+    //   f[25] = new TFile("Summer20UL18_ZLLGJets_MonoPhoton_PhoIdloose_phopt40_MET200.root");
+    //   f[26] = new TFile("Summer20UL_total2016_ZLLGJets_MonoPhoton_PhoIdloose_phopt40_MET200.root");
+    //   f[27] = new TFile("FullRun2_ZLLGJets_MonoPhoton_PhoIdloose_phopt40_MET200.root");
+
+    // }
+    // else if(which_Lept==1)
+    //   {
+    // 	n_files=5;
+    // 	f[0] = new TFile("./out_Data_UL2018_Allruns_MET_phoID_loose_pt40_MET200.root");
+    // 	f[1] = new TFile("./out_Data_UL2017_Allruns_MET_phoID_loose_pt40_MET200.root");
+    // 	f[2] = new TFile("./out_Data_UL2016_Allruns_MET_phoID_loose_pt40_MET200.root");
+    // 	f[3] = new TFile("./out_Data_UL2016APV_Allruns_MET_phoID_loose_pt40_MET200.root");
+    // 	f[4] = new TFile("./out_Data_UL20_total2016_Allruns_MET_phoID_loose_pt40_MET200.root");	
+    //   }
+    f[0]= new TFile("./out_FR_MC_CRvsSR_Default.root");
+    f[1]= new TFile("./out_FR_Data_CRvsSR_Default.root");
+
 
   vector<string>varName;
   vector<string>varName1;
@@ -875,24 +945,19 @@ void extraPlots_valid(string pathname, int which_plots)
   vector<string>varName5;
 
     // if(which_plots==0){
-  varName ={"h_Njets","h_Nbjets","h_MET","h_PhotonPt","h_Qmulti","h_PhotonEta","h_PhotonPhi"};                        
+  varName ={"h_St_Elec_CR","h_HT_Elec_CR","h_NhadJets_Elec_CR","h_NBJets_Elec_CR","h_MET_Elec_CR","h_PhoPt_Elec_CR","h_qmulti_Elec_CR","h_Photon_Eta_Elec_CR","h_Photon_Phi_Elec_CR","h_MET_Phi_Elec_CR","h_leadJets_qmulti_Elec_CR","h_leadJet_Pt_Elec_CR","h_leadbjet_tag_Elec_CR","h_nvrtx_Elec_CR","h_minDR_Jets_EMObject_Elec_CR","h_Phi_leadJet1_Elec_CR","h_Eta_leadJet1_Elec_CR","h_Pt_leadJet1_Elec_CR","h_dPhi_METJet1_Elec_CR","h_Phi_leadJet2_Elec_CR","h_Eta_leadJet2_Elec_CR","h_Pt_leadJet2_Elec_CR","h_dPhi_METJet2_Elec_CR","h_Phi_leadJet3_Elec_CR","h_Eta_leadJet3_Elec_CR","h_Pt_leadJet3_Elec_CR","h_dPhi_METJet3_Elec_CR","h_Phi_leadJet4_Elec_CR","h_Eta_leadJet4_Elec_CR","h_Pt_leadJet4_Elec_CR","h_dPhi_METJet4_Elec_CR","h_Phi_matchedJet_Elec_CR","h_Eta_matchedJet_Elec_CR","h_Pt_matchedJet_Elec_CR","h_HT5HT_Elec_CR","h_invariantMass_Elec_CR","h_invariantMass_noCut_Elec_CR","FR_nbtagBins_Elec_CR","h_tagEle_pT_Elec_CR","h_tagEle_Eta_Elec_CR","h_tagEle_Phi_Elec_CR","h_ZpT_Elec_CR"};  
 
-  // varName2={"h_St_Pho_SR","h_HT_Pho_SR","h_NhadJets_Pho_SR","h_NBJets_Pho_SR","h_MET_Pho_SR","h_PhoPt_Pho_SR","h_qmulti_Pho_SR","h_Photon_Eta_Pho_SR","h_Photon_Phi_Pho_SR","h_MET_Phi_Pho_SR","h_leadJets_qmulti_Pho_SR","h_leadJet_Pt_Pho_SR","h_leadbjet_tag_Pho_SR","h_nvrtx_Pho_SR","h_minDR_Jets_EMObject_Pho_SR","h_Phi_leadJet1_Pho_SR","h_Eta_leadJet1_Pho_SR","h_Pt_leadJet1_Pho_SR","h_dPhi_METJet1_Pho_SR","h_Phi_leadJet2_Pho_SR","h_Eta_leadJet2_Pho_SR","h_Pt_leadJet2_Pho_SR","h_dPhi_METJet2_Pho_SR","h_Phi_leadJet3_Pho_SR","h_Eta_leadJet3_Pho_SR","h_Pt_leadJet3_Pho_SR","h_dPhi_METJet3_Pho_SR","h_Phi_leadJet4_Pho_SR","h_Eta_leadJet4_Pho_SR","h_Pt_leadJet4_Pho_SR","h_dPhi_METJet4_Pho_SR","h_Phi_matchedJet_Pho_SR","h_Eta_matchedJet_Pho_SR","h_Pt_matchedJet_Pho_SR","h_HT5HT_Pho_SR"};
-
-  //   }
-  vector<string> bin_string = {"Elec_CR_validation_binno_9","Elec_CR_validation_binno_10","Elec_CR_validation_binno_11to12","Elec_CR_validation_binno_13to14","Elec_CR_validation_binno_15","Elec_CR_validation_binno_16","Elec_CR_validation_binno_17to18","Elec_CR_validation_binno30to33"};
-  vector<string>bin_string1= {"Pho_SR_binno_9","Pho_SR_binno_10","Pho_SR_binno_11to12","Pho_SR_binno_13to14","Pho_SR_binno_15","Pho_SR_binno_16","Pho_SR_binno_17to18","Pho_SR_binno30to33"};
+  varName2={"h_St_Pho_SR","h_HT_Pho_SR","h_NhadJets_Pho_SR","h_NBJets_Pho_SR","h_MET_Pho_SR","h_PhoPt_Pho_SR","h_qmulti_Pho_SR","h_Photon_Eta_Pho_SR","h_Photon_Phi_Pho_SR","h_MET_Phi_Pho_SR","h_leadJets_qmulti_Pho_SR","h_leadJet_Pt_Pho_SR","h_leadbjet_tag_Pho_SR","h_nvrtx_Pho_SR","h_minDR_Jets_EMObject_Pho_SR","h_Phi_leadJet1_Pho_SR","h_Eta_leadJet1_Pho_SR","h_Pt_leadJet1_Pho_SR","h_dPhi_METJet1_Pho_SR","h_Phi_leadJet2_Pho_SR","h_Eta_leadJet2_Pho_SR","h_Pt_leadJet2_Pho_SR","h_dPhi_METJet2_Pho_SR","h_Phi_leadJet3_Pho_SR","h_Eta_leadJet3_Pho_SR","h_Pt_leadJet3_Pho_SR","h_dPhi_METJet3_Pho_SR","h_Phi_leadJet4_Pho_SR","h_Eta_leadJet4_Pho_SR","h_Pt_leadJet4_Pho_SR","h_dPhi_METJet4_Pho_SR","h_Phi_matchedJet_Pho_SR","h_Eta_matchedJet_Pho_SR","h_Pt_matchedJet_Pho_SR","h_HT5HT_Pho_SR","h_invariantMass_Pho_SR","h_invariantMass_noCut_Pho_SR","FR_nbtagBins_Pho_SR","h_tagEle_pT_Pho_SR","h_tagEle_Eta_Pho_SR","h_tagEle_Phi_Pho_SR","h_ZpT_Pho_SR"};
 
    vector <string>  xLabel;
 
- xLabel={"N_{jets}","N_{ b-jets}","p_{T}^{miss} [GeV]","p_{T}^{EM-obj} [GeV]","q-multi","Eta coordinate of EM-obj","Phi coordinate of EM-obj"};
- 
+   xLabel={"Sum of P_{T}^{Jets} & P_{T}^{EM-obj} [GeV]","HT[GeV]","N_{jets}","N_{ b-jets}","p_{T}^{miss} [GeV]","p_{T}^{EM-obj} [GeV]","q-multi","Eta coordinate of EM-obj","Phi coordinate of EM-obj","MET phi","q multi of leading jets","pT of leading jets","b-tagger deep csv value","number of vertices","mindR(matched Jet, EM obj)","Phi coordinate of leading Jet1","Eta coordinate of leading Jet1","P_{T} of leading Jet1","d#phi(P_{T}^{miss},lead Jet1)","Phi coordinate of leading Jet2","Eta coordinate of leading Jet2","P_{T} of leading Jet2","d#phi(P_{T}^{miss},lead Jet2)","Phi coordinate of leading Jet3","Eta coordinate of leading Jet3","P_{T} of leading Jet3","d#phi(P_{T}^{miss},lead Jet3)","Phi coordinate of leading Jet4","Eta coordinate of leading Jet4","P_{T} of leading Jet4","d#phi(P_{T}^{miss},lead Jet4)","Phi coordinate of matched Jet","Eta coordinate of matched Jet","P_{T} of matched Jet","HT5/HT","M^{inv}_{tag & probe}","M^{inv}_{tag & probe}","Bin No.","P_{T}^{tag-e}","#eta^{tag-e}","#phi^{tag-e}","P_{T}^{Z}"};                                                                                             
   vector <int> rebin;
-  rebin={1,1,5,5,1,5,5};//,4,4,1,4,4,1,2,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,2,2,4};
-  vector<double> ymin ={1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
-  vector<double> ymax={100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000};
-  vector<double> xmin ={0,0,100,0,0,-5,-5,-10,-10,-10,0,0,0,0,0,-5,-5,0,0,-5,-5,0,0,-5,-5,0,0,-5,-5,0,0,-5,-5,0,0.9,0,0};
-  vector<double> xmax={16,10,600,600,20,5,5,100,10,10,10,100,1000,1,50,0.5,5,5,1000,1,5,5,1000,1,5,5,1000,1,5,5,1000,1,5,5,1000,2,400,3};
+  rebin={5,5,1,1,4,4,1,4,4,4,1,4,4,1,2,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,2,2,2,1,4,4,4,5};
+  vector<double> ymin ={1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,0,0};
+  vector<double> ymax={100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000,100000};
+  vector<double> xmin ={300,300,2,0,0,20,0,-10,-10,-10,0,0,0,0,0,-5,-5,0,0,-5,-5,0,0,-5,-5,0,0,-5,-5,0,0,-5,-5,0,0.9,70,0,0,0,-5,-5,0};
+  vector<double> xmax={1500,1500,11,8,200,600,20,10,10,10,100,1000,1,50,0.5,5,5,1000,1,5,5,1000,1,5,5,1000,1,5,5,1000,1,5,5,1000,2,120,400,3,600,5,5,600};
 
   cout<<"different vector sizes "<<endl;
   cout<<varName.size()<<"\t"<<varName2.size()<<"\t"<<xLabel.size()<<"\t"<<rebin.size()<<"\t"<<xmax.size()<<"\t"<<xmin.size()<<endl;
@@ -909,10 +974,22 @@ void extraPlots_valid(string pathname, int which_plots)
   //  const char* filetag[8]={"TTGJets_2018","TTGJets_2017","TTGJets_2016","Run2_TTGJets","WGJets_2018","WGJets_2017","WGJets_2016","Run2_WGJets"};
   // vector<string> filetag={"W+TTBar_2016preVFP","W+TTBar_2016postVFP","W+TTBar_2017","W+TTBar_2018","W+TTBar_FullRun2","TTGJets+TTJets_2016preVFP","TTGJets+TTJets_2016postVFP","TTGJets+TTJets_2017","TTGJets+TTJets_2018","TTGJets+TTJets_FullRun2","WGJets+WJets_2016preVFP","WGJets+WJets_2016postVFP","WGJets+WJets_2017","WGJets+WJets_2018","WGJets+WJets_FullRun2","TTGJets_2018","TTGJets_2017","TTGJets_2016postVFP","Run2_TTGJets","WGJets_2018","WGJets_2017","WGJets_2016postVFP","Run2_WGJets","TTJets_2018","TTJets_2017","TTJets_2016postVFP","Run2_TTJets","WJets_2018","WJets_2017","WJets_2016postVFP","Run2_WJets","WGJets+WJets_2018","WGJets+WJets_2017","WGJets+WJets_2016postVFP","Run2_WGJets+WJets","TTGJets+TTJets_2018","TTGJets+TTJets_2017","TTGJets+TTJets_2016postVFP","Run2_TTGJets+TTJets","W+TTBar_2018","W+TTBar_2017","W+TTBar_2016postVFP","W+TTBar_FullRun2","TTGJets_2016preVFP","WGJets_2016preVFP","TTJets_2016preVFP","WJets_2016preVFP","WGJets+WJets_2016preVFP","TTGJets+TTJets_2016preVFP","W+TTBar_2016preVFP","TTGJets_2016","WGJets_2016","TTJets_2016","WJets_2016","WGJets+WJets_2016","TTGJets+TTJets_2016","W+TTBar_2016"};
   // vector<float> energyy = {19.5,16.5,41.529,59.74,137.19,19.5,16.5,41.529,59.74,137.19,19.5,16.5,41.529,59.74,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,19.5,19.5,19.5,19.5,19.5,19.5,19.5,36.0,36.0,36.0,36.0,36.0,36.0,36.0};
+ 
+  vector<string> filetag=  {"MC_2018","MC_2017","MC_2016postVFP","MC_FullRun2","MC_2016preVFP","MC_2016"};
+  vector<string> filetag1= {"DY_2018","DY_2017","DY_2016postVFP","DY_FullRun2","DY_2016preVFP","DY_2016"};//  {"MC_2018","MC_2017","MC_2016postVFP","MC_FullRun2","MC_2016preVFP","MC_2016"};
 
-  vector<string> filetag=  {"W+TTBar_2018","W+TTBar_2017","W+TTBar_2016postVFP","W+TTBar_2016preVFP","W+TTBar_2016","W+TTBar_FullRun2"};
-  vector<float> energyy={59.74,41.529,16.5,19.5,36,137.19};//,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,19.5,19.5,19.5,19.5,19.5,19.5,19.5,36.0,36.0,36.0,36.0,36.0,36.0,36.0};
+    vector<string> filetag2=  {"2018","2017","2016postVFP","FullRun2","2016preVFP","2016"};
 
+  cout<<filetag.size()<<endl;
+  vector<float> energyy={59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,19.5,19.5,19.5,36,36,36,16.5,19.5, 41.529,59.74 ,36,137.19,16.5,19.5, 41.529,59.74 ,36,137.19};// 59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,19.5,19.5,19.5,19.5,19.5,19.5,19.5,36.0,36.0,36.0,36.0,36.0,36.0,36.0};
+  energyy={59.74,41.529,16.5,137.19,19.59,36};   
+
+  // if(which_Lept==1){
+  //   filetag=  {"Data_2018","Data_2017","Data_2016postVFP","Data_2016preVFP","Data_2016"};
+  //   energyy={59.74,41.529,16.5,19.59,36};
+
+  // }
+  cout<<filetag.size()<<"\t"<<energyy.size()<<endl;
 
  // if(which_Lept==3){
  //    energyy = {19.5,16.5,41.529,59.74,137.19,19.5,16.5,41.529,59.74,137.19,19.5,16.5,41.529,59.74,137.19,36.0,36.0,36.0};
@@ -930,57 +1007,66 @@ void extraPlots_valid(string pathname, int which_plots)
    /*    vector<TH1D*> hist_list_HT; */
 
   //  TFile* fout = new TFile("TF_allin1_LLEstimation_electron.root","RECREATE");
-  sprintf(hname1,"temp.root");//,hname); 
+  sprintf(hname1,"out_%s.root",string_png);//,hname); 
   TFile* fout = new TFile(hname1,"RECREATE");
   // sprintf(hname,"EventYields_TF_LL_muon_allProcess_binsV3_phoID_loose_09Jan24.txt");
   // std::ofstream file_;
   // file_.open(hname,ios::out);
   //  n_files=1;  
-  for(int i_file=0; i_file<n_files;i_file++)
-    {      
+  for(int i_file=0; i_file<6;i_file++)
+    {
+      //      if(i_file==3) continue;
       //      vector<TH1D*> hist_list_Njets;
-      // vector<TH1D*> hist_list_Bjets;
-      // vector<TH1D*> hist_list_MET;
-      // vector<TH1D*> hist_list_PhoPt;
-      // vector<TH1D*> hist_list_ST;
+      vector<TH1D*> hist_list_Bjets;
+      vector<TH1D*> hist_list_MET;
+      vector<TH1D*> hist_list_PhoPt;
+      vector<TH1D*> hist_list_ST;
       for(int i_cut=0; i_cut<varName.size();i_cut++)
 	{
 	  //if(i_cut==1) continue;
 	  vector<TH1D*> hist_list_Njets;
-	  for(int s=0;s<bin_string1.size();s++){
-	    vector<TH1D*> hist_list_Njets;
-
-	    sprintf(hist_name,"%s_%s",varName[i_cut].c_str(),bin_string[s].c_str());
-	    sprintf(hist_name2,"%s_%s",varName[i_cut].c_str(),bin_string1[s].c_str());
-	    cout<<hist_name<<"\t"<<i_cut<<"\t"<<i_file<<"\t"<<f[i_file]->GetName()<<endl;
-	    TH1D* h_resp = (TH1D*)f[i_file]->Get(hist_name);
-	    TH1D* h_resp2 = (TH1D*)f[i_file]->Get(hist_name2);
-	    cout<<"resp "<<h_resp->Integral()<<"\t"<<"resp2 "<<h_resp2->Integral()<<"\t"<<endl;
-	    h_resp->Rebin(rebin[i_cut]);
-	    h_resp2->Rebin(rebin[i_cut]);
-	    h_resp2= setMyRange(h_resp2,xmin[i_cut],xmax[i_cut]+4);//xmin,xmax+6);
-	    setLastBinAsOverFlow(h_resp2);
-	    h_resp= setMyRange(h_resp,xmin[i_cut],xmax[i_cut]+4);
-	    setLastBinAsOverFlow(h_resp);
-	    hist_list_Njets.push_back(h_resp2);
-	    hist_list_Njets.push_back(h_resp);
-	    cout<<h_resp->Integral()<<"\t"<<f[i_file]->GetName()<<endl;	 
-	    cout<<" hist_list_Njets.size() "<<hist_list_Njets.size()<<"\t "<<endl;//hist_list_Bjets.size() "<<hist_list_Bjets.size()<<endl;
-	    //path to save the png file
-	    float energy=energyy[i_file];
-	    int xrange=0.0;
-	    TH1D* hNjets_total =(TH1D*)hist_list_Njets.at(1)->Clone();
-	    TH1D* hNjets_ratio = (TH1D*)hist_list_Njets.at(0)->Clone();
-	    hNjets_ratio->Divide(hNjets_total);
-	    //setLastBinAsOverFlow(hNjets_ratio);
-	    sprintf(full_path,"%s/%s_%s_%s_%s",pathname.c_str(),string_png,varName[i_cut].c_str(),bin_string1[s].c_str(),filetag[i_file].c_str());
-	  if(i_cut==2 || i_cut==3)
-	    generate_1Dplot(hist_list_Njets,hNjets_ratio,full_path,xLabel[i_cut].c_str(),"Entries",energy,rebin[i_cut],ymin[i_cut],ymax[i_cut],xmin[i_cut],xmax[i_cut],leg_head,false,true,false,true,filetag[i_file].c_str(),legend_texts,which_TFBins, which_Lept);
-	  else
-	    generate_1Dplot(hist_list_Njets,hNjets_ratio,full_path,xLabel[i_cut].c_str(),"Entries",energy,rebin[i_cut],ymin[i_cut],ymax[i_cut],xmin[i_cut],xmax[i_cut],leg_head,false,true,false,true,filetag[i_file].c_str(),legend_texts,which_TFBins, which_Lept);
+	  sprintf(hist_name,"%s_%s",varName[i_cut].c_str(),filetag[i_file].c_str());
+	  sprintf(hist_name2,"%s_%s",varName[i_cut].c_str(),filetag1[i_file].c_str());
+	  cout<<hist_name<<"\t"<<i_cut<<"\t"<<i_file<<"\t"<<f[0]->GetName()<<"\t"<<varName[i_cut].c_str()<<"\t"<<xmin[i_cut]<<"\t"<<xmax[i_cut]<<endl;
+          TH1D* h_resp = (TH1D*)f[0]->Get(hist_name);
+	  TH1D* h_resp2 = (TH1D*)f[0]->Get(hist_name2);
+	  cout<<"resp "<<h_resp->Integral()<<"\t"<<"resp2 "<<h_resp2->Integral()<<"\t"<<endl;
+	  if(rebin[i_cut]!=1){
+	    h_resp->Rebin(2);//rebin[i_cut]);
+	    h_resp2->Rebin(2);//rebin[i_cut]);
 	  }
+	  h_resp2= setMyRange(h_resp2,xmin[i_cut],xmax[i_cut]+0.01*xmax[i_cut]);//xmin,xmax+6);
+	  setLastBinAsOverFlow(h_resp2);
+	  h_resp= setMyRange(h_resp,xmin[i_cut],xmax[i_cut]+0.01*xmax[i_cut]);
+	  setLastBinAsOverFlow(h_resp);
+	  hist_list_Njets.push_back(h_resp2);
+	  hist_list_Njets.push_back(h_resp);
+	  cout<<h_resp->Integral()<<"\t"<<f[1]->GetName()<<endl;	 
+	  cout<<" hist_list_Njets.size() "<<hist_list_Njets.size()<<"\t "<<endl;//hist_list_Bjets.size() "<<hist_list_Bjets.size()<<endl;
+	  //path to save the png file
+	  float energy=energyy[i_file];
+	  int xrange=0.0;
+	  TH1D* hNjets_total =(TH1D*)hist_list_Njets.at(1)->Clone();
+	  TH1D* hNjets_ratio = (TH1D*)hist_list_Njets.at(0)->Clone();
+	  hNjets_ratio->Divide(hNjets_total);
+	  //setLastBinAsOverFlow(hNjets_ratio);
+	  sprintf(full_path,"%s/purityFact_%s_%s_%s",pathname.c_str(),string_png,varName[i_cut].c_str(),filetag2[i_file].c_str());
+	  sprintf(full_path1,"%s_%s",varName[i_cut].c_str(),filetag2[i_file].c_str());
+	  hNjets_ratio->SetName(full_path1);
+	  fout->cd();
+	  hNjets_ratio->Write();
+	  if(i_cut==2 || i_cut==3)
+	    generate_1Dplot(hist_list_Njets,hNjets_ratio,full_path,xLabel[i_cut].c_str(),"Entries",energy,rebin[i_cut],ymin[i_cut],ymax[i_cut],xmin[i_cut],xmax[i_cut],leg_head,false,true,false,true,filetag2[i_file].c_str(),legend_texts,which_TFBins, which_Lept);
+	  else if (i_cut==6)
+	    generate_1Dplot(hist_list_Njets,hNjets_ratio,full_path,xLabel[i_cut].c_str(),"Entries",energy,rebin[i_cut],ymin[i_cut],ymax[i_cut],xmin[i_cut],xmax[i_cut],leg_head,false,true,false,true,filetag2[i_file].c_str(),legend_texts,which_TFBins, which_Lept);
+
+	  else
+	    generate_1Dplot(hist_list_Njets,hNjets_ratio,full_path,xLabel[i_cut].c_str(),"Entries",energy,rebin[i_cut],ymin[i_cut],ymax[i_cut],xmin[i_cut],xmax[i_cut],leg_head,false,true,false,true,filetag2[i_file].c_str(),legend_texts,which_TFBins, which_Lept);
+	  // fout->cd();
+          // ->Write();
+
 	}
-      //fout->Close();
+      // fout->Close();
       
     }
 }

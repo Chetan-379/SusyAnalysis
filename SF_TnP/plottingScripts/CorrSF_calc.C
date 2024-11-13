@@ -484,7 +484,7 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
   TLatex* textOnTop = new TLatex();
   //new
     textOnTop->SetTextSize(0.054);
-  textOnTop->DrawLatexNDC(0.146,0.925,"CMS #it{#bf{Simulation Preliminary}}");
+    //  textOnTop->DrawLatexNDC(0.146,0.925,"CMS #it{#bf{Simulation Preliminary}}");
 
   char* en_lat = new char[500];
   textOnTop->SetTextSize(0.054);
@@ -694,7 +694,7 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
     hist_ratio->SetLineColor(kBlack);
     hist_ratio->SetTitle(" ");
     hist_ratio->GetXaxis()->SetTitleSize(0.13);
-    hist_ratio->GetYaxis()->SetTitle("#beta = #frac{f(Data)}{f(MC)}");//TF = #frac{N_{SR}}{N_{CR}}");//(0#mu,1#gamma)}{(1#mu,1#gamma)}");
+    hist_ratio->GetYaxis()->SetTitle("#alpha = #frac{f(Data)}{f(MC)}");//TF = #frac{N_{SR}}{N_{CR}}");//(0#mu,1#gamma)}{(1#mu,1#gamma)}");
     hist_ratio->GetXaxis()->SetLabelSize(0.1);
     hist_ratio->GetYaxis()->SetRangeUser(0,5);
     //hist_ratio->GetXaxis()->SetRangeUser(xmin,xmax+4);
@@ -1015,7 +1015,7 @@ void CorrSF_calc(string pathname, int which_Lept)
   //  n_files=1;  
   for(int i_file=0; i_file<6;i_file++)
     {
-      if(i_file==3) continue;
+      //      if(i_file==3) continue;
       //      vector<TH1D*> hist_list_Njets;
       vector<TH1D*> hist_list_Bjets;
       vector<TH1D*> hist_list_MET;
@@ -1035,9 +1035,9 @@ void CorrSF_calc(string pathname, int which_Lept)
 	    h_resp->Rebin(2);//rebin[i_cut]);
 	    h_resp2->Rebin(2);//rebin[i_cut]);
 	  }
-	  h_resp2= setMyRange(h_resp2,xmin[i_cut],xmax[i_cut]+4);//xmin,xmax+6);
+	  h_resp2= setMyRange(h_resp2,xmin[i_cut],xmax[i_cut]+0.01*xmax[i_cut]);//xmin,xmax+6);
 	  setLastBinAsOverFlow(h_resp2);
-	  h_resp= setMyRange(h_resp,xmin[i_cut],xmax[i_cut]+4);
+	  h_resp= setMyRange(h_resp,xmin[i_cut],xmax[i_cut]+0.01*xmax[i_cut]);
 	  setLastBinAsOverFlow(h_resp);
 	  hist_list_Njets.push_back(h_resp2);
 	  hist_list_Njets.push_back(h_resp);

@@ -157,7 +157,7 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio, char const *tag_name="
 		     bool normalize=false, bool log_flag=true, bool DoRebin=false, bool save_canvas=true, char const *title="", vector<string> legend_texts={"nil"}, int which_TFbins=-1, int which_Lept=-1){  
   
 
-   TCanvas *canvas_n1 = new TCanvas(tag_name, tag_name,900,850);//600,600,1200,1200);
+   TCanvas *canvas_n1 = new TCanvas(tag_name, tag_name,1300,900);//600,600,1200,1200);
    canvas_n1->Range(-60.25,-0.625,562.25,0.625);
    canvas_n1->SetFillColor(0);
    canvas_n1->SetBorderMode(0);
@@ -263,6 +263,9 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio, char const *tag_name="
     //   hist.at(i)->GetXaxis()->SetRangeUser(0,22);
     // else if(which_TFbins==3) // v3 TF bins including MET<300 and MET>300
     hist.at(i)->GetXaxis()->SetRangeUser(0,39);
+    //if(which_TFbins==4)
+       hist.at(i)->GetXaxis()->SetRangeUser(0,104);
+     
     hist.at(i)->SetLineWidth(2);
     
     //hist.at(i)->SetLineStyle(line_style[i]);
@@ -413,13 +416,14 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio, char const *tag_name="
   gPad->Update(); 
   TLatex* textOnTop = new TLatex();
   textOnTop->SetTextSize(0.054);
-  textOnTop->DrawLatexNDC(0.135,0.925,"CMS #it{#bf{Simulation Preliminary}}");
+  //  textOnTop->DrawLatexNDC(0.135,0.925,"CMS #it{#bf{Simulation Preliminary}}");
   
   char* en_lat = new char[500];
   textOnTop->SetTextSize(0.054);
   float inlumi=energy;
   sprintf(en_lat,"#bf{%0.2f fb^{-1} (13 TeV)}",inlumi);
   textOnTop->DrawLatexNDC(0.7,0.925,en_lat);
+  if(which_TFbins==6){
   TLine *line1V7=new TLine( 8.0,0.001,  8.0,5400);
   TLine *line2V7=new TLine(14.0,0.001, 14.0,5400);
   TLine *line3V7=new TLine(19.0,0.001, 19.0,5400);
@@ -447,7 +451,67 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio, char const *tag_name="
     Tl.DrawLatex(19.5,9000,"N^{ #geq1}_{ 2-4}");
     Tl.DrawLatex(25.5,9000,"N^{ #geq1}_{ 5-6}");
     Tl.DrawLatex(30.5,9000,"N^{ #geq1}_{ #geq7}");
+  }
 
+
+
+  else
+    {
+        TLine *line1V7=new TLine( 6.0,0.01,  6.0,900);
+       TLine *line2V7=new TLine(11.0,0.01, 11.0,900);
+       TLine *line3V7=new TLine(16.0,0.01, 16.0,900);
+       TLine *line4V7=new TLine(21.0,0.01, 21.0,900);
+       TLine *line5V7=new TLine(26.0,0.1, 26.0,900);
+       line1V7->Draw();      line2V7->Draw();  line3V7->Draw();
+       line4V7->Draw();      line5V7->Draw();
+       TLine *line1V8=new TLine( 26.0,0.01,  26.0,900);
+       TLine *line2V8=new TLine(31.0,0.01, 31.0,900);
+       TLine *line3V8=new TLine(36.0,0.01, 36.0,900);
+       TLine *line4V8=new TLine(41.0,0.01, 41.0,900);
+       TLine *line5V8=new TLine(46.0,0.01, 46.0,900);
+        TLine *line6V8=new TLine(51.0,0.01, 51.0,900);
+        TLine *line7V8=new TLine(56.0,0.01, 56.0,900);
+         TLine *line8V8=new TLine(61.0,0.01, 61.0,900);
+         TLine *line9V8=new TLine(66.0,0.01, 66.0,900);
+         TLine *line10V8=new TLine(71.0,0.01, 71.0,900);
+         TLine *line11V8=new TLine(76.0,0.01, 76.0,900);
+        TLine *line12V8=new TLine(81.0,0.01, 81.0,900);
+        TLine *line13V8=new TLine(86.0,0.01, 86.0,900);
+         TLine *line14V8=new TLine(91.0,0.01, 91.0,900);
+         TLine *line15V8=new TLine(96.0,0.01, 96.0,900);
+         TLine *line16V8=new TLine(101.0,0.01, 101.0,900);
+
+       line1V8->Draw();      line2V8->Draw();  line3V8->Draw();
+       line4V8->Draw();      line5V8->Draw(); line6V8->Draw(); line7V8->Draw(); line8V8->Draw();
+
+       line9V8->Draw();      line10V8->Draw();  line11V8->Draw();
+       line12V8->Draw();     line13V8->Draw(); line14V8->Draw(); line15V8->Draw(); line16V8->Draw();
+ TLatex Tl;
+TArrow *Arrow_pt = new TArrow(1.0,2000,26.0,2000,0.01,"</>");
+        TArrow *Arrow_pt1 = new TArrow(26.0,2000,51.0,2000,0.01,"</>");
+        Arrow_pt->Draw(); Arrow_pt1->Draw();
+
+        TArrow *Arrow_pt2 = new TArrow(51.0,2000,76.0,2000,0.01,"</>");
+        TArrow *Arrow_pt3 = new TArrow(76.0,2000,101.0,2000,0.01,"</>");
+        Arrow_pt2->Draw(); Arrow_pt3->Draw();
+
+       Tl.SetTextSize(0.03);
+       Tl.DrawLatex(13.5,5000,"N_{jets}^{b} = 0");
+       Tl.DrawLatex(39.5,5000,"N_{jets}^{b} #geq1");
+       Tl.SetTextSize(0.03);
+       Tl.DrawLatex(58.5,5000,"N_{jets}^{b} = 0");
+       Tl.DrawLatex(90.5,5000,"N_{jets}^{b} #geq1");
+       TArrow *Arrow_pt4 = new TArrow(1.0,15000,51.0,15000,0.01,"</>");
+        TArrow *Arrow_pt5 = new TArrow(51.0,15000,101.0,15000,0.01,"</>");
+        Arrow_pt4->Draw(); Arrow_pt5->Draw();
+
+       Tl.DrawLatex(25.5,25000,"40<p_{T}^{#gamma}#leq100");
+       Tl.DrawLatex(75.5,25000,"p_{T}^{#gamma} > 100");
+
+
+      cout<<"mot adding blocks"<<endl;
+
+    }
   // TArrow *arrow1 = new TArrow( 1.0,0.10, 2.0,0.1,0.01,"<|>");
   // TArrow *arrow2 = new TArrow( 2.0,0.10,3.0,0.1,0.01,"<|>");
   // TArrow *arrow3 = new TArrow(3.0,0.10,4.0,0.1,0.01,"<|>");
@@ -617,15 +681,15 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio, char const *tag_name="
     hist_ratio->GetXaxis()->SetTitleSize(0.13);
     hist_ratio->GetYaxis()->SetTitle("Exp/Pred");//TF = #frac{N_{SR}}{N_{CR}}");//(0#mu,1#gamma)}{(1#mu,1#gamma)}");
     hist_ratio->GetXaxis()->SetLabelSize(0.1);
-    hist_ratio->GetYaxis()->SetRangeUser(0.,2.0);
+    hist_ratio->GetYaxis()->SetRangeUser(0.,3.0);
     
     hist_ratio->GetYaxis()->SetNdivisions(505);
     // if(which_TFbins==1) //default 8 bins                                                                                                    
     //   hist_ratio->GetXaxis()->SetRangeUser(0,10);//xmin,xrange);                                                                                                 
     // else if(which_TFbins==2) // v2 TF bins including photon pT>100 and pT<100
-    //   hist_ratio->GetXaxis()->SetRangeUser(0,18);
-    // else if(which_TFbins==3) // v3 TF bins including MET<300 and MET>300                                                                                        
     hist_ratio->GetXaxis()->SetRangeUser(0,39);
+    //    if(which_TFbins==4) // v3 TF bins including MET<300 and MET>300                                                                                        
+      hist_ratio->GetXaxis()->SetRangeUser(0,104);
     
     //    hist_ratio->GetXaxis()->SetLabelSize(0.0450);
     hist_ratio->GetYaxis()->SetTitleSize(0.13);
@@ -677,7 +741,23 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio, char const *tag_name="
 
    // l2->Draw("sames");
    // }
-         TLine *l =new TLine(0,1.0,39,1.0);
+   if(which_TFbins<=4){
+   TLine *l =new TLine(0,1.0,104,1.0);
+   hist_ratio->Draw("");
+   l->SetLineWidth(3);
+   l->Draw("sames");
+   TLine *l1 =new TLine(0,1.5,104,1.5);
+   l1->SetLineStyle(7);
+   l1->SetLineWidth(3);
+   l1->Draw("sames");
+   TLine *l2 =new TLine(0,0.5,104,0.5);
+   l2->SetLineStyle(7);
+    l2->SetLineWidth(3);
+   l2->Draw("sames");
+   }
+   else
+     {
+       TLine *l =new TLine(0,1.0,39,1.0);
    hist_ratio->Draw("");
    l->Draw("sames");
    TLine *l1 =new TLine(0,1.5,39,1.5);
@@ -688,6 +768,8 @@ void generate_1Dplot(vector<TH1F*> hist, TH1* hist_ratio, char const *tag_name="
 
    l2->Draw("sames");
 
+
+     }
   char* canvas_name = new char[1000];
   //c->Print(canvas_name);
   
@@ -748,13 +830,15 @@ void Valid_SRBins_LL_wrRatio(string pathname, int which_Lept, int which_TFBins, 
     sprintf(TFbins_str,"TFbins_v1_nJetsBjets_Qmulti");
   else if (which_TFBins==2)
     sprintf(TFbins_str,"TFbins_v2_nJetsBjets_PhoPt");
-  else if(which_TFBins==3)
+  else if(which_TFBins==3 || which_TFBins==4)
     sprintf(TFbins_str,"TFbins_v3_phopt_qmulti");
-  if(which_TFBins==3)  
-    baseline1={"Pho_SR","Validation_Elec_CR"};//,"ProbL1Trig_Pho_SR"};//,"TauHad_SR","Mu_SR","Elec_SR","FailAcep_ElecSR","FailId_ElecSR","FailIso_ElecSR","Elec_SR","Elec_"};//
+  if(which_TFBins==4 || which_TFBins==3)  
+    baseline1={"newSbins_v7_Pho_SR","newSbins_Validation_v7_Elec_CR"};//,"ProbL1Trig_Pho_SR"};//,"TauHad_SR","Mu_SR","Elec_SR","FailAcep_ElecSR","FailId_ElecSR","FailIso_ElecSR","Elec_SR","Elec_"};//
   else if(which_TFBins==1)
-    baseline1={"Pho_SR","Validation_TFbins_V2_Elec_CR"};
-  
+    baseline1={"newSbins_v7_Pho_SR","v2_newSbins_Validation_v7_Elec_CR"};
+  else if(which_TFBins==2)
+    baseline1={"newSbins_v7_Pho_SR","v3_newSbins_Validation_v7_Elec_CR"};
+
     legend_texts ={"Exp:(0e,1#gamma)","Pred: TF x (1e,0#gamma)"};//(0e,0#gamma) SR","(0e,1#gamma) SR"};
     sprintf(string_png,"FR_Sbins_Valid_%s",TFbins_str);
     sprintf(hname,"%s_phoID_loose_06March24",string_png);

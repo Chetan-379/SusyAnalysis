@@ -477,7 +477,7 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
   TLatex* textOnTop = new TLatex();
   //new
     textOnTop->SetTextSize(0.054);
-  textOnTop->DrawLatexNDC(0.146,0.925,"CMS #it{#bf{Simulation Preliminary}}");
+    //  textOnTop->DrawLatexNDC(0.146,0.925,"CMS #it{#bf{Simulation Preliminary}}");
 
   char* en_lat = new char[500];
   textOnTop->SetTextSize(0.054);
@@ -813,7 +813,7 @@ void DataMC_SRvsCR_kinem(string pathname, int which_Lept)
   char *dataset=new char[200];
   char *year =new char[200];
   //  float energyy[2]={};
-  int n_files=24;
+  int n_files=35;
   char *string_png = new char[200];
   vector<string>baseline1;
   vector<string> legend_texts;
@@ -910,21 +910,28 @@ void DataMC_SRvsCR_kinem(string pathname, int which_Lept)
       f[21] = new TFile("Summer20UL18_DYJets_Mt50_PhoIdloose_phopt40_MET200.root");
       f[22] = new TFile("Summer20UL_total2016_DYJets_Mt50_PhoIdloose_phopt40_MET200.root");
       f[23] = new TFile("FullRun2_DYJets_Mt50_PhoIdloose_phopt40_MET200.root");
-
-      f[24] = new TFile("Summer20UL17_ZLLGJets_MonoPhoton_PhoIdloose_phopt40_MET200.root");
+      f[24]= new TFile("FullRun2_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+      f[28] = new TFile("Summer20UL17_ZLLGJets_MonoPhoton_PhoIdloose_phopt40_MET200.root");
       f[25] = new TFile("Summer20UL18_ZLLGJets_MonoPhoton_PhoIdloose_phopt40_MET200.root");
       f[26] = new TFile("Summer20UL_total2016_ZLLGJets_MonoPhoton_PhoIdloose_phopt40_MET200.root");
       f[27] = new TFile("FullRun2_ZLLGJets_MonoPhoton_PhoIdloose_phopt40_MET200.root");
+      f[29]= new TFile("Summer20UL18_DY_ZLL_PhoIdloose_phopt40_MET200.root");
+      f[30]= new TFile("Summer20UL17_DY_ZLL_PhoIdloose_phopt40_MET200.root");
+      f[31]= new TFile("Summer20UL16_DY_ZLL_PhoIdloose_phopt40_MET200.root");
+      f[32]= new TFile("Summer20UL16APV_DY_ZLL_PhoIdloose_phopt40_MET200.root");
+      f[33]= new TFile("Summer20UL_total2016_DY_ZLL_PhoIdloose_phopt40_MET200.root");
+      f[34]= new TFile("FullRun2_DY_ZLL_PhoIdloose_phopt40_MET200.root");
 
     }
     else if(which_Lept==1)
       {
-	n_files=5;
+	n_files=6;
 	f[0] = new TFile("./out_Data_UL2018_Allruns_MET_phoID_loose_pt40_MET200.root");
 	f[1] = new TFile("./out_Data_UL2017_Allruns_MET_phoID_loose_pt40_MET200.root");
 	f[2] = new TFile("./out_Data_UL2016_Allruns_MET_phoID_loose_pt40_MET200.root");
 	f[3] = new TFile("./out_Data_UL2016APV_Allruns_MET_phoID_loose_pt40_MET200.root");
-	f[4] = new TFile("./out_Data_UL20_total2016_Allruns_MET_phoID_loose_pt40_MET200.root");	
+	f[4] = new TFile("./out_Data_UL20_total2016_Allruns_MET_phoID_loose_pt40_MET200.root");
+	f[5] = new TFile("./out_Data_FullRun2_Allruns_MET_phoID_loose_pt40_MET200.root");
       }
     
 
@@ -966,17 +973,18 @@ void DataMC_SRvsCR_kinem(string pathname, int which_Lept)
   // vector<string> filetag={"W+TTBar_2016preVFP","W+TTBar_2016postVFP","W+TTBar_2017","W+TTBar_2018","W+TTBar_FullRun2","TTGJets+TTJets_2016preVFP","TTGJets+TTJets_2016postVFP","TTGJets+TTJets_2017","TTGJets+TTJets_2018","TTGJets+TTJets_FullRun2","WGJets+WJets_2016preVFP","WGJets+WJets_2016postVFP","WGJets+WJets_2017","WGJets+WJets_2018","WGJets+WJets_FullRun2","TTGJets_2018","TTGJets_2017","TTGJets_2016postVFP","Run2_TTGJets","WGJets_2018","WGJets_2017","WGJets_2016postVFP","Run2_WGJets","TTJets_2018","TTJets_2017","TTJets_2016postVFP","Run2_TTJets","WJets_2018","WJets_2017","WJets_2016postVFP","Run2_WJets","WGJets+WJets_2018","WGJets+WJets_2017","WGJets+WJets_2016postVFP","Run2_WGJets+WJets","TTGJets+TTJets_2018","TTGJets+TTJets_2017","TTGJets+TTJets_2016postVFP","Run2_TTGJets+TTJets","W+TTBar_2018","W+TTBar_2017","W+TTBar_2016postVFP","W+TTBar_FullRun2","TTGJets_2016preVFP","WGJets_2016preVFP","TTJets_2016preVFP","WJets_2016preVFP","WGJets+WJets_2016preVFP","TTGJets+TTJets_2016preVFP","W+TTBar_2016preVFP","TTGJets_2016","WGJets_2016","TTJets_2016","WJets_2016","WGJets+WJets_2016","TTGJets+TTJets_2016","W+TTBar_2016"};
   // vector<float> energyy = {19.5,16.5,41.529,59.74,137.19,19.5,16.5,41.529,59.74,137.19,19.5,16.5,41.529,59.74,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,19.5,19.5,19.5,19.5,19.5,19.5,19.5,36.0,36.0,36.0,36.0,36.0,36.0,36.0};
  
-  vector<string> filetag=  {"WGJets+WJets_2018","WGJets+WJets_2017","WGJets+WJets_2016postVFP","Run2_WGJets+WJets","TTGJets+TTJets_2018","TTGJets+TTJets_2017","TTGJets+TTJets_2016postVFP","Run2_TTGJets+TTJets","MC_2018","MC_2017","MC_2016postVFP","MC_FullRun2","WGJets+WJets_2016preVFP","TTGJets+TTJets_2016preVFP","MC_2016preVFP","WGJets+WJets_2016","TTGJets+TTJets_2016","MC_2016","DY+Jets_2016postVFP","DY+Jets_2016preVFP","DY+Jets_2017","DY+Jets_2018","DY+Jets_2016","DY+Jets_FullRun2","ZeeGJets_2016postVFP","ZeeGJets_2016preVFP","ZeeGJets_2017","ZeeGJets_2018","ZeeGJets_2016","ZeeGJets_FullRun2"};
+  vector<string> filetag=  {"WGJets+WJets_2018","WGJets+WJets_2017","WGJets+WJets_2016postVFP","Run2_WGJets+WJets","TTGJets+TTJets_2018","TTGJets+TTJets_2017","TTGJets+TTJets_2016postVFP","Run2_TTGJets+TTJets","MC_2018","MC_2017","MC_2016postVFP","MC_FullRun2","WGJets+WJets_2016preVFP","TTGJets+TTJets_2016preVFP","MC_2016preVFP","WGJets+WJets_2016","TTGJets+TTJets_2016","MC_2016","DY+Jets_2016postVFP","DY+Jets_2016preVFP","DY+Jets_2017","DY+Jets_2018","DY+Jets_2016","DY+Jets_FullRun2","MC_FullRun2","ZeeGJets_2016postVFP","ZeeGJets_2016preVFP","ZeeGJets_2017","ZeeGJets_2018","DY_2018","DY_2017","DY_2016postVFP","DY_2016preVFP","DY_2016","DY_FullRun2"};
   cout<<filetag.size()<<endl;
-  vector<float> energyy={59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,19.5,19.5,19.5,36,36,36,16.5,19.5, 41.529,59.74 ,36,137.19,16.5,19.5, 41.529,59.74 ,36,137.19};// 59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,19.5,19.5,19.5,19.5,19.5,19.5,19.5,36.0,36.0,36.0,36.0,36.0,36.0,36.0};
+  vector<float> energyy={59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,19.5,19.5,19.5,36,36,36,16.5,19.5, 41.529,59.74 ,36,137.19,16.5,19.5, 41.529,59.74 ,36,137.19,59.74,41.529,16.5,19.5,36,137.19};// 59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,59.74,41.529,16.5,137.19,19.5,19.5,19.5,19.5,19.5,19.5,19.5,36.0,36.0,36.0,36.0,36.0,36.0,36.0};
 
   if(which_Lept==1){
-    filetag=  {"Data_2018","Data_2017","Data_2016postVFP","Data_2016preVFP","Data_2016"};
-    energyy={59.74,41.529,16.5,19.59,36};
+    filetag=  {"Data_2018","Data_2017","Data_2016postVFP","Data_2016preVFP","Data_2016","Data_FullRun2"};
+    energyy={59.74,41.529,16.5,19.59,36,137};
 
   }
   cout<<filetag.size()<<"\t"<<energyy.size()<<endl;
 
+ 
  // if(which_Lept==3){
  //    energyy = {19.5,16.5,41.529,59.74,137.19,19.5,16.5,41.529,59.74,137.19,19.5,16.5,41.529,59.74,137.19,36.0,36.0,36.0};
  //    filetag={"W+TTBar_2016preVFP","W+TTBar_2016postVFP","W+TTBar_2017","W+TTBar_2018","W+TTBar_FullRun2","TTGJets+TTJets_2016preVFP","TTGJets+TTJets_2016postVFP","TTGJets+TTJets_2017","TTGJets+TTJets_2018","TTGJets+TTJets_FullRun2","WGJets+WJets_2016preVFP","WGJets+WJets_2016postVFP","WGJets+WJets_2017","WGJets+WJets_2018","WGJets+WJets_FullRun2","WGJets+WJets_2016","TTGJets+TTJets_2016","W+TTBar_2016"};

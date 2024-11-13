@@ -406,7 +406,7 @@ void generate_1Dplot(vector<TH2F*> hist, char const *tag_name="",char const *xla
      legend->Draw();
      TLatex* textOnTop = new TLatex();
      textOnTop->SetTextSize(0.04);
-     textOnTop->DrawLatexNDC(0.13,0.96,"CMS #it{#bf{Simulation Preliminary}}");
+     //     textOnTop->DrawLatexNDC(0.13,0.96,"CMS #it{#bf{Simulation Preliminary}}");
      
      char* en_lat = new char[500];
      textOnTop->SetTextSize(0.04);

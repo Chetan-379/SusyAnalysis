@@ -459,7 +459,7 @@ void generate_1Dplot(vector<TH1D*> hist, TH1* hist_ratio, char const *tag_name="
   gPad->Update(); 
   TLatex* textOnTop = new TLatex();
   textOnTop->SetTextSize(0.054);
-  textOnTop->DrawLatexNDC(0.135,0.925,"CMS #it{#bf{Simulation Preliminary}}");
+  //  textOnTop->DrawLatexNDC(0.135,0.925,"CMS #it{#bf{Simulation Preliminary}}");
   
   char* en_lat = new char[500];
   textOnTop->SetTextSize(0.054);
@@ -663,7 +663,7 @@ void generate_1Dplot(vector<TH1D*> hist, TH1* hist_ratio, char const *tag_name="
     hist_ratio->GetXaxis()->SetTitleSize(0.13);
     hist_ratio->GetYaxis()->SetTitle("Exp/Pred");//TF = #frac{N_{SR}}{N_{CR}}");//(0#mu,1#gamma)}{(1#mu,1#gamma)}");
     hist_ratio->GetXaxis()->SetLabelSize(0.1);
-    hist_ratio->GetYaxis()->SetRangeUser(-0.5,3.0);
+    hist_ratio->GetYaxis()->SetRangeUser(0.,2.0);
     hist_ratio->GetXaxis()->SetRangeUser(xmin,xrange+xrange*0.04);
     // if(which_TFbins==1) //default 8 bins                                                                                                    
     //   hist_ratio->GetXaxis()->SetRangeUser(0,10);//xmin,xrange);                                                                                                 
