@@ -10,7 +10,7 @@ void Cal_TF()
   histnames2 = {"lost_mu_SR_binned", "lost_mu_CR_binned"};
   histnames3 = {"LL_SR_binned", "LL_CR_binned"};
 
-  rootFileName = {"e_TF_NBJet.root","mu_TF_NBJet.root","LL_TF_NBJet.root"};
+  rootFileName = {"root_files/e_TF_NBJet.root", "root_files/mu_TF_NBJet.root", "root_files/LL_TF_NBJet.root"};
 
   vector<vector<string>> cat;
   cat = {histnames1, histnames2, histnames3};

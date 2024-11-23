@@ -58,14 +58,14 @@ double NtupleVarsTProxy::MinDr2(vector<TLorentzVector> v1,TLorentzVector v2)
   return dr;
 }
 
-double NtupleVarsTProxy::MinDr2_myLV(vector<myLV> v1,myLV v2)
-{
-  double dr = 60;
-  for(int j=0;j<v1.size();j++)
-    {if(dr>=DeltaR(v1[j].Eta(),v1[j].Phi(),v2.Eta(),v2.Phi())) dr=DeltaR(v1[j].Eta(),v1[j].Phi(),v2.Eta(),v2.Phi());
-    }
-  return dr;
-}
+// double NtupleVarsTProxy::MinDr2_myLV(vector<myLV> v1,myLV v2)
+// {
+//   double dr = 60;
+//   for(int j=0;j<v1.size();j++)
+//     {if(dr>=DeltaR(v1[j].Eta(),v1[j].Phi(),v2.Eta(),v2.Phi())) dr=DeltaR(v1[j].Eta(),v1[j].Phi(),v2.Eta(),v2.Phi());
+//     }
+//   return dr;
+//}
 
 double NtupleVarsTProxy::getCrossSection(std::string process_name)
 {
@@ -111,3 +111,18 @@ void NtupleVarsTProxy::sortTLorVec(vector<TLorentzVector> *vec){
     }
   }
 }
+
+// void NtupleVarsTProxy::sortmyLV(vector<myLV> *vec){
+//   myLV temp;
+//   for(int i=1;i<vec->size();i++){
+//     for(int j=i;j<vec->size();j++){
+//       if( (*vec)[i-1].Pt() < (*vec)[j].Pt() ){
+// 	temp = (*vec)[i-1];
+// 	(*vec)[i-1] = (*vec)[j];
+// 	(*vec)[j] = temp;
+//       }
+//     }
+//   }
+// }
+
+

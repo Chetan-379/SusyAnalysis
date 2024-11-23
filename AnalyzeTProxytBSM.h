@@ -62,37 +62,18 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   TH1F *h_mindR_pho_gen_lep_Ovrlp,*h_mindR_pho_qg_Ovrlp,*h_mindR_pho_gen_lep_rmOvrlp,*h_mindR_pho_qg_rmOvrlp;
   TH1F *h_mindR_pho_gen_lep_Ovrlp_genPromptPho,*h_mindR_pho_qg_Ovrlp_genPromptPho,*h_mindR_pho_gen_lep_rmOvrlp_genPromptPho,*h_mindR_pho_qg_rmOvrlp_genPromptPho;
 
-  TH1F *h_Lost_e_SR_Pho_Pt, *h_Lost_e_CR_Pho_Pt;
-  TH1F *h_Lost_e_SR_MET, *h_Lost_e_CR_MET;
-  TH1D *h_Lost_e_SR_NHadJets, *h_Lost_e_CR_NHadJets;
-  TH1F *h_Lost_e_SR_NbJets, *h_Lost_e_CR_NbJets;
-  TH1F *h_Lost_e_CR_binned, *h_Lost_e_SR_binned;
-  TH1D *h_Lost_e_TF;
-  TH1F *h_Lost_e_SR_srch_binned, *h_Lost_e_CR_srch_binned, *h_Lost_e_SR_srch_binned_pred;
+  TH1F *h_FR_SR_Pho_Pt, *h_FR_CR_Pho_Pt;
+  TH1F *h_FR_SR_MET, *h_FR_CR_MET;
+  TH1D *h_FR_SR_NHadJets, *h_FR_CR_NHadJets;
+  TH1F *h_FR_SR_NbJets, *h_FR_CR_NbJets;
+  TH1F *h_FR_SR_QMult, *h_FR_CR_QMult;
+  TH1F *h_FR_CR_binned, *h_FR_SR_binned;
+  TH1D *h_FR_TF;
+  TH1F *h_FR_SR_srch_binned, *h_FR_CR_srch_binned, *h_FR_SR_srch_binned_pred;
 
-  TH1F *h_Lost_mu_SR_Pho_Pt, *h_Lost_mu_CR_Pho_Pt;
-  TH1F *h_Lost_mu_SR_MET, *h_Lost_mu_CR_MET;
-  TH1D *h_Lost_mu_SR_NHadJets, *h_Lost_mu_CR_NHadJets;
-  TH1F *h_Lost_mu_SR_NbJets, *h_Lost_mu_CR_NbJets;
-  TH1F *h_Lost_mu_CR_binned, *h_Lost_mu_SR_binned;
-  TH1D *h_Lost_mu_TF;
-  TH1F *h_Lost_mu_SR_srch_binned, *h_Lost_mu_CR_srch_binned, *h_Lost_mu_SR_srch_binned_pred;
-
-  TH1F *h_Had_tau_SR_Pho_Pt;
-  TH1F *h_Had_tau_SR_MET;
-  TH1D *h_Had_tau_SR_NHadJets;
-  TH1F *h_Had_tau_SR_NbJets;
   
-  TH1F *h_LL_SR_Pho_Pt, *h_LL_CR_Pho_Pt;
-  TH1F *h_LL_SR_MET, *h_LL_CR_MET;
-  TH1D *h_LL_SR_NHadJets, *h_LL_CR_NHadJets;
-  TH1F *h_LL_SR_NbJets, *h_LL_CR_NbJets;
-  TH1F *h_LL_CR_binned, *h_LL_SR_binned;
-  TH1D *h_LL_TF;
-  TH1F *h_LL_SR_srch_binned, *h_LL_CR_srch_binned, *h_LL_SR_srch_binned_pred;
-  
-  TH1F *h_FR_SR_binned;
-  TH1D *h_FR_SR_NHadJets;
+  // TH1F *h_FR_SR_binned;
+  // TH1D *h_FR_SR_NHadJets;
 
   TH1D *h_rest_NHadJets;
 
@@ -108,6 +89,7 @@ class AnalyzeTProxytBSM : public NtupleVarsTProxy{
   TH1I *h_ptcl_W_rest;
   TH1F *h_Pho_Pt_rest, *h_MET_rest, *h_NHadJets_rest, *h_NbJets_rest, *h_dhi_JetMET1_rest, *h_dhi_JetMET2_rest;
   //TH1F *h_pu;
+  TH2I *h_Electrons_size_NElectrons;
   
   //==========================================
 
@@ -208,67 +190,33 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
   h_mindR_pho_gen_lep_rmOvrlp_genPromptPho=new TH1F("h_mindR_pho_gen_lep_rmOvrlp_genPromptPho","h_mindR_pho_gen_lep_rmOvrlp_genPromptPho",100,0.0,5.0);
   h_mindR_pho_qg_rmOvrlp_genPromptPho=new TH1F("h_mindR_pho_qg_rmOvrlp_genPromptPho","h_mindR_pho_qg_rmOvrlp_genPromptPho",100,0.0,5.0);
 
-  h_Lost_e_SR_Pho_Pt = new TH1F("lost_e_SR_Pho_Pt","lost_e_SR_Pho_Pt",50,0.0,1000.0); 
-  h_Lost_e_CR_Pho_Pt = new TH1F("lost_e_CR_Pho_Pt","lost_e_CR_Pho_Pt",50,0.0,1000.0);
-  h_Lost_e_SR_MET = new TH1F("lost_e_SR_MET","lost_e_SR_MET",50,0.0,1000.0); 
-  h_Lost_e_CR_MET = new TH1F("lost_e_CR_MET","lost_e_CR_MET",50,0.0,1000.0);
-  h_Lost_e_SR_NHadJets = new TH1D("lost_e_SR_NHadJets","lost_e_SR_NHadJets",20,0.0,20.0); 
-  h_Lost_e_CR_NHadJets = new TH1D("lost_e_CR_NHadJets","lost_e_CR_NHadJets",20,0.0,20.0);
-  h_Lost_e_SR_NbJets = new TH1F("lost_e_SR_NbJets","lost_e_SR_NbJets",10,0.0,10.0); 
-  h_Lost_e_CR_NbJets = new TH1F("lost_e_CR_NbJets","lost_e_CR_NbJets",10,0.0,10.0);
+  h_FR_SR_Pho_Pt = new TH1F("FR_SR_Pho_Pt","FR_SR_Pho_Pt",50,0.0,1000.0); 
+  h_FR_CR_Pho_Pt = new TH1F("FR_CR_Pho_Pt","FR_CR_Pho_Pt",50,0.0,1000.0);
+  h_FR_SR_MET = new TH1F("FR_SR_MET","FR_SR_MET",50,0.0,1000.0); 
+  h_FR_CR_MET = new TH1F("FR_CR_MET","FR_CR_MET",50,0.0,1000.0);
+  h_FR_SR_NHadJets = new TH1D("FR_SR_NHadJets","FR_SR_NHadJets",20,0.0,20.0); 
+  h_FR_CR_NHadJets = new TH1D("FR_CR_NHadJets","FR_CR_NHadJets",20,0.0,20.0);
+  h_FR_SR_NbJets = new TH1F("FR_SR_NbJets","FR_SR_NbJets",10,0.0,10.0); 
+  h_FR_CR_NbJets = new TH1F("FR_CR_NbJets","FR_CR_NbJets",10,0.0,10.0);
+  h_FR_SR_QMult = new TH1F("FR_SR_QMult","FR_SR_QMult",500,0.0,500.0); 
+  h_FR_CR_QMult = new TH1F("FR_CR_QMult","FR_CR_QMult",500,0.0,500.0);
   
-  h_Lost_e_CR_binned = new TH1F("lost_e_CR_binned","lost_e_CR_binned",10,0,10);
-  h_Lost_e_SR_binned = new TH1F("lost_e_SR_binned","lost_e_SR_binned",10,0,10);
-  h_Lost_e_TF = new TH1D("h_Lost_e_TF","h_Lost_e_TF",10,0.0,10.0);
-  h_Lost_e_SR_srch_binned = new TH1F("lost_e_SR_srch_binned","lost_e_SR_srch_binned",35,0,35); 
-  h_Lost_e_CR_srch_binned = new TH1F("lost_e_CR_srch_binned","lost_e_CR_srch_binned",35,0,35);
-  h_Lost_e_SR_srch_binned_pred = new TH1F("lost_e_SR_srch_binned_pred","lost_e_SR_srch_binned_pred",35,0,35);
+  h_FR_CR_binned = new TH1F("FR_CR_binned","FR_CR_binned",10,0,10);
+  h_FR_SR_binned = new TH1F("FR_SR_binned","FR_SR_binned",10,0,10);
+  h_FR_TF = new TH1D("h_FR_TF","h_FR_TF",10,0.0,10.0);
+  h_FR_SR_srch_binned = new TH1F("FR_SR_srch_binned","FR_SR_srch_binned",35,0,35); 
+  h_FR_CR_srch_binned = new TH1F("FR_CR_srch_binned","FR_CR_srch_binned",35,0,35);
+  h_FR_SR_srch_binned_pred = new TH1F("FR_SR_srch_binned_pred","FR_SR_srch_binned_pred",35,0,35);
 
 
-  h_Lost_mu_SR_Pho_Pt = new TH1F("lost_mu_SR_Pho_Pt","lost_mu_SR_Pho_Pt",50,0.0,1000.0); 
-  h_Lost_mu_CR_Pho_Pt = new TH1F("lost_mu_CR_Pho_Pt","lost_mu_CR_Pho_Pt",50,0.0,1000.0);
-  h_Lost_mu_SR_MET = new TH1F("lost_mu_SR_MET","lost_mu_SR_MET",50,0.0,1000.0); 
-  h_Lost_mu_CR_MET = new TH1F("lost_mu_CR_MET","lost_mu_CR_MET",50,0.0,1000.0);
-  h_Lost_mu_SR_NHadJets = new TH1D("lost_mu_SR_NHadJets","lost_mu_SR_NHadJets",20,0.0,20.0); 
-  h_Lost_mu_CR_NHadJets = new TH1D("lost_mu_CR_NHadJets","lost_mu_CR_NHadJets",20,0.0,20.0);
-  h_Lost_mu_SR_NbJets = new TH1F("lost_mu_SR_NbJets","lost_mu_SR_NbJets",10,0.0,10.0); 
-  h_Lost_mu_CR_NbJets = new TH1F("lost_mu_CR_NbJets","lost_mu_CR_NbJets",10,0.0,10.0);
-  
-  h_Lost_mu_CR_binned = new TH1F("lost_mu_CR_binned","lost_mu_CR_binned",10,0,10);
-  h_Lost_mu_SR_binned = new TH1F("lost_mu_SR_binned","lost_mu_SR_binned",10,0,10);
-  h_Lost_mu_TF = new TH1D("h_Lost_mu_TF","h_Lost_mu_TF",10,0.0,10.0);
-  h_Lost_mu_SR_srch_binned = new TH1F("lost_mu_SR_srch_binned","lost_mu_SR_srch_binned",35,0,35); 
-  h_Lost_mu_CR_srch_binned = new TH1F("lost_mu_CR_srch_binned","lost_mu_CR_srch_binned",35,0,35);
-  h_Lost_mu_SR_srch_binned_pred = new TH1F("lost_mu_SR_srch_binned_pred","lost_mu_SR_srch_binned_pred",35,0,35);
-
-  h_Had_tau_SR_Pho_Pt = new TH1F("had_tau_SR_Pho_Pt","had_tau_SR_Pho_Pt",50,0.0,1000.0); 
-  h_Had_tau_SR_MET = new TH1F("had_tau_SR_MET","had_tau_SR_MET",50,0.0,1000.0); 
-  h_Had_tau_SR_NHadJets = new TH1D("had_tau_SR_NHadJets","had_tau_SR_NHadJets",20,0.0,20.0); 
-  h_Had_tau_SR_NbJets = new TH1F("had_tau_SR_NbJets","had_tau_SR_NbJets",10,0.0,10.0); 
-
-  //all cat combined
-  h_LL_SR_Pho_Pt = new TH1F("LL_SR_Pho_Pt","LL_SR_Pho_Pt",50,0.0,1000.0); 
-  h_LL_CR_Pho_Pt = new TH1F("LL_CR_Pho_Pt","LL_CR_Pho_Pt",50,0.0,1000.0);
-  h_LL_SR_MET = new TH1F("LL_SR_MET","LL_SR_MET",50,0.0,1000.0); 
-  h_LL_CR_MET = new TH1F("LL_CR_MET","LL_CR_MET",50,0.0,1000.0);
-  h_LL_SR_NHadJets = new TH1D("LL_SR_NHadJets","LL_SR_NHadJets",20,0.0,20.0); 
-  h_LL_CR_NHadJets = new TH1D("LL_CR_NHadJets","LL_CR_NHadJets",20,0.0,20.0);
-  h_LL_SR_NbJets = new TH1F("LL_SR_NbJets","LL_SR_NbJets",10,0.0,10.0); 
-  h_LL_CR_NbJets = new TH1F("LL_CR_NbJets","LL_CR_NbJets",10,0.0,10.0);
-  
-  h_LL_CR_binned = new TH1F("LL_CR_binned","LL_CR_binned",10,0,10);
-  h_LL_SR_binned = new TH1F("LL_SR_binned","LL_SR_binned",10,0,10);
-  h_LL_TF = new TH1D("h_LL_TF","h_LL_TF",10,0.0,10.0);
-  h_LL_SR_srch_binned = new TH1F("LL_SR_srch_binned","LL_SR_srch_binned",35,0,35); 
-  h_LL_CR_srch_binned = new TH1F("LL_CR_srch_binned","LL_CR_srch_binned",35,0,35);
-  h_LL_SR_srch_binned_pred = new TH1F("LL_SR_srch_binned_pred","LL_SR_srch_binned_pred",35,0,35);
-
+ 
+ 
 
  
   //h_Had_tau_SR_NHadJets = new TH1D("had_tau_SR_NHadJets","had_tau_SR_NHadJets",20,0.0,20.0);
     
-  h_FR_SR_binned = new TH1F("FR_SR_binned","h_FR_SR_binned",10,0.0,10);
-  h_FR_SR_NHadJets = new TH1D("FR_SR_NHadJets","FR_SR_NHadJets",20,0.0,20.0);
+  // h_FR_SR_binned = new TH1F("FR_SR_binned","h_FR_SR_binned",10,0.0,10);
+  // h_FR_SR_NHadJets = new TH1D("FR_SR_NHadJets","FR_SR_NHadJets",20,0.0,20.0);
 
   h_rest_NHadJets = new TH1D("rest_NHadJets","rest_NHadJets",20,0.0,20.0);
   
@@ -286,6 +234,8 @@ void AnalyzeTProxytBSM::BookHistogram(const char *outFileName) {
   h_dhi_JetMET1_rest = new TH1F("rest_dphi_JetMET1","rest_dPhi_JetMET1",100,0.0,5.0);
   h_dhi_JetMET2_rest = new TH1F("rest_dphi_JetMET2","rest_dPhi_JetMET2",100,0.0,5.0);
   //h_pu = new TH1F("puWeight","puWeight",1000,0,2);
+  h_Electrons_size_NElectrons = new TH2I("Elec_sizeVsNElectrons","Elec_sizeVsNElectrons",10,0,10,10,0,10);
+
 }
 
 AnalyzeTProxytBSM::AnalyzeTProxytBSM(const TString &inputFileList, const char *outFileName,const char *dataset, const char *sample, const char* LostlepFlag, const char* phoID) {

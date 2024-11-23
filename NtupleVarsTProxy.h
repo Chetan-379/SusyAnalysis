@@ -940,11 +940,13 @@ public :
    double DeltaPhi(double, double);
    double DeltaR(double eta1, double phi1, double eta2, double phi2);
    void   sortTLorVec(vector<TLorentzVector> *);
+   void   sortmyLV(TStlPx_ROOT__Math__LorentzVector_ROOT__Math__PtEtaPhiE4D_float__ *);
    double TransMass(double phi1, double phi2, double pt1, double pt2);
    double MinDr(TLorentzVector v1,vector<TLorentzVector> v2);
    double MinDr_myLV(myLV v1,vector<myLV> v2);  
    double MinDr2(vector<TLorentzVector> v1,TLorentzVector v2);
   double MinDr2_myLV(vector<myLV> v1, myLV v2);
+  
    // double getCrossSection(std::string process_name);
   // std::map<std::string,float> cross_sectionValues;
 

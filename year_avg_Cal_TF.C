@@ -43,7 +43,6 @@ void year_avg_Cal_TF()
       
     TH1F* h_total_SR = (TH1F*)hist_list[0]-> Clone();	 
     TH1F* h_total_CR = (TH1F*)hist_list[1]-> Clone();
-    //cout << "SR Integral of sample " << f << ": " << hist_list[0]->Integral() << endl;
       
     TH1D* h_TF = (TH1D*) h_total_SR->Clone("combined_TF");
     h_TF->Divide(h_total_CR);

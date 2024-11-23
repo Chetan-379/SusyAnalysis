@@ -12,8 +12,8 @@ for i in year:
     count=0
     for j in bkg_samples:
         condorSubmit = "Submit_condor/submitCondor_%s_%s_Sbin"%(i,j)
-        fname1 = "/afs/cern.ch/user/c/cagrawal/public/MyAnalysis/CMSSW_14_0_2/src/SusySoft2023Ana/runFiles/runList_%s_%s.txt"%(j,i)
-        fname = "/afs/cern.ch/user/c/cagrawal/public/MyAnalysis/CMSSW_14_0_2/src/SusySoft2023Ana/condor/root_files_condor/%s_%s.root"%(i,j)
+        fname1 = "/afs/cern.ch/user/c/cagrawal/public/MyAnalysis/CMSSW_14_0_2/src/SusySoft2023Ana_FR/runFiles/runList_%s_%s.txt"%(j,i)
+        fname = "/afs/cern.ch/user/c/cagrawal/public/MyAnalysis/CMSSW_14_0_2/src/SusySoft2023Ana_FR/condor/root_files_condor/%s_%s.root"%(i,j)
         jobName = "%s_%s"%(i,j)
         #out_tag="%s_%s" %(sample_tag[count1],year[count1])                                                             
         shutil.copyfile("proto_condor_submit",condorSubmit)
