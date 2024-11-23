@@ -172,7 +172,8 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
     float ST=0;
     int NEMu;
     double dPhi_METjet1, dPhi_METjet2;
-    bool applyHEMveto=true, applyL1TrigFire_prob=true;
+    bool applyHEMveto = true, applyL1TrigFire_prob = true;
+    bool apply_pixelveto = true;
 
     if(s_data.Contains("2016preVFP")){lumiInfb=19.5;deepCSVvalue = 0.6001; p0=1.586e+02; p1=6.83e+01; p2=9.28e-01;}// APV
     if(s_data.Contains("2016postVFP")) {lumiInfb=16.5; deepCSVvalue = 0.5847; p0=1.586e+02; p1=6.83e+01; p2=9.28e-01;} //2016
@@ -308,7 +309,10 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
   
   
 //===============================================================================    
-
+   if(apply_pixelveto){
+      if(s_data.Contains("2017") && ((bestEMObj.Eta() > 0.0 && bestEMObj.Eta() < 1.5 && bestEMObj.Phi() > 2.7))) continue;
+      if(s_data.Contains("2018") && ((bestEMObj.Eta() > 0.0 && bestEMObj.Eta() < 1.5 && bestEMObj.Phi() > 0.4 && bestEMObj.Phi() < 0.8))) continue;
+    }
     
     
     //selecting Hadronic and b jets
@@ -392,7 +396,7 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
     
     //defining flags for applying baseline selections
     bool Pass_EMu_veto=false, Pass_Iso_trk_veto=false, Pass_Pho_pT=false, Pass_MET=false, Pass_NHadJets=false, Pass_ST=false, applyTrgEff = false, EvtCln=false,JetMetPhi=false,rmOvrlp=false, Pass_MET2=false;
-    if (bestPhoton.Pt() >40) Pass_Pho_pT = true;
+    if (bestEMObj.Pt() >40) Pass_Pho_pT = true;
     if (Pass_Pho_pT && MET > 100) Pass_MET = true;
     if (Pass_MET && NHadJets >=2) Pass_NHadJets = true;		
     if (Pass_NHadJets && ST > 300) {Pass_ST = true; applyTrgEff = true;}
@@ -558,43 +562,13 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 // //     // sortTLorVec(&GenElectrons_v1);
 
 
-
-    
-  
-
-    
-
-//===========================================================FR CR====================================================================================
+//==================================================================FR SR=============================================================================
     bool elec_CR= false; 
     bool pho_SR= false;
     double mt_ele = 0.0;
     
-    if(bestEMobj && bestEMObjIsEle && !hasPho){
-      //h_selectBaselineYields_v1->Fill("Enter Elec CR",wt);
-      if(isoMuonTracks !=0 || isoPionTracks !=0) continue; // veto muon/pions from 1 electron CR
-      if(NMuons!=0 || NElectrons>1) continue;     
-      mt_ele = sqrt(2*bestEMObj.Pt()*MET*(1-cos(DeltaPhi(METPhi,bestEMObj.Phi()))));
-      if(mt_ele>100) { continue;}//h_selectBaselineYields_CR->Fill("e-CR: mT<100",wt);continue;} // remove signal contamination 
-      elec_CR = true;
-      // h_selectBaselineYields_v1->Fill("After Elec CR",wt);
-      // int searchBin = getBinNoV6_WithOnlyBLSelec(nHadJets,BTags);
-      // if(nHadJets>=7 && Debug)
-      // 	cout<<"Entry: "<<jentry<<"\t"<<searchBin<<"\t"<<nHadJets<<"\t"<<BTags<<"\t"<<MET<<"\t"<<bestPhoton.Pt()<<"\t"<<wt<<endl;
-      if (bestEMObj.Pt()<=40) continue;
-
-      if (elec_CR){
-	 h_FR_CR_Pho_Pt->Fill(bestEMObj.Pt(),wt1);
-	 h_FR_CR_MET->Fill(MET,wt1);
-	 h_FR_CR_NHadJets->Fill(NHadJets,wt1);
-	 h_FR_CR_NbJets->Fill(BTags,wt1);
-      }
-    }
-//====================================================================================================================================================    
-
-    
-//==================================================================FR SR=============================================================================
-   bool fakeElectron=false, proc=false, proc1=false;
-    if(hasPho && bestEMobj && !bestEMObjIsEle){
+    bool fakeElectron=false, proc=false, proc1=false;
+    if(Pass_MET2 && hasPho && bestEMobj && !bestEMObjIsEle){
       //h_selectBaselineYields_v1->Fill("Enter Pho SR",wt);
       if(isoMuonTracks !=0 || isoPionTracks!=0 || isoElectronTracks!=0) continue; // veto muon/pions/electrons 
       if(NMuons!=0 || NElectrons!=0) continue;
@@ -618,9 +592,42 @@ void AnalyzeTProxytBSM::EventLoop(std::string buffer, const char *data, const ch
 	 h_FR_SR_MET->Fill(MET,wt1);
 	 h_FR_SR_NHadJets->Fill(NHadJets,wt1);
 	 h_FR_SR_NbJets->Fill(BTags,wt1);
+	 h_FR_SR_QMult->Fill(qmulti,wt1);
       }
     }
 //====================================================================================================================================================
+
+    
+  
+
+    
+
+//===========================================================FR CR====================================================================================
+    
+    if(Pass_MET2 && bestEMobj && bestEMObjIsEle && !hasPho){
+      //h_selectBaselineYields_v1->Fill("Enter Elec CR",wt);
+      if(isoMuonTracks !=0 || isoPionTracks !=0) continue; // veto muon/pions from 1 electron CR
+      if(NMuons!=0 || NElectrons>1) continue;     
+      mt_ele = sqrt(2*bestEMObj.Pt()*MET*(1-cos(DeltaPhi(METPhi,bestEMObj.Phi()))));
+      if(mt_ele>100) { continue;}//h_selectBaselineYields_CR->Fill("e-CR: mT<100",wt);continue;} // remove signal contamination 
+      elec_CR = true;
+      // h_selectBaselineYields_v1->Fill("After Elec CR",wt);
+      // int searchBin = getBinNoV6_WithOnlyBLSelec(nHadJets,BTags);
+      // if(nHadJets>=7 && Debug)
+      // 	cout<<"Entry: "<<jentry<<"\t"<<searchBin<<"\t"<<nHadJets<<"\t"<<BTags<<"\t"<<MET<<"\t"<<bestPhoton.Pt()<<"\t"<<wt<<endl;
+      //if (bestEMObj.Pt()<=40) continue;
+
+      if (elec_CR){
+	 h_FR_CR_Pho_Pt->Fill(bestEMObj.Pt(),wt1);
+	 h_FR_CR_MET->Fill(MET,wt1);
+	 h_FR_CR_NHadJets->Fill(NHadJets,wt1);
+	 h_FR_CR_NbJets->Fill(BTags,wt1);
+	 h_FR_CR_QMult->Fill(qmulti,wt1);
+      }
+    }
+//====================================================================================================================================================    
+
+    
 
         
 
