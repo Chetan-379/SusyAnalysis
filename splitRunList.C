@@ -1,9 +1,9 @@
-#include<iostream>
-#include<string>
-#include<vector>
-#include<fstream>
-#include<iomanip>
-#include<stdlib.h>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <fstream>
+#include <iomanip>
+#include <stdlib.h>
 
 using namespace std;
 void splitRunList(string infile,int nfPerJob, string datasetAna, string process, string phoID){
@@ -21,6 +21,10 @@ void splitRunList(string infile,int nfPerJob, string datasetAna, string process,
   if(!file){cout<<"Couldn't Open File "<<infile<<endl;}
   string str,dataset=infile;
   dataset.pop_back();  dataset.pop_back();  dataset.pop_back();  dataset.pop_back();
+
+  // string dataset1 =dataset;
+  // dataset1.pop_front(), dataset1.pop_front(), dataset1.pop_front(), dataset1.pop_front(), dataset1.pop_front(), dataset1.pop_front(), dataset1.pop_front(), dataset1.pop_front(), dataset1.pop_front(), dataset1.pop_front(), dataset1.pop_front();
+
   vector<string> fname;
   while (std::getline(file, str))
     {
@@ -31,22 +35,31 @@ void splitRunList(string infile,int nfPerJob, string datasetAna, string process,
   int jobid=0;
   char name[200];
   ofstream outf;
+  cout << "size of fname: " << fname.size() << endl;
   for(int i=0,j=0;i<fname.size();){
-    sprintf(name,"FileList_%s_job%i.txt",dataset.c_str(),jobid);
+    //cout << fname[i] << endl;
+    //sprintf(name,"%s.txt",dataset.c_str());
+    //sprintf(name,"Jobwise_inputfiles/%s_job%i.txt",dataset.c_str(),jobid);
+    sprintf(name,"Jobwise_inputfiles/FileList_%s_job%i.txt",dataset.c_str(),jobid);
+    //cout << name << endl;
     outf.open(name);
     for(j=0;j<nfPerJob && i<fname.size();j++){
       outf<<fname[i]<<endl;
+      // cout << fname[i] << endl;
       i++;
     }
     jobid++;
     outf.close();
   }
 
-  //--------------------- make files for codor ------------------------------------
+  cout << jobid << endl;
+
+  //--------------------- make files for condor ------------------------------------
   char fileListName[200],logFile[200];
   for(int i=0;i<jobid;i++){
-    sprintf(name,"%s_job%i.jdl",dataset.c_str(),i);
-    sprintf(fileListName,"FileList_%s_job%i.txt",dataset.c_str(),i);
+    sprintf(name,"condor_made_files/%s_job%i.jdl",dataset.c_str(),i);
+    //sprintf(fileListName,"%s.txt",dataset.c_str());
+    sprintf(fileListName,"Jobwise_inputfiles/FileList_%s_job%i.txt",dataset.c_str(),i);
     sprintf(logFile,"phoID_%s_%s_pt100_MET200_job%i",phoID.c_str(),dataset.c_str(),i);
     outf.open(name);
     outf<<"universe = vanilla"<<endl
@@ -67,6 +80,7 @@ void splitRunList(string infile,int nfPerJob, string datasetAna, string process,
 	<<"x509userproxy = $ENV(X509_USER_PROXY)"<<endl
 	<<"use_x509userproxy = True"<<endl
 	<<"Arguments = "<<exeAna<<" "<<fileListName<<" "<<logFile<<".root"<<" "<<datasetAna<<" "<<process<<" "<<phoID<<endl
+	<<"+MaxRuntime = 4*60*60" <<endl
 	<<"+LENGTH=\"SHORT\""<<endl
 	<<endl
 	<<"Queue 1";
@@ -77,7 +91,7 @@ void splitRunList(string infile,int nfPerJob, string datasetAna, string process,
   cout<<"Do you want to submit "<<jobid<<" jobs? If yes enter 100"<<endl;
   //  cin>>t1;
   for(int i=0;i<jobid && t1==100;i++){
-    sprintf(name,"condor_submit %s_job%i.jdl",dataset.c_str(),i);
+    sprintf(name,"condor_submit condor_made_files/%s_job%i.jdl",dataset.c_str(),i);
     system(name); 
   }
   

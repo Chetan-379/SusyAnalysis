@@ -267,7 +267,8 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
   TLegend *legend;
   //legend = new TLegend(0.60,0.88,0.98,0.72);  
   legend = new TLegend(0.2,0.75,0.65,0.88);  
-  legend->SetTextSize(0.055);
+  //legend->SetTextSize(0.055);
+  legend->SetTextSize(0.035);
   legend->SetLineColor(kWhite);
   legend->SetNColumns(4);
   char* lhead = new char[100];
@@ -294,6 +295,11 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
   //     legend_text[1] = "Failed acceptance";
   //   }
   for(int i =0;i<(int)hist.size(); i ++) {
+
+    char final_label[100];
+    float Integral = hist.at(i)->Integral();     
+    sprintf(final_label,"%s (%0.2f)",legend_texts[i].c_str(), Integral); 
+
     // if(DoRebin) {
     //  hist.at(i)->Rebin(2);
 
@@ -380,7 +386,8 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
     /* hist.at(i)->GetXaxis()->SetRangeUser(x_min[energy],x_max[energy]); */
     //    hist.at(i)= DrawOverflow(hist.at(i));
     legName.push_back(hist.at(i)->GetName());
-    leg_entry[i] = legend->AddEntry(hist.at(i),legend_texts[i].c_str(),"e2p");
+    //leg_entry[i] = legend->AddEntry(hist.at(i),legend_texts[i].c_str(),"e2p");
+    leg_entry[i] = legend->AddEntry(hist.at(i),final_label,"e2p");
     leg_entry[i]->SetTextColor(hist.at(i)->GetLineColor());
     
     if(hist.at(i)->GetMaximum() > ymax) ymax = hist.at(i)->GetMaximum();
@@ -793,8 +800,8 @@ void generate_1Dplot(vector<TH1D*> hist, TH1D* hist_ratio, char const *tag_name=
   if(save_canvas) {
     sprintf(canvas_name,"%s.png",tag_name);//.png",tag_name);//_wnormalize.png",tag_name);
      canvas_n1->SaveAs(canvas_name);   
-     sprintf(canvas_name,"%s.pdf",tag_name);
-    canvas_n1->SaveAs(canvas_name);
+     // sprintf(canvas_name,"%s.pdf",tag_name);
+    // canvas_n1->SaveAs(canvas_name);
     
   }
   
@@ -805,6 +812,7 @@ TFile *f1[nfiles];
 
 
 void TF_varKinem_ratio(string pathname, int which_plots)
+
 {
   char* hname = new char[200];
   char* hname1 = new char[200];
@@ -887,49 +895,58 @@ void TF_varKinem_ratio(string pathname, int which_plots)
   // cout<<string_png<<"\t"<<TFbins_str<<"\t"<<which_TFBins<<endl;
   // if(which_Lept==1)
   //   {
-      f[0] = new TFile("Summer20UL18_TTGJets_PhoIdloose_phopt40_MET200.root");
-      f[1] = new TFile("Summer20UL17_TTGJets_PhoIdloose_phopt40_MET200.root");
-      f[2] = new TFile("Summer20UL16_TTGJets_PhoIdloose_phopt40_MET200.root");
-      f[3]= new TFile("FullRun2_TTGJets_PhoIdloose_phopt40_MET200.root");
+    // string path;
+    // path = "/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/";
+      f[0] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL18_TTGJets_PhoIdloose_phopt40_MET200.root");
+      f[1] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL17_TTGJets_PhoIdloose_phopt40_MET200.root");
+      f[2] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16_TTGJets_PhoIdloose_phopt40_MET200.root");
+      f[3] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/FullRun2_TTGJets_PhoIdloose_phopt40_MET200.root");
 
-      f[4] = new TFile("Summer20UL18_WGJets_PhoIdloose_phopt40_MET200.root");
-      f[5] = new TFile("Summer20UL17_WGJets_PhoIdloose_phopt40_MET200.root");
-      f[6] = new TFile("Summer20UL16_WGJets_PhoIdloose_phopt40_MET200.root");
-      f[7]= new TFile("FullRun2_WGJets_PhoIdloose_phopt40_MET200.root");
-      f[8] = new TFile("Summer20UL18_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[9] = new TFile("Summer20UL17_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[10] = new TFile("Summer20UL16_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[11]= new TFile("FullRun2_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[12] = new TFile("Summer20UL18_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
-      f[13] = new TFile("Summer20UL17_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
-      f[14] = new TFile("Summer20UL16_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
-      f[15]= new TFile("FullRun2_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
-      f[16] = new TFile("Summer20UL18_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
-      f[17] = new TFile("Summer20UL17_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
-      f[18] = new TFile("Summer20UL16_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
-      f[19] = new TFile("FullRun2_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
-      f[20] = new TFile("Summer20UL18_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[21] = new TFile("Summer20UL17_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[22] = new TFile("Summer20UL16_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[23] = new TFile("FullRun2_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[24]= new TFile("Summer20UL18_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
-      f[25]= new TFile("Summer20UL17_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
-      f[26]= new TFile("Summer20UL16_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
-      f[27]= new TFile("FullRun2_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
-      f[28] = new TFile("Summer20UL16APV_TTGJets_PhoIdloose_phopt40_MET200.root");
-      f[29] = new TFile("Summer20UL16APV_WGJets_PhoIdloose_phopt40_MET200.root");
-      f[30] = new TFile("Summer20UL16APV_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[31] = new TFile("Summer20UL16APV_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
-      f[32] = new TFile("Summer20UL16APV_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
-      f[33] = new TFile("Summer20UL16APV_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[34]= new TFile("Summer20UL16APV_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
-      f[35] = new TFile("Summer20UL_total2016_TTGJets_PhoIdloose_phopt40_MET200.root");
-      f[36] = new TFile("Summer20UL_total2016_WGJets_PhoIdloose_phopt40_MET200.root");
-      f[37] = new TFile("Summer20UL_total2016_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[38] = new TFile("Summer20UL_total2016_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
-      f[39] = new TFile("Summer20UL_total2016_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
-      f[40] = new TFile("Summer20UL_total2016_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[41]= new TFile("Summer20UL_total2016_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+      f[4] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL18_WGJets_PhoIdloose_phopt40_MET200.root");
+      f[5] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL17_WGJets_PhoIdloose_phopt40_MET200.root");
+      f[6] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16_WGJets_PhoIdloose_phopt40_MET200.root");
+      f[7] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/FullRun2_WGJets_PhoIdloose_phopt40_MET200.root");
+
+      f[8] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL18_TTJets_PhoIdloose_phopt40_MET200.root");
+      f[9] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL17_TTJets_PhoIdloose_phopt40_MET200.root");
+      f[10] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16_TTJets_PhoIdloose_phopt40_MET200.root");
+      f[11] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/FullRun2_TTJets_PhoIdloose_phopt40_MET200.root");
+
+      f[12] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL18_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
+      f[13] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL17_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
+      f[14] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
+      f[15] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/FullRun2_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
+
+      f[16] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL18_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
+      f[17] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL17_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
+      f[18] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
+      f[19] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/FullRun2_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
+
+      f[20] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL18_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
+      f[21] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL17_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
+      f[22] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
+      f[23] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/FullRun2_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
+
+      f[24] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL18_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+      f[25] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL17_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+      f[26] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+      f[27] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/FullRun2_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+
+      f[28] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16APV_TTGJets_PhoIdloose_phopt40_MET200.root");
+      f[29] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16APV_WGJets_PhoIdloose_phopt40_MET200.root");
+      f[30] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16APV_TTJets_PhoIdloose_phopt40_MET200.root");
+      f[31] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16APV_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
+      f[32] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16APV_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
+      f[33] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16APV_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
+      f[34] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16APV_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+
+      f[35] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL_total2016_TTGJets_PhoIdloose_phopt40_MET200.root");
+      f[36] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL_total2016_WGJets_PhoIdloose_phopt40_MET200.root");
+      f[37] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL_total2016_TTJets_PhoIdloose_phopt40_MET200.root");
+      f[38] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL_total2016_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
+      f[39] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL_total2016_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
+      f[40] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL_total2016_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
+      f[41] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL_total2016_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
 
   vector<string>varName;
   vector<string>varName1;
@@ -1015,7 +1032,8 @@ void TF_varKinem_ratio(string pathname, int which_plots)
       vector<TH1D*> hist_list_MET;
       vector<TH1D*> hist_list_PhoPt;
       vector<TH1D*> hist_list_ST;
-      for(int i_cut=6; i_cut<7;i_cut++)
+      for(int i_cut=0; i_cut<7;i_cut++)
+      //for(int i_cut=0; i_cut<1;i_cut++)
 	{
 	  //if(i_cut==1) continue;
 	  vector<TH1D*> hist_list_Njets;

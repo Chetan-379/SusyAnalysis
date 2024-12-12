@@ -6,39 +6,40 @@ outputFileTag=$3
 #commitHash=$4
 datasetName=$4
 process=$5
-LL=$6
-phoID=$7
-currDir=$(pwd)
+#LL=$6
+phoID=$6
+#currDir=$(pwd)
+
 ######################################
 # SETUP CMSSW STUFF...
 ######################################
 
-source /cvmfs/cms.cern.ch/cmsset_default.sh
-export SCRAM_ARCH=el9_amd64_gcc12
-scram p CMSSW CMSSW_14_0_0_pre0
-cd CMSSW_14_0_0_pre0/src
+# source /cvmfs/cms.cern.ch/cmsset_default.sh
+# export SCRAM_ARCH=el9_amd64_gcc12
+# scram p CMSSW CMSSW_14_0_0_pre0
+cd /afs/cern.ch/user/c/cagrawal/public/MyAnalysis/CMSSW_14_0_2/src/Alpana_FR_machinery
 
-eval `scramv1 runtime -sh`
+# # eval `scramv1 runtime -sh`
 pwd
-echo $CMSSW_RELEASE_BASE
-cd $currDir
-echo $currDir
+# # echo $CMSSW_RELEASE_BASE
+# cd $currDir
+#echo $currDir
 
-
-######################################
-# SETUP PRIVATE STUFF...
-######################################
+# ######################################
+# # SETUP PRIVATE STUFF...
+# ######################################
 echo "RUNNING ANALYSIS"
 pwd
 echo $executable
 echo $inputFileTag
-./$executable $inputFileTag $outputFileTag $datasetName $process $LL $phoID
+./$executable $inputFileTag $outputFileTag $datasetName $process $phoID
 echo "processed. ls"
 ls
 echo "COPYING OUTPUT"
 
 #xrdcp -f skimmed_ntuple_$datasetName'_'$process'.root' root://cmseos.fnal.gov//store/user/kalpana/Susy_phoMet/SkimmedNtuples/
-xrdcp -f $outputFileTag root://cmseos.fnal.gov//store/user/kalpana/FR_UL_Oct24 
+#xrdcp -f $outputFileTag root://eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/
+cp -f $outputFileTag /eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/ 
 
 #xrdcp -f ${datasetName}'_'${outputFileTag} root://cmseos.fnal.gov//store/group/lpcsusyhad/SusyPhotonMET/Run2ProductionV17/background/skims/${outputFileTag}
 rm $outputFileTag
