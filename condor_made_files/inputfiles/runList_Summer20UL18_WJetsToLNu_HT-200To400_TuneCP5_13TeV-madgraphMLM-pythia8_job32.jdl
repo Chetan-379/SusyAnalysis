@@ -1,0 +1,18 @@
+universe = vanilla
+Executable = worker2.sh
+request_disk = 1000000
+request_cpus = 1
+request_memory = 1.5GB
+Should_Transfer_Files = YES
+WhenToTransferOutput = ON_EXIT_OR_EVICT
+Transfer_Input_Files = map_crosssection_SMprocess_v1.txt, Electron_FR_TFbins_v3_phopt_qmulti_phoID_loose_09Jan24.root,Electron_FR_TFbins_v2_qmulti_nJetsBjets_phoID_loose_09Jan24.root,out_SF_FR_Data_MC_Default.root,Electron_FR_TFbins_v1_phopT_qmulti_phoID_loose_09Jan24.root,analyzeLightBSM,Jobwise_inputfiles/FileList_inputfiles/runList_Summer20UL18_WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8_job32.txt,
+Output = phoID_loose_inputfiles/runList_Summer20UL18_WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8_pt100_MET200_job32.stdout
+Error = phoID_loose_inputfiles/runList_Summer20UL18_WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8_pt100_MET200_job32.stderr
+Log = phoID_loose_inputfiles/runList_Summer20UL18_WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8_pt100_MET200_job32.condor
+x509userproxy = $ENV(X509_USER_PROXY)
+use_x509userproxy = True
+Arguments = analyzeLightBSM Jobwise_inputfiles/FileList_inputfiles/runList_Summer20UL18_WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8_job32.txt phoID_loose_inputfiles/runList_Summer20UL18_WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8_pt100_MET200_job32.root 2018 WJetsToLNu_HT-200To400UL loose
++MaxRuntime = 4*60*60
++LENGTH="SHORT"
+
+Queue 1
