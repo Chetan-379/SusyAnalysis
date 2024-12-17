@@ -46,14 +46,14 @@ hadd -f $path/FullRun2_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root $p
 
 hadd -f	$path/FullRun2_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root $path/Summer20UL17_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root $path/Summer20UL16_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root $path/Summer20UL18_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root $path/Summer20UL16APV_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root #checked 
 
-hadd -f $path/Summer20UL18_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root $path/Summer20UL18_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root $path/Summer20UL18_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root #$path/Summer20UL18_singleTop_PhoIdloose_phopt40_MET200.root #checked 
+hadd -f $path/Summer20UL18_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root $path/Summer20UL18_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root $path/Summer20UL18_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root $path/Summer20UL18_singleTop_PhoIdloose_phopt40_MET200.root #checked 
 
 
-hadd -f	$path/Summer20UL17_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root $path/Summer20UL17_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root $path/Summer20UL17_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root #$path/Summer20UL17_singleTop_PhoIdloose_phopt40_MET200.root #checked 
+hadd -f	$path/Summer20UL17_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root $path/Summer20UL17_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root $path/Summer20UL17_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root $path/Summer20UL17_singleTop_PhoIdloose_phopt40_MET200.root #checked 
 
-hadd -f	$path/Summer20UL16_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root $path/Summer20UL16_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root $path/Summer20UL16_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root #$path/Summer20UL16_singleTop_PhoIdloose_phopt40_MET200.root #checked 
+hadd -f	$path/Summer20UL16_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root $path/Summer20UL16_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root $path/Summer20UL16_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root $path/Summer20UL16_singleTop_PhoIdloose_phopt40_MET200.root #checked 
 
-hadd -f $path/Summer20UL16APV_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root $path/Summer20UL16APV_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root $path/Summer20UL16APV_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root #$path/Summer20UL16APV_singleTop_PhoIdloose_phopt40_MET200.root #checked                                                                                                            
+hadd -f $path/Summer20UL16APV_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root $path/Summer20UL16APV_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root $path/Summer20UL16APV_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root $path/Summer20UL16APV_singleTop_PhoIdloose_phopt40_MET200.root #checked                                                                                                            
 
 hadd -f $path/FullRun2_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root $path/Summer20UL16_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root $path/Summer20UL17_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root $path/Summer20UL18_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root $path/Summer20UL16APV_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root #checked $path/FullRun2_singleTop_PhoIdloose_phopt40_MET200.root #checked 
 

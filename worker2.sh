@@ -39,10 +39,10 @@ echo "COPYING OUTPUT"
 
 #xrdcp -f skimmed_ntuple_$datasetName'_'$process'.root' root://cmseos.fnal.gov//store/user/kalpana/Susy_phoMet/SkimmedNtuples/
 #xrdcp -f $outputFileTag root://eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/
-cp -f $outputFileTag /eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/ 
+mv -f $outputFileTag /eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/ 
 
 #xrdcp -f ${datasetName}'_'${outputFileTag} root://cmseos.fnal.gov//store/group/lpcsusyhad/SusyPhotonMET/Run2ProductionV17/background/skims/${outputFileTag}
-rm $outputFileTag
+#rm $outputFileTag
 rm skimmed_ntuple_$datasetName'_'$process'.root'
 #xrdcp -f $outputFileTag root://cmseos.fnal.gov//store/group/lpcsusyhad/SusyPhotonMET/Run2ProductionV17/background/$outputFileTag
 #xrdcp -f $outputFileTag root://cmseos.fnal.gov//store/user/bkansal/GMSB_skims_TreesV17/for_bkg_estimation/lost_electron/new2/CR_$outputFileTag
