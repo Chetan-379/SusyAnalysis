@@ -32,7 +32,7 @@ void splitRunList(string infile,int nfPerJob, string datasetAna, string process,
   char name[200];
   ofstream outf;
   for(int i=0,j=0;i<fname.size();){
-    sprintf(name,"FileList_%s_job%i.txt",dataset.c_str(),jobid);
+    sprintf(name,"Jobwise_inputfiles/FileList_%s_job%i.txt",dataset.c_str(),jobid);
     outf.open(name);
     for(j=0;j<nfPerJob && i<fname.size();j++){
       outf<<fname[i]<<endl;
@@ -45,8 +45,8 @@ void splitRunList(string infile,int nfPerJob, string datasetAna, string process,
   //--------------------- make files for codor ------------------------------------
   char fileListName[200],logFile[200];
   for(int i=0;i<jobid;i++){
-    sprintf(name,"%s_job%i.jdl",dataset.c_str(),i);
-    sprintf(fileListName,"FileList_%s_job%i.txt",dataset.c_str(),i);
+    sprintf(name,"condor_made_files/%s_job%i.jdl",dataset.c_str(),i);
+    sprintf(fileListName,"Jobwise_inputfiles/FileList_%s_job%i.txt",dataset.c_str(),i);
     sprintf(logFile,"phoID_%s_%s_pt100_MET200_job%i",phoID.c_str(),dataset.c_str(),i);
     outf.open(name);
     outf<<"universe = vanilla"<<endl
@@ -67,6 +67,7 @@ void splitRunList(string infile,int nfPerJob, string datasetAna, string process,
 	<<"x509userproxy = $ENV(X509_USER_PROXY)"<<endl
 	<<"use_x509userproxy = True"<<endl
 	<<"Arguments = "<<exeAna<<" "<<fileListName<<" "<<logFile<<".root"<<" "<<datasetAna<<" "<<process<<" "<<phoID<<endl
+	<<"+MaxRuntime = 4*60*60" <<endl
 	<<"+LENGTH=\"SHORT\""<<endl
 	<<endl
 	<<"Queue 1";
@@ -77,7 +78,7 @@ void splitRunList(string infile,int nfPerJob, string datasetAna, string process,
   cout<<"Do you want to submit "<<jobid<<" jobs? If yes enter 100"<<endl;
   //  cin>>t1;
   for(int i=0;i<jobid && t1==100;i++){
-    sprintf(name,"condor_submit %s_job%i.jdl",dataset.c_str(),i);
+    sprintf(name,"condor_submit condor_made_files/%s_job%i.jdl",dataset.c_str(),i);
     system(name); 
   }
   

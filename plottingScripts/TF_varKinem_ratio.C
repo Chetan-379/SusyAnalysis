@@ -897,56 +897,56 @@ void TF_varKinem_ratio(string pathname, int which_plots)
   //   {
     // string path;
     // path = "/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/";
-      f[0] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL18_TTGJets_PhoIdloose_phopt40_MET200.root");
-      f[1] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL17_TTGJets_PhoIdloose_phopt40_MET200.root");
-      f[2] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16_TTGJets_PhoIdloose_phopt40_MET200.root");
-      f[3] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/FullRun2_TTGJets_PhoIdloose_phopt40_MET200.root");
+      f[0] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL18_TTGJets_PhoIdloose_phopt40_MET200.root");
+      f[1] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL17_TTGJets_PhoIdloose_phopt40_MET200.root");
+      f[2] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL16_TTGJets_PhoIdloose_phopt40_MET200.root");
+      f[3] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/FullRun2_TTGJets_PhoIdloose_phopt40_MET200.root");
 
-      f[4] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL18_WGJets_PhoIdloose_phopt40_MET200.root");
-      f[5] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL17_WGJets_PhoIdloose_phopt40_MET200.root");
-      f[6] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16_WGJets_PhoIdloose_phopt40_MET200.root");
-      f[7] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/FullRun2_WGJets_PhoIdloose_phopt40_MET200.root");
+      f[4] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL18_WGJets_PhoIdloose_phopt40_MET200.root");
+      f[5] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL17_WGJets_PhoIdloose_phopt40_MET200.root");
+      f[6] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL16_WGJets_PhoIdloose_phopt40_MET200.root");
+      f[7] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/FullRun2_WGJets_PhoIdloose_phopt40_MET200.root");
 
-      f[8] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL18_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[9] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL17_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[10] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[11] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/FullRun2_TTJets_PhoIdloose_phopt40_MET200.root");
+      f[8] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL18_TTJets_PhoIdloose_phopt40_MET200.root");
+      f[9] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL17_TTJets_PhoIdloose_phopt40_MET200.root");
+      f[10] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL16_TTJets_PhoIdloose_phopt40_MET200.root");
+      f[11] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/FullRun2_TTJets_PhoIdloose_phopt40_MET200.root");
 
-      f[12] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL18_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
-      f[13] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL17_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
-      f[14] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
-      f[15] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/FullRun2_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
+      f[12] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL18_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
+      f[13] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL17_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
+      f[14] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL16_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
+      f[15] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/FullRun2_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
 
-      f[16] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL18_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
-      f[17] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL17_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
-      f[18] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
-      f[19] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/FullRun2_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
+      f[16] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL18_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
+      f[17] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL17_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
+      f[18] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL16_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
+      f[19] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/FullRun2_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
 
-      f[20] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL18_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[21] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL17_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[22] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[23] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/FullRun2_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
+      f[20] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL18_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
+      f[21] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL17_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
+      f[22] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL16_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
+      f[23] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/FullRun2_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
 
-      f[24] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL18_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
-      f[25] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL17_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
-      f[26] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
-      f[27] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/FullRun2_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+      f[24] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL18_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+      f[25] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL17_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+      f[26] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL16_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+      f[27] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/FullRun2_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
 
-      f[28] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16APV_TTGJets_PhoIdloose_phopt40_MET200.root");
-      f[29] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16APV_WGJets_PhoIdloose_phopt40_MET200.root");
-      f[30] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16APV_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[31] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16APV_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
-      f[32] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16APV_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
-      f[33] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16APV_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[34] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL16APV_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+      f[28] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL16APV_TTGJets_PhoIdloose_phopt40_MET200.root");
+      f[29] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL16APV_WGJets_PhoIdloose_phopt40_MET200.root");
+      f[30] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL16APV_TTJets_PhoIdloose_phopt40_MET200.root");
+      f[31] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL16APV_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
+      f[32] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL16APV_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
+      f[33] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL16APV_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
+      f[34] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL16APV_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
 
-      f[35] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL_total2016_TTGJets_PhoIdloose_phopt40_MET200.root");
-      f[36] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL_total2016_WGJets_PhoIdloose_phopt40_MET200.root");
-      f[37] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL_total2016_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[38] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL_total2016_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
-      f[39] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL_total2016_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
-      f[40] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL_total2016_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
-      f[41] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test/Summer20UL_total2016_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
+      f[35] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL_total2016_TTGJets_PhoIdloose_phopt40_MET200.root");
+      f[36] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL_total2016_WGJets_PhoIdloose_phopt40_MET200.root");
+      f[37] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL_total2016_TTJets_PhoIdloose_phopt40_MET200.root");
+      f[38] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL_total2016_WJetsToLNu_HT_PhoIdloose_phopt40_MET200.root");
+      f[39] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL_total2016_combined_WGJets_WJets_PhoIdloose_phopt40_MET200.root");
+      f[40] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL_total2016_combined_TTGJets_TTJets_PhoIdloose_phopt40_MET200.root");
+      f[41] = new TFile("/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/unskimmed_root_files/Summer20UL_total2016_WGJets_TTGJets_Allcombined_PhoIdloose_phopt40_MET200.root");
 
   vector<string>varName;
   vector<string>varName1;

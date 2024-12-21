@@ -1,5 +1,5 @@
 #!/bin/bash                                                                                                                                      
-path=/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test
+#path=/eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test
 # hadd -f out_Data_UL2018_Run2018D_MET_phoID_loose_pt40_MET200.root `ls -u /eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test | grep 'phoID_loose_runList_UL2018_Run2018D_v1_MET_pt100_MET200'`
 # hadd -f out_Data_UL2018_Run2018A_MET_phoID_loose_pt40_MET200.root `ls -u /eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test | grep 'phoID_loose_runList_UL2018_Run2018A_v2_MET_pt100_MET200'`
 # hadd -f out_Data_UL2018_Run2018B_MET_phoID_loose_pt40_MET200.root `ls -u /eos/home-c/cagrawal/SusySoftPhoAna/FR_estimation/root_files_test | grep 'phoID_loose_runList_UL2018_Run2018B_v2_MET_pt100_MET200'`
