@@ -1027,7 +1027,7 @@
     // // ********* This is to account into all visible energy: Adding photon matching with Jet ******************//
     TLorentzVector Met, tag_Met; 
     Met.SetPtEtaPhiE(MET,0,METPhi,0);
-    tag_Met.SetPtEtaPhiE(tagEMObj.Pt(),0,tagEMobj.Phi(),0);
+    tag_Met.SetPtEtaPhiE(tagEMObj.Pt(),0,tagEMObj.Phi(),0);
 
     double new_MET = (Met + tag_Met).Pt();
     double new_METPhi = (Met + tag_Met).Phi();
@@ -1438,7 +1438,7 @@ int AnalyzeLightBSM::getBinNo_v2FR(double qmulti, int nHadJets, int nbjets){
   return sBin;
 }
 
-int AnalyzeLightBSM::getBinNoV6_WithOnlyBLSelec(int nHadJets,int nbjets, double new_MET)
+int AnalyzeLightBSM::getBinNoV6_WithOnlyBLSelec(int nHadJets,int nbjets)
 {
 
   int sBin=-100,m_i=0;
@@ -1457,9 +1457,9 @@ int AnalyzeLightBSM::getBinNoV6_WithOnlyBLSelec(int nHadJets,int nbjets, double 
       if(METLowEdge_v3[i]<199.99) continue;
       int sBin1=sBin;
       m_i++;
-      if(new_MET >= METLowEdge_v3[i] && new_MET < METLowEdge_v3[i+1]){ sBin = sBin+m_i;
+      if(MET >= METLowEdge_v3[i] && MET < METLowEdge_v3[i+1]){ sBin = sBin+m_i;
 	break; }
-      else if(new_MET >= METLowEdge_v3[METLowEdge_v3.size()-1])  { sBin = 7         ;
+      else if(MET >= METLowEdge_v3[METLowEdge_v3.size()-1])  { sBin = 7         ;
         break; }
     }
   }
@@ -1468,8 +1468,8 @@ int AnalyzeLightBSM::getBinNoV6_WithOnlyBLSelec(int nHadJets,int nbjets, double 
     for(int i=0;i<METLowEdge_v3_1.size()-1;i++){
       if(METLowEdge_v3_1[i]<199.99) continue;
       m_i++;
-      if(new_MET >= METLowEdge_v3_1[i] && new_MET < METLowEdge_v3_1[i+1]){ sBin = sBin+m_i;break;}
-      else if(new_MET >= METLowEdge_v3_1[METLowEdge_v3_1.size()-1])  { sBin = sBin+6; break; }
+      if(MET >= METLowEdge_v3_1[i] && MET < METLowEdge_v3_1[i+1]){ sBin = sBin+m_i;break;}
+      else if(MET >= METLowEdge_v3_1[METLowEdge_v3_1.size()-1])  { sBin = sBin+6; break; }
     }
   }
 
@@ -1478,8 +1478,8 @@ int AnalyzeLightBSM::getBinNoV6_WithOnlyBLSelec(int nHadJets,int nbjets, double 
       for(int i=0;i<METLowEdge_v3_2.size()-1;i++){
 	if(METLowEdge_v3_2[i]<199.99) continue;
 	m_i++;
-	if(new_MET >= METLowEdge_v3_2[i] && new_MET < METLowEdge_v3_2[i+1]){ sBin = sBin+m_i;break; }
-	else if(new_MET >= METLowEdge_v3_2[METLowEdge_v3_2.size()-1])  { sBin = sBin+5; break; }
+	if(MET >= METLowEdge_v3_2[i] && MET < METLowEdge_v3_2[i+1]){ sBin = sBin+m_i;break; }
+	else if(MET >= METLowEdge_v3_2[METLowEdge_v3_2.size()-1])  { sBin = sBin+5; break; }
       }
     }
   // if(sBin==0){
@@ -1917,12 +1917,12 @@ vector <TLorentzVector> AnalyzeLightBSM::getLorentzVector(int size, Float_t Pt_s
   return Temp;
 }
 
-void AnalyzeLightBSM::FillHistogram_Kinematics(int i, int Njets, int btags, double pho_Pt, double mt_phoMET, double dPhi, double ST,float Eta , float Phi, double E, float METPhi,double qmulti,double leadJets_qmulti, double leadJet_Pt, double leadbjet_tag, double mindR, TLorentzVector Jet_matched, vector<TLorentzVector>hadJets, TLorentzVector leadJet,int nvrtx,double mindr_Pho_genElec, double wt, double New_MET){
+void AnalyzeLightBSM::FillHistogram_Kinematics(int i, int Njets, int btags, double pho_Pt, double mt_phoMET, double dPhi, double ST,float Eta , float Phi, double E, float METPhi,double qmulti,double leadJets_qmulti, double leadJet_Pt, double leadbjet_tag, double mindR, TLorentzVector Jet_matched, vector<TLorentzVector>hadJets, TLorentzVector leadJet,int nvrtx,double mindr_Pho_genElec, double wt, double New_MET, double New_METPhi){
   //cout<<"Alps "<<i<<"\t"<<Njets<<"\t"<<btags<<"\t"<<pho_Pt<<"\t"<<mt_phoMET<<"\t"<<dPhi<<"\t"<<ST<<endl;
   
   h_Njets[i]->Fill(Njets,wt);
   h_Nbjets[i]->Fill(btags,wt);
-  h_MET_[i]->Fill(new_MET,wt);
+  h_MET_[i]->Fill(New_MET,wt);
   h_PhotonPt[i]->Fill(pho_Pt,wt);
   h_Mt_PhoMET[i]->Fill(mt_phoMET,wt);
   h_dPhi_PhoMET[i]->Fill(dPhi,wt);
@@ -1932,7 +1932,7 @@ void AnalyzeLightBSM::FillHistogram_Kinematics(int i, int Njets, int btags, doub
   h_Photon_Phi[i]->Fill(Phi,wt);
   
   h_Photon_E[i]->Fill(E,wt);
-  h_MET_Phi[i]->Fill(METPhi,wt);
+  h_MET_Phi[i]->Fill(New_METPhi,wt);
   h_qmulti_1[i]->Fill(qmulti,wt);
   h_qmultiVsEmobjPT[i]->Fill(pho_Pt,qmulti,wt);
   h_qmultiVsnJets[i]->Fill(Njets,qmulti,wt);
@@ -1964,7 +1964,7 @@ void AnalyzeLightBSM::FillHistogram_Kinematics(int i, int Njets, int btags, doub
     h_PtvsPhi_leadJet[j][i]->Fill(hadJets[j].Pt(),hadJets[j].Phi(),wt);
     h_PtvsEta_leadJet[j][i]->Fill(hadJets[j].Pt(),hadJets[j].Eta(),wt);
     TLorentzVector Met;
-    Met.SetPtEtaPhiE(MET,0,METPhi,0);
+    Met.SetPtEtaPhiE(New_MET,0,New_METPhi,0);
     double dPhi_METjet = abs(Met.DeltaPhi(hadJets[j])); 
     h_HT5HT_vsdPhi_METJet[j][i]->Fill(dPhi_METjet,HT5/HT,wt);
     h_dPhi_METJet[j][i]->Fill(dPhi_METjet,wt);
