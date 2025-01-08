@@ -1065,7 +1065,8 @@
     //cout<<"Event : " <<jentry <<"\t"<<(*Photons_mvaValuesID)[bestPhotonIndxAmongPhotons] << " (*Photons_mvaValuesID)[iPho]"<< "\t"<<bestPhotonIndxAmongPhotons<< " Photons _ "<<Photons_ <<"\t Photons_mvaValuesID->size() "<<Photons_mvaValuesID->size()<<"\t"<<Photons_v1.size()<<"\t"<<Photons_fullID->size()<<"\t"<<Photons_cutBasedID->size()<<endl;
     if (nHadJets>=2)h_selectBaselineYields_v1->Fill("njets>=2",wt);
     else continue;
-    if(MET<200) 
+    //if(MET<200)
+    if(MET>200) 
       h_selectBaselineYields_v1->Fill("MET<200",wt);
     else continue;
     //if(ST>200)
@@ -1083,7 +1084,7 @@
       }
     else continue;
     }
-    FillHistogram_Kinematics(1,nHadJets,BTags,bestEMObj.Pt(),mTPhoMET,dPhi_PhoMET,ST,bestEMObj.Eta(),bestEMObj.Phi(),bestEMObj.E(),METPhi,qmulti, leadjet_qmulti, leadjet_Pt,leadbjet_tag,minDR,Jet_matched, hadJets, hadJets[0], NVtx,mindr_Pho_genlep,wt);
+    FillHistogram_Kinematics(1,nHadJets,BTags,bestEMObj.Pt(),mTPhoMET,dPhi_PhoMET,ST,bestEMObj.Eta(),bestEMObj.Phi(),bestEMObj.E(),METPhi,qmulti, leadjet_qmulti, leadjet_Pt,leadbjet_tag,minDR,Jet_matched, hadJets, hadJets[0], NVtx,mindr_Pho_genlep,wt,new_MET,new_METPhi);
 			    
      	 //    h_madminPhotonDeltaR_preSelection->Fill(madMinPhotonDeltaR,wt);
     if(Debug)
@@ -1146,7 +1147,7 @@
 	// if(!(invariantmass>=80 && invariantmass<=100) )continue; 
 	// h_selectBaselineYields_v1->Fill("Elec CR - inv mass cut ",wt);
 
-	FillHistogram_Kinematics(2,nHadJets,BTags,bestEMObj.Pt(),mTPhoMET,dPhi_PhoMET,ST,bestEMObj.Eta(),bestEMObj.Phi(),bestEMObj.E(),new_METPhi,qmulti, leadjet_qmulti, leadjet_Pt,leadbjet_tag,minDR,Jet_matched, hadJets, hadJets[0], NVtx,mindr_Pho_genlep,wt);
+	FillHistogram_Kinematics(2,nHadJets,BTags,bestEMObj.Pt(),mTPhoMET,dPhi_PhoMET,ST,bestEMObj.Eta(),bestEMObj.Phi(),bestEMObj.E(),new_METPhi,qmulti, leadjet_qmulti, leadjet_Pt,leadbjet_tag,minDR,Jet_matched, hadJets, hadJets[0], NVtx,mindr_Pho_genlep,wt,new_MET,new_METPhi);
 	FillHistogram_Kinematics_varBin(2,nHadJets, BTags, bestEMObj.Pt(),ST,qmulti,wt);
 	h_tagEle_pT_Elec_CR->Fill(tagEMObj.Pt(),wt);
 	h_tagEle_Eta_Elec_CR->Fill(tagEMObj.Eta(),wt);
@@ -1242,7 +1243,7 @@
 
 	// h_selectBaselineYields_v1->Fill("Pho SR inv mass cut",wt);
 
-	FillHistogram_Kinematics(3,nHadJets,BTags,bestEMObj.Pt(),mTPhoMET,dPhi_PhoMET,ST,bestEMObj.Eta(),bestEMObj.Phi(),bestEMObj.E(),METPhi,qmulti, leadjet_qmulti, leadjet_Pt,leadbjet_tag,minDR,Jet_matched, hadJets, hadJets[0], NVtx,mindr_Pho_genlep,wt);
+	FillHistogram_Kinematics(3,nHadJets,BTags,bestEMObj.Pt(),mTPhoMET,dPhi_PhoMET,ST,bestEMObj.Eta(),bestEMObj.Phi(),bestEMObj.E(),METPhi,qmulti, leadjet_qmulti, leadjet_Pt,leadbjet_tag,minDR,Jet_matched, hadJets, hadJets[0], NVtx,mindr_Pho_genlep,wt,new_MET,new_METPhi);
 	FillHistogram_Kinematics_varBin(3,nHadJets, BTags, bestEMObj.Pt(),ST,qmulti,wt);
 
 	h_tagEle_pT_Pho_SR->Fill(tagEMObj.Pt(),wt);
